@@ -1,7 +1,6 @@
 package org.groover.bar.util.data
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import java.io.File
@@ -25,10 +24,9 @@ abstract class Repository<T: BarData>(
         val readFile = File(dir, fileName)
 
         // Read all lines if file exists, drop title row
-        val lines = if (!readFile.exists()) {
-            readFile.createNewFile()
-            emptyList()
-        } else readFile.readLines().drop(1)
+        val lines = if (readFile.exists())
+            readFile.readLines().drop(1)
+        else emptyList()
 
         // Turn the values into T's
         val values = lines
@@ -44,12 +42,16 @@ abstract class Repository<T: BarData>(
     fun save() {
         // Open a file for writing
         val writeFile = File(dir, fileName)
+        if (!writeFile.exists()) {
+            writeFile.createNewFile()
+        }
 
         // Write title row to file
-//        writeFile.writeText(CSV.serialize(titleRow) + "\n")
+        val titleRowStr = CSV.serialize(titleRow)
 
         // Write content to file
-        val data = data.joinToString("\n", transform = serialize)
+        val data = titleRowStr + "\n" +
+                data.joinToString("\n", transform = serialize)
         writeFile.writeText(data)
     }
 

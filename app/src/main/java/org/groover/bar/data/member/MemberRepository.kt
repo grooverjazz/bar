@@ -7,7 +7,7 @@ class MemberRepository(
     context: Context
 ) : Repository<Member>(
     context,
-    "members.txt",
+    "members.csv",
     Member.Companion::serialize,
     Member.Companion::deserialize,
     listOf("ID", "Voornaam", "Tussenvoegsel", "Achternaam")

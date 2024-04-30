@@ -8,7 +8,7 @@ class OrderRepository(
     context: Context
 ) : Repository<Order>(
     context,
-    "orders.txt",
+    "orders.csv",
     Order.Companion::serialize,
     Order.Companion::deserialize,
     listOf("ID", "Customer ID", "Timestamp", "Amounts...")

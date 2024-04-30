@@ -7,7 +7,7 @@ class ItemRepository(
     context: Context
 ) : Repository<Item>(
     context,
-    "items.txt",
+    "items.csv",
     Item.Companion::serialize,
     Item.Companion::deserialize,
     listOf("ID", "Name", "Price", "BTW Percentage"),

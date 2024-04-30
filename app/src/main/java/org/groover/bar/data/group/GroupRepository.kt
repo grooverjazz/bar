@@ -6,7 +6,7 @@ import org.groover.bar.util.data.Repository
 class GroupRepository(
     context: Context
 ) : Repository<Group>(context,
-    "groups.txt",
+    "groups.csv",
     Group.Companion::serialize,
     Group.Companion::deserialize,
     listOf("ID", "Name", "Member IDs...")
