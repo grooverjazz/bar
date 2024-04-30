@@ -7,18 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import org.groover.bar.data.group.GroupRepository
-import org.groover.bar.data.member.MemberRepository
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
-import org.groover.bar.util.app.TotalMemberList
 import org.groover.bar.util.app.VerticalGrid
 
 @Composable
 fun BeheerScreen(
-    navController: NavController,
-    memberRepository: MemberRepository,
-    groupRepository: GroupRepository,
+    navController: NavController
 ) {
     VerticalGrid(
         modifier = Modifier
@@ -32,21 +27,27 @@ fun BeheerScreen(
             height = 60.dp,
         )
 
-        Spacer(modifier = Modifier.size(20.dp))
-        TitleText("Bar Beheer")
-        Spacer(modifier = Modifier.size(20.dp))
+        Spacer(Modifier.size(100.dp))
 
-        // Member list
-        TotalMemberList(
-            memberRepository = memberRepository,
-            groupRepository = groupRepository,
-            memberOnClick = { member ->
-                navController.navigate("beheer/member/${member.id}")
-            },
-            groupOnClick = {
-                groupRepository.removeGroup(it.id)
-            },
-            showAddNewButton = true,
+        // Title
+        TitleText("Beheer")
+
+        Spacer(Modifier.size(80.dp))
+
+        // Leden en Groepen button
+        NavigateButton(
+            navController = navController,
+            text = "Leden en Groepen",
+            route = "beheer/customers",
+        )
+
+        Spacer(Modifier.size(30.dp))
+
+        // Items button
+        NavigateButton(
+            navController = navController,
+            text = "Items",
+            route = "beheer/items",
         )
     }
 }

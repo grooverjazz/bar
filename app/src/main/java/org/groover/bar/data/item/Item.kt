@@ -15,7 +15,9 @@ data class Item(
     // String formatting helper properties
     private val locale = Locale("nl")
 
-    val priceString: String = "€%.2f".format(locale, price)
+    val priceStringNoEuro: String = "%.2f".format(locale, price)
+    val priceString: String = "€" + priceStringNoEuro
+
     val priceWithBtwString: String = "€%.2f".format(locale, priceWithBtw)
 
     override fun toString(): String = "$name ($priceString, $btwPercentage% BTW)"
@@ -27,7 +29,7 @@ data class Item(
             return CSV.serialize(
                 item.id.toString(),
                 item.name,
-                item.priceString,
+                item.priceStringNoEuro,
                 item.btwPercentage.toString()
             )
         }

@@ -1,4 +1,4 @@
-package org.groover.bar.app.beheer.member
+package org.groover.bar.app.beheer.customers.member
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding

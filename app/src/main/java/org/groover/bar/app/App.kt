@@ -10,7 +10,9 @@ import org.groover.bar.app.bar.geschiedenis.BarGeschiedenisScreen
 import org.groover.bar.app.bar.turven.BarTurvenScreen
 import org.groover.bar.app.bar.turven.customer.BarTurvenCustomerScreen
 import org.groover.bar.app.beheer.BeheerScreen
-import org.groover.bar.app.beheer.member.BeheerMemberScreen
+import org.groover.bar.app.beheer.customers.BeheerCustomersScreen
+import org.groover.bar.app.beheer.customers.member.BeheerMemberScreen
+import org.groover.bar.app.beheer.items.BeheerItemsScreen
 import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.member.MemberRepository
@@ -108,13 +110,28 @@ fun App() {
         composable("beheer") {
             BeheerScreen(
                 navController = navController,
+            )
+        }
+
+        // Beheer: items
+        composable("beheer/items") {
+            BeheerItemsScreen(
+                navController = navController,
+                itemRepository = itemRepository,
+            )
+        }
+
+        // Beheer: customers
+        composable("beheer/customers") {
+            BeheerCustomersScreen(
+                navController = navController,
                 memberRepository = memberRepository,
                 groupRepository = groupRepository,
             )
         }
 
-        // Beheer: member
-        composable("beheer/member/{memberId}") { backStackEntry ->
+        // Beheer: customers: member
+        composable("beheer/customers/member/{memberId}") { backStackEntry ->
             // Extract the member ID from the route
             val memberIdStr = backStackEntry.arguments?.getString("memberId")!!
             val memberId = memberIdStr.toInt()
