@@ -13,6 +13,7 @@ import org.groover.bar.app.beheer.BeheerScreen
 import org.groover.bar.app.beheer.customers.BeheerCustomersScreen
 import org.groover.bar.app.beheer.customers.member.BeheerMemberScreen
 import org.groover.bar.app.beheer.items.BeheerItemsScreen
+import org.groover.bar.app.beheer.items.item.BeheerItemsItemScreen
 import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.member.MemberRepository
@@ -118,6 +119,19 @@ fun App() {
             BeheerItemsScreen(
                 navController = navController,
                 itemRepository = itemRepository,
+            )
+        }
+
+        // Beheer: items: item
+        composable("beheer/items/item/{itemId}") { backStackEntry ->
+            // Extract the item ID from the route
+            val itemIdStr = backStackEntry.arguments?.getString("itemId")!!
+            val itemId = itemIdStr.toInt()
+
+            BeheerItemsItemScreen(
+                navController = navController,
+                itemRepository = itemRepository,
+                itemId = itemId,
             )
         }
 

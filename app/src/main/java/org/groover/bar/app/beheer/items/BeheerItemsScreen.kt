@@ -8,12 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
-import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -73,9 +71,9 @@ fun BeheerItemsScreen(
                 item {
                     ItemEditItem(
                         title = item.name,
-                        onTitleClick = { /*TODO*/ },
-                        onUpClick = { itemRepository.move(item.id, true) },
-                        onDownClick = { itemRepository.move(item.id, false) },
+                        onTitleClick = { navController.navigate("beheer/items/item/${item.id}") },
+                        onUpClick = { itemRepository.moveItem(item.id, true) },
+                        onDownClick = { itemRepository.moveItem(item.id, false) },
                         onDeleteClick = { itemRepository.removeById(item.id) }
                     )
                 }
