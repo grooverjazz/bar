@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -13,11 +14,14 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.util.app.NavigateButton
@@ -91,26 +95,34 @@ fun ItemEditItem(
     onDeleteClick: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.padding(vertical = 20.dp)
+        modifier = Modifier.padding(vertical = 5.dp)
     ) {
-        Button(modifier = Modifier.fillMaxWidth(),
+        Button(modifier = Modifier.fillMaxWidth().height(70.dp),
             onClick = onTitleClick
         ) {
-            Text(title)
+            Text(
+                text = title,
+                fontSize = 15.sp
+            )
         }
+
+        val colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
 
         Row {
             Button(modifier = Modifier.weight(1f),
+                colors = colors,
                 onClick = onUpClick
             ) {
                 Icon(Icons.Rounded.KeyboardArrowUp, null)
             }
             Button(modifier = Modifier.weight(1f),
+                colors = colors,
                 onClick = onDownClick
             ) {
                 Icon(Icons.Rounded.KeyboardArrowDown, null)
             }
             Button(modifier = Modifier.weight(1f),
+                colors = colors,
                 onClick = onDeleteClick
             ) {
                 Icon(Icons.Rounded.Delete, null)

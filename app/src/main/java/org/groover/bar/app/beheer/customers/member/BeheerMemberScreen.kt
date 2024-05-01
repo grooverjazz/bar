@@ -25,7 +25,7 @@ fun BeheerMemberScreen(
         NavigateButton(
             navController = navController,
             text = "Terug",
-            route = "beheer",
+            route = "beheer/customers",
             height = 60.dp,
         )
 

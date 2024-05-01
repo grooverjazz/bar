@@ -69,6 +69,24 @@ abstract class Repository<T: BarData>(
         save()
     }
 
+    // (Replaces the element)
+    fun replaceById(id: Int, new: T) {
+        assert(new.id == id) { "Incorrect ID" }
+
+        // Get all items before and after the specified item
+        val before = data.takeWhile { it.id != id }
+        val after = data.takeLastWhile { it.id != id }
+
+        val newData = before + listOf(new) + after
+
+        // Reassign data
+        data.clear()
+        data += newData
+
+        // Save
+        save()
+    }
+
     // (Finds the first available ID)
     fun generateId(): Int {
         // Get the item with the highest ID, add 1

@@ -28,11 +28,9 @@ class ItemRepository(
         save()
     }
 
-    fun changeItem(itemId: Int, newName: String, newPrice: Float, newBtwPercentage: Int) {
-        // Get all items before and after the specified item
-        val before = data.takeWhile { it.id != itemId }
-        val after = data.takeLastWhile { it.id != itemId }
 
+
+    fun changeItem(itemId: Int, newName: String, newPrice: Float, newBtwPercentage: Int) {
         // Create new item
         val newItem = Item(
             itemId,
@@ -41,14 +39,8 @@ class ItemRepository(
             newBtwPercentage
         )
 
-        val newData = before + listOf(newItem) + after
-
-        // Reassign data
-        data.clear()
-        data += newData
-
-        // Save
-        save()
+        // Replace the old one
+        replaceById(itemId, newItem)
     }
 
     fun moveItem(itemId: Int, moveUp: Boolean) {

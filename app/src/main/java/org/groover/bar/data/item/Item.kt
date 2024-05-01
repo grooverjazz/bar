@@ -13,7 +13,7 @@ data class Item(
     val priceWithBtw: Float = price * (1f + (btwPercentage / 100.0f))
 
     // String formatting helper properties
-    private val locale = Locale("nl")
+    private val locale = Locale("en")
 
     val priceStringNoEuro: String = "%.2f".format(locale, price)
     val priceString: String = "€" + priceStringNoEuro
