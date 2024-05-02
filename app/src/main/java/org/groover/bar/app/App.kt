@@ -19,6 +19,7 @@ import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.member.MemberRepository
 import org.groover.bar.data.order.Order
 import org.groover.bar.data.order.OrderRepository
+import org.groover.bar.export.ExportHandler
 
 @Composable
 fun App() {
@@ -28,6 +29,14 @@ fun App() {
     val groupRepository = GroupRepository(context)
     val itemRepository = ItemRepository(context)
     val orderRepository = OrderRepository(context)
+
+    val exportHandler = ExportHandler(
+        context = context,
+        memberRepository = memberRepository,
+        groupRepository = groupRepository,
+        itemRepository = itemRepository,
+        orderRepository = orderRepository,
+    )
 
     val navController = rememberNavController()
 
@@ -111,6 +120,7 @@ fun App() {
         composable("beheer") {
             BeheerScreen(
                 navController = navController,
+                exportHandler = exportHandler,
             )
         }
 

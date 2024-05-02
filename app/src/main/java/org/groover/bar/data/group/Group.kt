@@ -6,7 +6,7 @@ import org.groover.bar.util.data.CSV
 data class Group (
     override val id: Int,
     val name: String,
-    val memberIds: List<String>
+    val memberIds: List<Int>
 ): BarData() {
     override fun toString(): String = "$name (${memberIds.size} leden)"
 
@@ -15,7 +15,8 @@ data class Group (
         fun serialize(group: Group): String {
             // Return serialization
             return CSV.serialize(
-                listOf(group.id.toString(), group.name) + group.memberIds
+                listOf(group.id.toString(), group.name)
+                        + group.memberIds.map(Int::toString)
             )
         }
 
@@ -29,7 +30,7 @@ data class Group (
             val id = idStr.toInt()
 
             // Get member IDs
-            val memberIds = data.drop(2)
+            val memberIds = data.drop(2).map(String::toInt)
 
             // Return group
             return Group(id, name, memberIds)

@@ -46,12 +46,15 @@ abstract class Repository<T: BarData>(
             writeFile.createNewFile()
         }
 
-        // Write title row to file
+        // Get title row string
         val titleRowStr = CSV.serialize(titleRow)
 
+        // Get data string
+        val dataStr = data
+            .joinToString("\n", transform = serialize)
+
         // Write content to file
-        val data = titleRowStr + "\n" +
-                data.joinToString("\n", transform = serialize)
+        val data = titleRowStr + "\n" + dataStr
         writeFile.writeText(data)
     }
 
