@@ -17,12 +17,9 @@ class ExportHandler(
     private val itemRepository: ItemRepository,
     private val orderRepository: OrderRepository,
 ) {
-
     // Get the current directory
     // (Android/data/org.groover.bartablet2/files)
     private val dir = context.getExternalFilesDir("")
-
-
     private fun getExportRows(): List<ExportRow> {
         val orders = orderRepository.data
         val items = itemRepository.data
@@ -87,9 +84,8 @@ class ExportHandler(
         // Open a file for writing
         // TODO: opslaan in export-map
         val writeFile = File(dir, "$incassoName.csv")
-        if (!writeFile.exists()) {
-            writeFile.createNewFile()
-        }
+        assert(!writeFile.exists()) { "Export bestaat al!" }
+        writeFile.createNewFile()
 
         // Get title row string
         val titleRowStr = CSV.serialize(
