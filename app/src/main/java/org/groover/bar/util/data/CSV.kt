@@ -6,10 +6,13 @@ import java.util.Date
 
 class CSV {
     companion object {
-        fun serialize(strs: List<String>): String = strs.joinToString(",")
+        fun serialize(strs: List<String>): String = strs
+            .joinToString(";") { "\"$it\"" }
         fun serialize(vararg strs: String): String = serialize(strs.asList())
 
-        fun deserialize(str: String): List<String> = str.split(",")
+        fun deserialize(str: String): List<String> = str
+            .split(";")
+            .map {it.trim('"')}
 
         // TODO: ???
         @SuppressLint("SimpleDateFormat")
