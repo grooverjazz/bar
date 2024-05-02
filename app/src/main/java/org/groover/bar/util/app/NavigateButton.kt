@@ -18,7 +18,7 @@ import androidx.navigation.NavController
 
 @Composable
 fun NavigateButton(
-    navController: NavController,
+    navigate: (String) -> Unit,
     text: String,
     fontSize: TextUnit = 30.sp,
     height: Dp = 100.dp,
@@ -37,7 +37,7 @@ fun NavigateButton(
                 Toast.makeText(context, "TODO Route!", Toast.LENGTH_SHORT).show()
             }
             else {
-                navController.navigate(route)
+                navigate(route)
             }
         },
     ) {

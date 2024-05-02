@@ -12,13 +12,23 @@ import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 
 @Composable
-fun BarScreen(navController: NavController) {
+fun BarScreen(
+    navigate: (String) -> Unit,
+) {
+    BarContent(navigate)
+}
+
+
+@Composable
+private fun BarContent(
+    navigate: (String) -> Unit = {},
+) {
     VerticalGrid(
         modifier = Modifier.padding(10.dp)
     ) {
         // Terug button
         NavigateButton(
-            navController = navController,
+            navigate = navigate,
             text = "Terug",
             route = "home",
             height = 60.dp,
@@ -33,7 +43,7 @@ fun BarScreen(navController: NavController) {
 
         // Turven button
         NavigateButton(
-            navController = navController,
+            navigate = navigate,
             text = "Turven",
             route = "bar/turven"
         )
@@ -42,7 +52,7 @@ fun BarScreen(navController: NavController) {
 
         // Overzicht bestellingen button
         NavigateButton(
-            navController = navController,
+            navigate = navigate,
             text = "Geschiedenis",
             route = "bar/geschiedenis"
         )

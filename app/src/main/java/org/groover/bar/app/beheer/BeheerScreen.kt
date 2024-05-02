@@ -16,8 +16,20 @@ import org.groover.bar.util.app.VerticalGrid
 
 @Composable
 fun BeheerScreen(
-    navController: NavController,
+    navigate: (String) -> Unit,
     exportHandler: ExportHandler
+) {
+    BeheerContent(
+        navigate = navigate,
+        export = exportHandler::export,
+    )
+}
+
+
+@Composable
+private fun BeheerContent(
+    navigate: (String) -> Unit,
+    export: () -> Unit,
 ) {
     VerticalGrid(
         modifier = Modifier
@@ -25,7 +37,7 @@ fun BeheerScreen(
     ) {
         // Terug button
         NavigateButton(
-            navController = navController,
+            navigate = navigate,
             text = "Terug",
             route = "home",
             height = 60.dp,
@@ -40,7 +52,7 @@ fun BeheerScreen(
 
         // Leden en Groepen button
         NavigateButton(
-            navController = navController,
+            navigate = navigate,
             text = "Leden en Groepen",
             route = "beheer/customers",
         )
@@ -49,7 +61,7 @@ fun BeheerScreen(
 
         // Items button
         NavigateButton(
-            navController = navController,
+            navigate = navigate,
             text = "Items",
             route = "beheer/items",
         )
@@ -57,11 +69,9 @@ fun BeheerScreen(
         Spacer(Modifier.size(50.dp))
 
         Button(
-            onClick = {
-                exportHandler.export()
-            }
+            onClick = export
         ) {
-            Text("Incasso fixen")
+            Text("Export incasso")
         }
     }
 }

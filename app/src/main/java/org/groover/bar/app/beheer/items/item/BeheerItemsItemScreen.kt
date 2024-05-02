@@ -14,31 +14,55 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.VerticalGrid
 
 @Composable
 fun BeheerItemsItemScreen(
-    navController: NavController,
+    navigate: (String) -> Unit,
     itemRepository: ItemRepository,
     itemId: Int
 ) {
+    // Get item
+    val item = itemRepository.lookupById(itemId)!!
+
+    // Finishes editing the item
+    val finishEdit = { newName: String, newPrice: Float, newBtwPercentage: Int ->
+        // Change the item
+        itemRepository.changeItem(itemId, newName, newPrice, newBtwPercentage)
+
+        // Navigate back
+        navigate("beheer/items")
+    }
+
+    BeheerItemsItemContent(
+        navigate = navigate,
+        item = item,
+        finishEdit = finishEdit,
+    )
+}
+
+
+@Composable
+private fun BeheerItemsItemContent(
+    navigate: (String) -> Unit,
+    item: Item,
+    finishEdit: (String, Float, Int) -> Unit
+) {
+    // Remember name, price and BTW percentage
+    var newName: String by remember { mutableStateOf(item.name) }
+    var newPriceStr: String by remember { mutableStateOf(item.price.toString()) }
+    var newBtwPercentageStr: String by remember { mutableStateOf(item.btwPercentage.toString()) }
+
     VerticalGrid(
         modifier = Modifier
             .padding(10.dp)
     ) {
-        // Get item
-        val item = itemRepository.lookupById(itemId)!!
-
-        // Remember name, price and BTW percentage
-        var newName: String by remember { mutableStateOf(item.name) }
-        var newPriceStr: String by remember { mutableStateOf(item.price.toString()) }
-        var newBtwPercentageStr: String by remember { mutableStateOf(item.btwPercentage.toString()) }
-
         // Terug button
         NavigateButton(
-            navController = navController,
+            navigate = navigate,
             text = "Terug",
             route = "beheer/items",
             height = 60.dp,
@@ -72,15 +96,8 @@ fun BeheerItemsItemScreen(
 
         // Save button
         Button(onClick = {
-            // Convert new price and BTW percentage
-            val newPrice = newPriceStr.toFloat()
-            val newBtwPercentage = newBtwPercentageStr.toInt()
-
-            // Change the item
-            itemRepository.changeItem(itemId, newName, newPrice, newBtwPercentage)
-
-            // Navigate back
-            navController.navigate("beheer/items")
+            // Convert new price and BTW percentage, finish
+            finishEdit(newName, newPriceStr.toFloat(), newBtwPercentageStr.toInt())
         }) {
             Text("Opslaan")
         }

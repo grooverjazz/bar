@@ -27,11 +27,9 @@ import kotlin.math.max
 
 @Composable
 fun ItemList(
-    itemRepository: ItemRepository,
+    items: List<Item>,
     amounts: MutableList<Int>,
 ) {
-    val items = itemRepository.data
-
     LazyVerticalGrid(
         columns = GridCells.Fixed(1),
     ) {

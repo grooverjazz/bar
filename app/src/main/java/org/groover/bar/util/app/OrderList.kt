@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import org.groover.bar.data.group.GroupRepository
+import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.member.MemberRepository
 import org.groover.bar.data.order.Order
@@ -17,15 +18,11 @@ import org.groover.bar.data.order.OrderRepository
 
 @Composable
 fun OrderList(
-    orderRepository: OrderRepository,
-    memberRepository: MemberRepository,
-    groupRepository: GroupRepository,
-    itemRepository: ItemRepository,
+    orders: List<Order>,
+    items: List<Item>,
+    getCustomerName: (Int) -> String,
     onClick: (Order) -> Unit,
 ) {
-    val orders = orderRepository.data
-    val items = itemRepository.data
-
     // UI
     LazyVerticalGrid(
         columns = GridCells.Fixed(1),
@@ -34,10 +31,7 @@ fun OrderList(
         orders.forEach { order ->
             item {
                 // Get printable name of customer
-                val customerName = (
-                        memberRepository.lookupById(order.customerId)?.fullName ?:
-                        groupRepository.lookupById(order.customerId)?.name
-                        )!!
+                val customerName = getCustomerName(order.customerId)
 
                 val totalPrice = order.getTotalPriceString(items)
 

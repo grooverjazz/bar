@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.groover.bar.data.group.GroupRepository
+import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.member.MemberRepository
 import org.groover.bar.data.order.Order
@@ -19,18 +20,47 @@ import org.groover.bar.util.app.VerticalGrid
 
 @Composable
 fun BarGeschiedenisScreen(
-    navController: NavController,
+    navigate: (String) -> Unit,
     orderRepository: OrderRepository,
     memberRepository: MemberRepository,
     groupRepository: GroupRepository,
     itemRepository: ItemRepository,
+) {
+    val getCustomerName = { id: Int ->
+        (memberRepository.lookupById(id)?.fullName ?:
+        groupRepository.lookupById(id)?.name)!!
+    }
+
+    val orderOnClick = { order: Order ->
+        val orderStr = Order.serialize(order)
+
+        navigate("bar/geschiedenis/edit/${orderStr}")
+    }
+
+    BarGeschiedenisContent(
+        navigate = navigate,
+        orders = orderRepository.data,
+        items = itemRepository.data,
+        getCustomerName = getCustomerName,
+        orderOnClick = orderOnClick
+    )
+}
+
+
+@Composable
+private fun BarGeschiedenisContent(
+    navigate: (String) -> Unit,
+    orders: List<Order>,
+    items: List<Item>,
+    getCustomerName: (Int) -> String,
+    orderOnClick: (Order) -> Unit,
 ) {
     VerticalGrid(
         modifier = Modifier.padding(10.dp)
     ) {
         // Terug button
         NavigateButton(
-            navController = navController,
+            navigate = navigate,
             text = "Terug",
             route = "bar",
             height = 60.dp,
@@ -41,15 +71,10 @@ fun BarGeschiedenisScreen(
         Spacer(modifier = Modifier.size(20.dp))
 
         OrderList(
-            orderRepository = orderRepository,
-            memberRepository = memberRepository,
-            groupRepository = groupRepository,
-            itemRepository = itemRepository,
-            onClick = { order ->
-                val orderStr = Order.serialize(order)
-
-                navController.navigate("bar/geschiedenis/edit/${orderStr}")
-            }
+            orders = orders,
+            items = items,
+            getCustomerName = getCustomerName,
+            onClick = orderOnClick,
         )
     }
 }

@@ -12,7 +12,19 @@ import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(
+    navigate: (String) -> Unit,
+) {
+    HomeContent(
+        navigate = navigate
+    )
+}
+
+
+@Composable
+private fun HomeContent(
+   navigate: (String) -> Unit
+) {
     VerticalGrid(
         modifier = Modifier.padding(10.dp)
     ) {
@@ -25,7 +37,7 @@ fun HomeScreen(navController: NavController) {
 
         // Bar button
         NavigateButton(
-            navController = navController,
+            navigate = navigate,
             text = "Bar",
             route = "bar",
         )
@@ -34,7 +46,7 @@ fun HomeScreen(navController: NavController) {
 
         // Bar Beheer button
         NavigateButton(
-            navController = navController,
+            navigate = navigate,
             text = "Beheer",
             route = "beheer",
         )

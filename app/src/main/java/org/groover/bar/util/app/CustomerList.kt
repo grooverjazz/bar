@@ -24,9 +24,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.android.awaitFrame
 import org.groover.bar.data.group.Group
-import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.member.Member
-import org.groover.bar.data.member.MemberRepository
 
 enum class MemberListState {
     MEMBERS,
@@ -34,12 +32,14 @@ enum class MemberListState {
 }
 
 @Composable
-fun TotalMemberList(
-    memberRepository: MemberRepository,
-    groupRepository: GroupRepository,
+fun CustomerList(
+    members: List<Member>,
+    groups: List<Group>,
     memberOnClick: (Member) -> Unit,
     groupOnClick: (Group) -> Unit,
     showAddNewButton: Boolean = false,
+    addTempMember: (String) -> Unit,
+    addGroup: (String) -> Unit,
 ) {
     var state by remember { mutableStateOf(MemberListState.MEMBERS) }
     var searchText by remember { mutableStateOf("") }
@@ -80,19 +80,32 @@ fun TotalMemberList(
     val formattedSearchText = searchText.trim().replaceFirstChar(Char::uppercaseChar)
 
     when (state) {
-        MemberListState.MEMBERS -> MemberList(memberRepository, formattedSearchText, memberOnClick, showAddNewButton)
-        MemberListState.GROUPS -> GroupsList(groupRepository, formattedSearchText, groupOnClick, showAddNewButton)
+        MemberListState.MEMBERS -> MemberList(
+            members = members,
+            searchText = formattedSearchText,
+            onClick = memberOnClick,
+            showAddNewButton = showAddNewButton,
+            addTempMember = addTempMember,
+        )
+
+        MemberListState.GROUPS -> GroupsList(
+            groups = groups,
+            searchText = formattedSearchText,
+            onClick = groupOnClick,
+            showAddNewButton = showAddNewButton,
+            addGroup = addGroup
+        )
     }
 }
 
 @Composable
-fun MemberList(
-    memberRepository: MemberRepository,
+private fun MemberList(
+    members: List<Member>,
     searchText: String,
     onClick: (Member) -> Unit,
-    showAddNewButton: Boolean
+    showAddNewButton: Boolean,
+    addTempMember: (String) -> Unit,
 ) {
-    val members = memberRepository.data
     val filteredMembers = members
         .filter { it.toString().contains(searchText) }
         .take(20)
@@ -116,9 +129,7 @@ fun MemberList(
                 Button(
                     shape = RectangleShape,
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
-                    onClick = {
-                        memberRepository.addTempMember(searchText)
-                    },
+                    onClick = { addTempMember(searchText) },
                 ) { Text("Nieuw tijdelijk lid '$searchText' toevoegen") }
             }
         }
@@ -127,12 +138,12 @@ fun MemberList(
 
 @Composable
 fun GroupsList(
-    groupRepository: GroupRepository,
+    groups: List<Group>,
     searchText: String,
     onClick: (Group) -> Unit,
-    showAddNewButton: Boolean
+    showAddNewButton: Boolean,
+    addGroup: (String) -> Unit
 ) {
-    val groups = groupRepository.data
     val filteredGroups = groups
         .filter { it.toString().contains(searchText) }
         .take(20)
@@ -158,9 +169,7 @@ fun GroupsList(
                 Button(
                     shape = RectangleShape,
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
-                    onClick = {
-                        groupRepository.addGroup(searchText)
-                    },
+                    onClick = { addGroup(searchText) },
                 ) { Text("Nieuwe lege groep '$searchText' toevoegen") }
             }
         }

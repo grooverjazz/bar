@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
@@ -30,18 +31,39 @@ import org.groover.bar.util.app.VerticalGrid
 
 @Composable
 fun BeheerItemsScreen(
-    navController: NavController,
+    navigate: (String) -> Unit,
     itemRepository: ItemRepository,
+) {
+    val itemMoveUp = { id: Int -> itemRepository.moveItem(id, true) }
+    val itemMoveDown = { id: Int -> itemRepository.moveItem(id, false) }
+
+    BeheerItemsContent(
+        navigate = navigate,
+        items = itemRepository.data,
+        addItem = itemRepository::addItem,
+        itemMoveUp = itemMoveUp,
+        itemMoveDown = itemMoveDown,
+        itemRemove = itemRepository::removeById
+    )
+
+}
+
+@Composable
+private fun BeheerItemsContent(
+    navigate: (String) -> Unit,
+    items: List<Item>,
+    addItem: (String, Float, Int) -> Unit,
+    itemMoveUp: (Int) -> Unit,
+    itemMoveDown: (Int) -> Unit,
+    itemRemove: (Int) -> Unit,
 ) {
     VerticalGrid(
         modifier = Modifier
             .padding(10.dp)
     ) {
-        val items = itemRepository.data
-
         // Terug button
         NavigateButton(
-            navController = navController,
+            navigate = navigate,
             text = "Terug",
             route = "beheer",
             height = 60.dp,
@@ -55,8 +77,8 @@ fun BeheerItemsScreen(
 
         // Add item button
         Button(onClick = {
-            itemRepository.addItem(
-                "Tijdelijk item ${itemRepository.data.size}",
+            addItem(
+                "Tijdelijk item",
                 0.0f,
                 0,
             )
@@ -75,10 +97,10 @@ fun BeheerItemsScreen(
                 item {
                     ItemEditItem(
                         title = item.name,
-                        onTitleClick = { navController.navigate("beheer/items/item/${item.id}") },
-                        onUpClick = { itemRepository.moveItem(item.id, true) },
-                        onDownClick = { itemRepository.moveItem(item.id, false) },
-                        onDeleteClick = { itemRepository.removeById(item.id) }
+                        onTitleClick = { navigate("beheer/items/item/${item.id}") },
+                        onUpClick = { itemMoveUp(item.id) },
+                        onDownClick = { itemMoveDown(item.id) },
+                        onDeleteClick = { itemRemove(item.id) }
                     )
                 }
             }
@@ -97,7 +119,9 @@ fun ItemEditItem(
     Column(
         modifier = Modifier.padding(vertical = 5.dp)
     ) {
-        Button(modifier = Modifier.fillMaxWidth().height(70.dp),
+        Button(modifier = Modifier
+            .fillMaxWidth()
+            .height(70.dp),
             onClick = onTitleClick
         ) {
             Text(

@@ -39,6 +39,7 @@ fun App() {
     )
 
     val navController = rememberNavController()
+    val navigate: (String) -> Unit = { navController.navigate(it) }
 
     NavHost(
         navController = navController,
@@ -47,21 +48,21 @@ fun App() {
         // Home
         composable("home") {
             HomeScreen(
-                navController = navController,
+                navigate = navigate,
             )
         }
 
         // Bar
         composable("bar") {
             BarScreen(
-                navController = navController,
+                navigate = navigate,
             )
         }
 
         // Bar: turven
         composable("bar/turven") {
             BarTurvenScreen(
-                navController = navController,
+                navigate = navigate,
                 memberRepository = memberRepository,
                 groupRepository = groupRepository,
             )
@@ -74,7 +75,7 @@ fun App() {
             val customerId = customerIdStr.toInt()
 
             BarTurvenCustomerScreen(
-                navController = navController,
+                navigate = navigate,
                 memberRepository = memberRepository,
                 groupRepository = groupRepository,
                 itemRepository = itemRepository,
@@ -87,7 +88,7 @@ fun App() {
         // Bar: geschiedenis
         composable("bar/geschiedenis") {
             BarGeschiedenisScreen(
-                navController = navController,
+                navigate = navigate,
                 orderRepository = orderRepository,
                 memberRepository = memberRepository,
                 groupRepository = groupRepository,
@@ -105,7 +106,7 @@ fun App() {
             val customerId = previousOrder.customerId
 
             BarTurvenCustomerScreen(
-                navController = navController,
+                navigate = navigate,
                 memberRepository = memberRepository,
                 groupRepository = groupRepository,
                 itemRepository = itemRepository,
@@ -119,7 +120,7 @@ fun App() {
         // Beheer
         composable("beheer") {
             BeheerScreen(
-                navController = navController,
+                navigate = navigate,
                 exportHandler = exportHandler,
             )
         }
@@ -127,7 +128,7 @@ fun App() {
         // Beheer: items
         composable("beheer/items") {
             BeheerItemsScreen(
-                navController = navController,
+                navigate = navigate,
                 itemRepository = itemRepository,
             )
         }
@@ -139,7 +140,7 @@ fun App() {
             val itemId = itemIdStr.toInt()
 
             BeheerItemsItemScreen(
-                navController = navController,
+                navigate = navigate,
                 itemRepository = itemRepository,
                 itemId = itemId,
             )
@@ -148,7 +149,7 @@ fun App() {
         // Beheer: customers
         composable("beheer/customers") {
             BeheerCustomersScreen(
-                navController = navController,
+                navigate = navigate,
                 memberRepository = memberRepository,
                 groupRepository = groupRepository,
             )
@@ -161,7 +162,7 @@ fun App() {
             val memberId = memberIdStr.toInt()
 
             BeheerMemberScreen(
-                navController = navController,
+                navigate = navigate,
                 memberRepository = memberRepository,
                 memberId = memberId,
             )
