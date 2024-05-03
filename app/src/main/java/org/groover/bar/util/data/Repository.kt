@@ -30,8 +30,8 @@ abstract class Repository<T: BarData>(
 
         // Turn the values into T's
         val values = lines
-            .filter { it != "" }
             .map(String::trim)
+            .filter { it != "" }
             .map(deserialize)
 
         // Create snapshot state list
