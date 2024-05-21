@@ -24,7 +24,7 @@ class ExportHandler(
         val orders = orderRepository.data
         val items = itemRepository.data
 
-        val amounts = mutableMapOf<Int, Float>()
+        val totalAmounts = mutableMapOf<Int, Float>()
 
         for (order in orders) {
             // Calculate the price of the order
@@ -41,8 +41,8 @@ class ExportHandler(
                     // Add the single order to the temporary map
                     val member: Member = customer
 
-                    val newPrice = amounts.getOrDefault(member.id, 0f) + price
-                    amounts[member.id] = newPrice
+                    val newPrice = totalAmounts.getOrDefault(member.id, 0f) + price
+                    totalAmounts[member.id] = newPrice
                 }
                 is Group -> {
                     // Split the costs of the order and add to the export
@@ -50,15 +50,15 @@ class ExportHandler(
                     val splitPrice = price / group.memberIds.size
 
                     for (memberId in group.memberIds) {
-                        val newPrice = amounts.getOrDefault(memberId, 0f) + splitPrice
-                        amounts[memberId] = newPrice
+                        val newPrice = totalAmounts.getOrDefault(memberId, 0f) + splitPrice
+                        totalAmounts[memberId] = newPrice
                     }
                 }
             }
         }
 
         // Map all total amounts to export rows
-        val rows = amounts.map { (memberId, amount) ->
+        val rows = totalAmounts.map { (memberId, totalAmount) ->
             val member = memberRepository.lookupById(memberId)!!
 
             ExportRow(
@@ -66,7 +66,7 @@ class ExportHandler(
                 member.voornaam,
                 member.tussenvoegsel,
                 member.achternaam,
-                amount
+                totalAmount
             )
         }
 

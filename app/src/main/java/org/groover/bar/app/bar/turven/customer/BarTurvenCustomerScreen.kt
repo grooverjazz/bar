@@ -53,8 +53,10 @@ fun BarTurvenCustomerScreen(
         else -> currentCustomer.toString()
     }
 
+    val items = itemRepository.data
+
     val finishOrder = { currentOrder: List<Int> ->
-        orderRepository.placeOrder(currentOrder, customerId)
+        orderRepository.placeOrder(currentOrder, customerId, items)
 
         if (previousOrder == null) {
             navigate("bar/turven")
@@ -78,7 +80,7 @@ fun BarTurvenCustomerScreen(
 
     BarTurvenCustomerContent(
         navigate = navigate,
-        items = itemRepository.data,
+        items = items,
         previousOrder = previousOrder,
         customerName = customerName,
         finishOrder = finishOrder,
@@ -94,8 +96,7 @@ private fun BarTurvenCustomerContent(
     finishOrder: (List<Int>) -> Unit,
 ) {
     // Initialize (use zeroes if no amounts specified)
-    val zeroes = List(items.size) { 0 }
-    val initialAmounts = previousOrder?.amounts ?: zeroes
+    val initialAmounts = items.map { item -> previousOrder?.getAmount(item.id) ?: 0 }
     val currentOrder = remember { mutableStateListOf(*initialAmounts.toTypedArray()) }
 
     VerticalGrid(

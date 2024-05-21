@@ -10,13 +10,17 @@ data class Order(
     override val id: Int,
     val customerId: Int, // (this can be a user ID or a group ID)
     val timestamp: Date,
-    val amounts: List<Int>,
+    private val amounts: MutableMap<Int, Int>, // (maps every item to an amount)
 ): BarData() {
     // Get the total price of the order
-    fun getTotalPrice(items: List<Item>): Float = amounts
-        .zip(items)
-        .map { (amount, item) -> amount * item.priceWithBtw }
+    fun getTotalPrice(items: List<Item>): Float = items
+        .map { item -> item.priceWithBtw * getAmount(item.id) }
         .sum()
+
+    fun getAmount(itemId: Int): Int = amounts.getOrElse(itemId) {
+        amounts[itemId] = 0
+        return 0
+    }
 
     private val locale = Locale("nl")
 
@@ -25,13 +29,16 @@ data class Order(
     companion object {
         // (Serializes the order)
         fun serialize(order: Order): String {
+            val amountsStrs = order.amounts
+                .map { (itemId, amount) -> "${itemId}:${amount}" }
+
             // Return serialization
             return CSV.serialize(
                 listOf(
                     order.id.toString(),
                     order.customerId.toString(),
                     CSV.serializeDate(order.timestamp)
-                ) + order.amounts.map(Int::toString)
+                ) + amountsStrs
             )
         }
 
@@ -48,7 +55,11 @@ data class Order(
 
             // Get amounts
             val amountsStr = data.drop(3)
-            val amounts = amountsStr.map(String::toInt)
+            val amounts = amountsStr.associate { s ->
+                val (a, b) = s.split(":")
+
+                a.toInt() to b.toInt()
+            }.toMutableMap()
 
             // Return order
             return Order(id, customerId, timestamp, amounts)
