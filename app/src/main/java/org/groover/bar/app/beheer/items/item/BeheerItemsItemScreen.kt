@@ -17,6 +17,7 @@ import androidx.navigation.NavController
 import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.util.app.NavigateButton
+import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 
 @Composable
@@ -69,6 +70,9 @@ private fun BeheerItemsItemContent(
         )
         Spacer(modifier = Modifier.size(20.dp))
 
+        TitleText("Item bewerken")
+        Spacer(Modifier.size(20.dp))
+
         // Name field
         TextField(
             value = newName,
@@ -92,7 +96,7 @@ private fun BeheerItemsItemContent(
             placeholder = { Text("Naam") }
         )
 
-        Spacer(modifier = Modifier.size(50.dp))
+        Spacer(modifier = Modifier.size(30.dp))
 
         // Save button
         Button(onClick = {

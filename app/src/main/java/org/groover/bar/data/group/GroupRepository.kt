@@ -31,4 +31,11 @@ class GroupRepository(
         data += newData
         save()
     }
+
+    fun changeGroup(groupId: Int, newName: String, newMemberIds: List<Int>) {
+        // Create new group
+        val newGroup = Group(groupId, newName, newMemberIds)
+
+        replaceById(groupId, newGroup)
+    }
 }

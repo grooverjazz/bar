@@ -26,4 +26,11 @@ class MemberRepository(
         data += newMember
         save()
     }
+
+    fun changeMember(memberId: Int, newVoornaam: String, newTussenvoegsel: String, newAchternaam: String) {
+        // Create new member
+        val newMember = Member(memberId, newVoornaam, newTussenvoegsel, newAchternaam)
+
+        replaceById(memberId, newMember)
+    }
 }

@@ -26,7 +26,7 @@ import kotlinx.coroutines.android.awaitFrame
 import org.groover.bar.data.group.Group
 import org.groover.bar.data.member.Member
 
-enum class MemberListState {
+enum class CustomerListState {
     MEMBERS,
     GROUPS
 }
@@ -35,28 +35,31 @@ enum class MemberListState {
 fun CustomerList(
     members: List<Member>,
     groups: List<Group>,
+    listState: CustomerListState? = null,
     memberOnClick: (Member) -> Unit,
     groupOnClick: (Group) -> Unit,
     showAddNewButton: Boolean = false,
     addTempMember: (String) -> Unit,
     addGroup: (String) -> Unit,
 ) {
-    var state by remember { mutableStateOf(MemberListState.MEMBERS) }
+    var state by remember { mutableStateOf(listState ?: CustomerListState.MEMBERS) }
     var searchText by remember { mutableStateOf("") }
 
     // Leden / Groepen button
-    Row {
-        Button(
-            modifier = Modifier.weight(1f),
-            enabled = (state != MemberListState.MEMBERS),
-            onClick = { state = MemberListState.MEMBERS }
-        ) { Text("Leden") }
+    if (listState == null) {
+        Row {
+            Button(
+                modifier = Modifier.weight(1f),
+                enabled = (state != CustomerListState.MEMBERS),
+                onClick = { state = CustomerListState.MEMBERS }
+            ) { Text("Leden") }
 
-        Button(
-            modifier = Modifier.weight(1f),
-            enabled = (state != MemberListState.GROUPS),
-            onClick = { state = MemberListState.GROUPS }
-        ) { Text("Groepen") }
+            Button(
+                modifier = Modifier.weight(1f),
+                enabled = (state != CustomerListState.GROUPS),
+                onClick = { state = CustomerListState.GROUPS }
+            ) { Text("Groepen") }
+        }
     }
 
     // Keyboard focus for search box
@@ -80,7 +83,7 @@ fun CustomerList(
     val formattedSearchText = searchText.trim().replaceFirstChar(Char::uppercaseChar)
 
     when (state) {
-        MemberListState.MEMBERS -> MemberList(
+        CustomerListState.MEMBERS -> MemberList(
             members = members,
             searchText = formattedSearchText,
             onClick = memberOnClick,
@@ -88,7 +91,7 @@ fun CustomerList(
             addTempMember = addTempMember,
         )
 
-        MemberListState.GROUPS -> GroupsList(
+        CustomerListState.GROUPS -> GroupsList(
             groups = groups,
             searchText = formattedSearchText,
             onClick = groupOnClick,
@@ -137,7 +140,7 @@ private fun MemberList(
 }
 
 @Composable
-fun GroupsList(
+private fun GroupsList(
     groups: List<Group>,
     searchText: String,
     onClick: (Group) -> Unit,

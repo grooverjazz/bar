@@ -11,6 +11,7 @@ import org.groover.bar.app.bar.turven.BarTurvenScreen
 import org.groover.bar.app.bar.turven.customer.BarTurvenCustomerScreen
 import org.groover.bar.app.beheer.BeheerScreen
 import org.groover.bar.app.beheer.customers.BeheerCustomersScreen
+import org.groover.bar.app.beheer.customers.group.BeheerGroupScreen
 import org.groover.bar.app.beheer.customers.member.BeheerMemberScreen
 import org.groover.bar.app.beheer.items.BeheerItemsScreen
 import org.groover.bar.app.beheer.items.item.BeheerItemsItemScreen
@@ -165,6 +166,20 @@ fun App() {
                 navigate = navigate,
                 memberRepository = memberRepository,
                 memberId = memberId,
+            )
+        }
+
+        // Beheer: customers: group
+        composable("beheer/customers/group/{groupId}") { backStackEntry ->
+            // Extract the member ID from the route
+            val groupIdStr = backStackEntry.arguments?.getString("groupId")!!
+            val groupId = groupIdStr.toInt()
+
+            BeheerGroupScreen(
+                navigate = navigate,
+                memberRepository = memberRepository,
+                groupRepository = groupRepository,
+                groupId = groupId,
             )
         }
     }

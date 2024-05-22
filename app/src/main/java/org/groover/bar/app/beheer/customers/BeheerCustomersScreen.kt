@@ -26,9 +26,8 @@ fun BeheerCustomersScreen(
         navigate("beheer/customers/member/${member.id}")
     }
 
-    // TODO: edit-scherm
     val groupOnClick = { group: Group ->
-        groupRepository.removeGroup(group.id)
+        navigate("beheer/customers/group/${group.id}")
     }
 
     BeheerCustomersContent(

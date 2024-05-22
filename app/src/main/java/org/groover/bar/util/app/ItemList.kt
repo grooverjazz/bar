@@ -76,7 +76,7 @@ fun ItemListEntry(item: Item, index: Int, amount: Int, setAmount: (Int) -> Unit)
             ) { Text("-") }
 
             Text(
-                amount.toInt().toString(),
+                amount.toString(),
                 modifier = Modifier.padding(horizontal = 15.dp)
             )
 
