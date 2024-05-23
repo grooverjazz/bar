@@ -7,7 +7,7 @@ data class ExportRow (
     val voornaam: String,
     val tussenvoegsel: String,
     val achternaam: String,
-    val amount: Float
+    val amount: Int
 ) {
     companion object {
         fun serialize(exportRow: ExportRow): String {

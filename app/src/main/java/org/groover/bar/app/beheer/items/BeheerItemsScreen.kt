@@ -52,7 +52,7 @@ fun BeheerItemsScreen(
 private fun BeheerItemsContent(
     navigate: (String) -> Unit,
     items: List<Item>,
-    addItem: (String, Float, Int) -> Unit,
+    addItem: (String, Int, Int) -> Unit,
     itemMoveUp: (Int) -> Unit,
     itemMoveDown: (Int) -> Unit,
     itemRemove: (Int) -> Unit,
@@ -79,7 +79,7 @@ private fun BeheerItemsContent(
         Button(onClick = {
             addItem(
                 "Tijdelijk item",
-                0.0f,
+                0,
                 0,
             )
         }) {

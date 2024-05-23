@@ -7,20 +7,14 @@ import java.util.Locale
 data class Item(
     override val id: Int,
     val name: String,
-    val price: Float, // TODO: beter datatype
+    val price: Int, // incl. BTW, in cents!
     val btwPercentage: Int
 ): BarData() {
-    val priceWithBtw: Float = price * (1f + (btwPercentage / 100.0f))
-
     // String formatting helper properties
-    private val locale = Locale("en")
-
-    val priceStringNoEuro: String = "%.2f".format(locale, price)
+    val priceStringNoEuro: String = "${price / 100}.${"%02d".format(price % 100)}"
     val priceString: String = "€" + priceStringNoEuro
 
-    val priceWithBtwString: String = "€%.2f".format(locale, priceWithBtw)
-
-    override fun toString(): String = "$name ($priceString, $btwPercentage% BTW)"
+    override fun toString(): String = "$name ($priceString incl. $btwPercentage% BTW)"
 
     companion object {
         // (Serializes the item)
@@ -29,7 +23,7 @@ data class Item(
             return CSV.serialize(
                 item.id.toString(),
                 item.name,
-                item.priceStringNoEuro,
+                item.price.toString(),
                 item.btwPercentage.toString()
             )
         }
@@ -41,7 +35,7 @@ data class Item(
 
             // Turn id, price and BTW-percentage into floats
             val id = idStr.toInt()
-            val price = priceStr.toFloat()
+            val price = priceStr.toInt()
             val btwPercentage = btwPercentageStr.toInt()
 
             return Item(id, name, price, btwPercentage)

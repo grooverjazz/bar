@@ -60,7 +60,7 @@ fun ItemListEntry(item: Item, index: Int, amount: Int, setAmount: (Int) -> Unit)
         )
 
         Text(
-            item.priceWithBtwString,
+            item.priceString,
             modifier = Modifier.weight(0.2f),
         )
 

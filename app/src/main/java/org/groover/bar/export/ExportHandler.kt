@@ -17,14 +17,22 @@ class ExportHandler(
     private val itemRepository: ItemRepository,
     private val orderRepository: OrderRepository,
 ) {
-    // Get the current directory
-    // (Android/data/org.groover.bartablet2/files)
-    private val dir = context.getExternalFilesDir("")
+    private fun splitCents(cents: Int, n: Int): List<Int> {
+        val baseAmount = cents / n
+        val centsToSplit = cents % n
+
+        return (
+            List(centsToSplit) { baseAmount + 1 } +
+            List(n - centsToSplit) { baseAmount }
+        ).shuffled()
+    }
+
+
     private fun getExportRows(): List<ExportRow> {
         val orders = orderRepository.data
         val items = itemRepository.data
 
-        val totalAmounts = mutableMapOf<Int, Float>()
+        val totalAmounts = mutableMapOf<Int, Int>()
 
         for (order in orders) {
             // Calculate the price of the order
@@ -41,16 +49,16 @@ class ExportHandler(
                     // Add the single order to the temporary map
                     val member: Member = customer
 
-                    val newPrice = totalAmounts.getOrDefault(member.id, 0f) + price
+                    val newPrice = totalAmounts.getOrDefault(member.id, 0) + price
                     totalAmounts[member.id] = newPrice
                 }
                 is Group -> {
                     // Split the costs of the order and add to the export
                     val group: Group = customer
-                    val splitPrice = price / group.memberIds.size
+                    val splitPrices = splitCents(price, group.memberIds.size)
 
-                    for (memberId in group.memberIds) {
-                        val newPrice = totalAmounts.getOrDefault(memberId, 0f) + splitPrice
+                    for ((memberId, splitPrice) in group.memberIds.zip(splitPrices)) {
+                        val newPrice = totalAmounts.getOrDefault(memberId, 0) + splitPrice
                         totalAmounts[memberId] = newPrice
                     }
                 }
@@ -78,12 +86,16 @@ class ExportHandler(
     fun export() {
         val exportRows = getExportRows()
 
-        // TODO: laat beheer dit bewerken
-        val incassoName = "export_Bar"
+        // TODO: in sessie-mapje
+        val fileName = "export_Incasso"
+
+        // Get the current directory
+        // (Android/data/org.groover.bar/files)
+        val dir = context.getExternalFilesDir("")
 
         // Open a file for writing
         // TODO: opslaan in export-map
-        val writeFile = File(dir, "$incassoName.csv")
+        val writeFile = File(dir, "$fileName.csv")
         assert(!writeFile.exists()) { "Export bestaat al!" }
         writeFile.createNewFile()
 
@@ -93,7 +105,7 @@ class ExportHandler(
             "voornaam",
             "tussenvoegsel",
             "achternaam",
-            incassoName
+            fileName
         )
 
         // Get data string

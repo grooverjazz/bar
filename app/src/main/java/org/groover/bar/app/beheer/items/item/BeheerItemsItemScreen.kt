@@ -30,7 +30,7 @@ fun BeheerItemsItemScreen(
     val item = itemRepository.lookupById(itemId)!!
 
     // Finishes editing the item
-    val finishEdit = { newName: String, newPrice: Float, newBtwPercentage: Int ->
+    val finishEdit = { newName: String, newPrice: Int, newBtwPercentage: Int ->
         // Change the item
         itemRepository.changeItem(itemId, newName, newPrice, newBtwPercentage)
 
@@ -50,11 +50,11 @@ fun BeheerItemsItemScreen(
 private fun BeheerItemsItemContent(
     navigate: (String) -> Unit,
     item: Item,
-    finishEdit: (String, Float, Int) -> Unit
+    finishEdit: (String, Int, Int) -> Unit
 ) {
     // Remember name, price and BTW percentage
     var newName: String by remember { mutableStateOf(item.name) }
-    var newPriceStr: String by remember { mutableStateOf(item.price.toString()) }
+    var newPriceStr: String by remember { mutableStateOf(item.priceStringNoEuro) }
     var newBtwPercentageStr: String by remember { mutableStateOf(item.btwPercentage.toString()) }
 
     VerticalGrid(
@@ -84,7 +84,7 @@ private fun BeheerItemsItemContent(
         // New price field
         TextField(
             value = newPriceStr,
-            onValueChange = { newPriceStr = it },
+            onValueChange = { newPriceStr = it.replace(",",".") },
             placeholder = { Text("Naam") }
         )
         Spacer(modifier = Modifier.size(20.dp))
@@ -101,7 +101,10 @@ private fun BeheerItemsItemContent(
         // Save button
         Button(onClick = {
             // Convert new price and BTW percentage, finish
-            finishEdit(newName, newPriceStr.toFloat(), newBtwPercentageStr.toInt())
+            val (eurosStr, centsStr) = newPriceStr.split(".")
+            val newPrice = 100 * eurosStr.toInt() + centsStr.take(2).toInt()
+
+            finishEdit(newName, newPrice, newBtwPercentageStr.toInt())
         }) {
             Text("Opslaan")
         }
