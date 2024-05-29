@@ -1,6 +1,7 @@
 package org.groover.bar.data.item
 
 import android.content.Context
+import org.groover.bar.util.data.Cents
 import org.groover.bar.util.data.Repository
 
 class ItemRepository(
@@ -12,7 +13,7 @@ class ItemRepository(
     Item.Companion::deserialize,
     listOf("ID", "Name", "Price", "BTW Percentage"),
 ) {
-    fun addItem(name: String, price: Int, btwPercentage: Int) {
+    fun addItem(name: String, price: Cents, btwPercentage: Int) {
         // Create new item
         val newItem = Item(
             generateId(),
@@ -28,9 +29,7 @@ class ItemRepository(
         save()
     }
 
-
-
-    fun changeItem(itemId: Int, newName: String, newPrice: Int, newBtwPercentage: Int) {
+    fun changeItem(itemId: Int, newName: String, newPrice: Cents, newBtwPercentage: Int) {
         // Create new item
         val newItem = Item(
             itemId,

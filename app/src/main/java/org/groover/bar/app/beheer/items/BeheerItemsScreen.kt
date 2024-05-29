@@ -28,6 +28,7 @@ import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
+import org.groover.bar.util.data.Cents
 
 @Composable
 fun BeheerItemsScreen(
@@ -52,7 +53,7 @@ fun BeheerItemsScreen(
 private fun BeheerItemsContent(
     navigate: (String) -> Unit,
     items: List<Item>,
-    addItem: (String, Int, Int) -> Unit,
+    addItem: (String, Cents, Int) -> Unit,
     itemMoveUp: (Int) -> Unit,
     itemMoveDown: (Int) -> Unit,
     itemRemove: (Int) -> Unit,
@@ -79,7 +80,7 @@ private fun BeheerItemsContent(
         Button(onClick = {
             addItem(
                 "Tijdelijk item",
-                0,
+                Cents(0),
                 0,
             )
         }) {

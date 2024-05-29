@@ -2,17 +2,18 @@ package org.groover.bar.data.item
 
 import org.groover.bar.util.data.BarData
 import org.groover.bar.util.data.CSV
+import org.groover.bar.util.data.Cents
 import java.util.Locale
 
 data class Item(
     override val id: Int,
     val name: String,
-    val price: Int, // incl. BTW, in cents!
+    val price: Cents, // incl. BTW, in cents!
     val btwPercentage: Int
 ): BarData() {
     // String formatting helper properties
-    val priceStringNoEuro: String = "${price / 100}.${"%02d".format(price % 100)}"
-    val priceString: String = "€" + priceStringNoEuro
+    val priceStringNoEuro = price.stringWithoutEuro
+    val priceString = price.stringWithEuro
 
     override fun toString(): String = "$name ($priceString incl. $btwPercentage% BTW)"
 
@@ -23,7 +24,7 @@ data class Item(
             return CSV.serialize(
                 item.id.toString(),
                 item.name,
-                item.price.toString(),
+                item.price.amount.toString(),
                 item.btwPercentage.toString()
             )
         }
@@ -35,7 +36,7 @@ data class Item(
 
             // Turn id, price and BTW-percentage into floats
             val id = idStr.toInt()
-            val price = priceStr.toInt()
+            val price = Cents(priceStr.toInt())
             val btwPercentage = btwPercentageStr.toInt()
 
             return Item(id, name, price, btwPercentage)

@@ -3,6 +3,7 @@ package org.groover.bar.data.order
 import org.groover.bar.data.item.Item
 import org.groover.bar.util.data.BarData
 import org.groover.bar.util.data.CSV
+import org.groover.bar.util.data.Cents
 import java.util.Date
 import java.util.Locale
 
@@ -13,17 +14,14 @@ data class Order(
     private val amounts: MutableMap<Int, Int>, // (maps every item to an amount)
 ): BarData() {
     // Get the total price of the order
-    fun getTotalPrice(items: List<Item>): Int =
-        items.sumOf { item -> item.price * getAmount(item.id) }
+    fun getTotalPrice(items: List<Item>): Cents =
+        Cents(items.sumOf { item -> item.price.amount * getAmount(item.id) })
+
+    fun getTotalPriceString(items: List<Item>): String = getTotalPrice(items).stringWithEuro
 
     fun getAmount(itemId: Int): Int = amounts.getOrElse(itemId) {
         amounts[itemId] = 0
         return 0
-    }
-
-    fun getTotalPriceString(items: List<Item>): String {
-        val totalPrice = getTotalPrice(items)
-        return "€" + "${totalPrice / 100},${"%02d".format(totalPrice % 100)}"
     }
 
     companion object {

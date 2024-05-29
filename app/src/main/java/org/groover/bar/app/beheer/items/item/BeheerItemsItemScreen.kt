@@ -19,6 +19,7 @@ import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
+import org.groover.bar.util.data.Cents
 
 @Composable
 fun BeheerItemsItemScreen(
@@ -30,7 +31,7 @@ fun BeheerItemsItemScreen(
     val item = itemRepository.lookupById(itemId)!!
 
     // Finishes editing the item
-    val finishEdit = { newName: String, newPrice: Int, newBtwPercentage: Int ->
+    val finishEdit = { newName: String, newPrice: Cents, newBtwPercentage: Int ->
         // Change the item
         itemRepository.changeItem(itemId, newName, newPrice, newBtwPercentage)
 
@@ -50,7 +51,7 @@ fun BeheerItemsItemScreen(
 private fun BeheerItemsItemContent(
     navigate: (String) -> Unit,
     item: Item,
-    finishEdit: (String, Int, Int) -> Unit
+    finishEdit: (String, Cents, Int) -> Unit
 ) {
     // Remember name, price and BTW percentage
     var newName: String by remember { mutableStateOf(item.name) }
@@ -101,10 +102,11 @@ private fun BeheerItemsItemContent(
         // Save button
         Button(onClick = {
             // Convert new price and BTW percentage, finish
-            val (eurosStr, centsStr) = newPriceStr.split(".")
-            val newPrice = 100 * eurosStr.toInt() + centsStr.take(2).toInt()
-
-            finishEdit(newName, newPrice, newBtwPercentageStr.toInt())
+            finishEdit(
+                newName,
+                Cents.fromString(newPriceStr),
+                newBtwPercentageStr.toInt()
+            )
         }) {
             Text("Opslaan")
         }

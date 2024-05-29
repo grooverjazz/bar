@@ -8,6 +8,7 @@ import org.groover.bar.data.member.Member
 import org.groover.bar.data.member.MemberRepository
 import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.util.data.CSV
+import org.groover.bar.util.data.Cents
 import java.io.File
 
 class ExportHandler(
@@ -17,22 +18,11 @@ class ExportHandler(
     private val itemRepository: ItemRepository,
     private val orderRepository: OrderRepository,
 ) {
-    private fun splitCents(cents: Int, n: Int): List<Int> {
-        val baseAmount = cents / n
-        val centsToSplit = cents % n
-
-        return (
-            List(centsToSplit) { baseAmount + 1 } +
-            List(n - centsToSplit) { baseAmount }
-        ).shuffled()
-    }
-
-
     private fun getExportRows(): List<ExportRow> {
         val orders = orderRepository.data
         val items = itemRepository.data
 
-        val totalAmounts = mutableMapOf<Int, Int>()
+        val totalAmounts = mutableMapOf<Int, Cents>()
 
         for (order in orders) {
             // Calculate the price of the order
@@ -49,16 +39,16 @@ class ExportHandler(
                     // Add the single order to the temporary map
                     val member: Member = customer
 
-                    val newPrice = totalAmounts.getOrDefault(member.id, 0) + price
+                    val newPrice = totalAmounts.getOrDefault(member.id, Cents(0)) + price
                     totalAmounts[member.id] = newPrice
                 }
                 is Group -> {
                     // Split the costs of the order and add to the export
                     val group: Group = customer
-                    val splitPrices = splitCents(price, group.memberIds.size)
+                    val splitPrices = Cents.split(price, group.memberIds.size)
 
                     for ((memberId, splitPrice) in group.memberIds.zip(splitPrices)) {
-                        val newPrice = totalAmounts.getOrDefault(memberId, 0) + splitPrice
+                        val newPrice = totalAmounts.getOrDefault(memberId, Cents(0)) + splitPrice
                         totalAmounts[memberId] = newPrice
                     }
                 }
