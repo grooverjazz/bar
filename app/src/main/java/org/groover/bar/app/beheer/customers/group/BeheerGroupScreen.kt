@@ -25,6 +25,7 @@ import org.groover.bar.data.member.MemberRepository
 import org.groover.bar.util.app.CustomerList
 import org.groover.bar.util.app.CustomerListState
 import org.groover.bar.util.app.NavigateButton
+import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 
 
@@ -35,7 +36,15 @@ fun BeheerGroupScreen(
     groupRepository: GroupRepository,
     groupId: Int,
 ) {
-    val currentGroup = groupRepository.lookupById(groupId)!!
+    val currentGroup = groupRepository.lookupById(groupId)
+
+    if (currentGroup == null) {
+        BeheerGroupError(
+            navigate = navigate,
+            groupId = groupId
+        )
+        return
+    }
 
     val finishEdit = { newName: String, newMemberIds: List<Int> ->
         // Change the group
@@ -45,7 +54,9 @@ fun BeheerGroupScreen(
         navigate("beheer/customers")
     }
 
-    val initialMembers = currentGroup.memberIds.map { memberRepository.lookupById(it)!! }
+    val initialMembers = currentGroup.memberIds.map {
+        memberRepository.lookupById(it) ?: throw Exception("Kan lid met ID $it niet vinden!")
+    }
     var newMembers = remember { mutableStateListOf(*initialMembers.toTypedArray()) }
 
     val addMember = { member: Member ->
@@ -66,6 +77,28 @@ fun BeheerGroupScreen(
         addMember = addMember,
         removeMember = removeMember,
     )
+}
+
+@Composable
+fun BeheerGroupError(
+    navigate: (String) -> Unit,
+    groupId: Int,
+) {
+    VerticalGrid(
+        modifier = Modifier.padding(10.dp)
+    ) {
+        // Terug button
+        NavigateButton(
+            navigate = navigate,
+            text = "Terug",
+            route = "beheer/customers",
+            height = 60.dp,
+        )
+        Spacer(Modifier.size(20.dp))
+
+        // Name field
+        TitleText("Groep met ID $groupId niet gevonden!")
+    }
 }
 
 @Composable

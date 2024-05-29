@@ -20,6 +20,6 @@ class CSV {
 
         // Date methods
         fun serializeDate(date: Date): String = formatter.format(date)
-        fun deserializeDate(str: String): Date = formatter.parse(str)!!
+        fun deserializeDate(str: String): Date = formatter.parse(str) ?: Date()
     }
 }

@@ -28,7 +28,15 @@ fun BeheerItemsItemScreen(
     itemId: Int
 ) {
     // Get item
-    val item = itemRepository.lookupById(itemId)!!
+    val item = itemRepository.lookupById(itemId)
+
+    if (item == null) {
+        BeheerItemsItemError(
+            navigate = navigate,
+            itemId = itemId
+        )
+        return
+    }
 
     // Finishes editing the item
     val finishEdit = { newName: String, newPrice: Cents, newBtwPercentage: Int ->
@@ -44,6 +52,28 @@ fun BeheerItemsItemScreen(
         item = item,
         finishEdit = finishEdit,
     )
+}
+
+@Composable
+private fun BeheerItemsItemError(
+    navigate: (String) -> Unit,
+    itemId: Int
+) {
+    VerticalGrid(
+        modifier = Modifier
+            .padding(10.dp)
+    ) {
+        // Terug button
+        NavigateButton(
+            navigate = navigate,
+            text = "Terug",
+            route = "beheer/items",
+            height = 60.dp,
+        )
+        Spacer(modifier = Modifier.size(20.dp))
+
+        TitleText("Kan item met ID $itemId niet vinden!")
+    }
 }
 
 

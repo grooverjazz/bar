@@ -79,7 +79,7 @@ fun App() {
         // Bar: turven: member
         composable("bar/turven/customer/{customerId}") { backStackEntry ->
             // Extract the member ID from the route
-            val customerIdStr = backStackEntry.arguments?.getString("customerId")!!
+            val customerIdStr = backStackEntry.arguments?.getString("customerId") ?: throw Exception("Kan klant niet vinden in route!")
             val customerId = customerIdStr.toInt()
 
             BarTurvenCustomerScreen(
@@ -107,7 +107,7 @@ fun App() {
         // Bar: geschiedenis: aanpassing
         composable("bar/geschiedenis/edit/{previousOrder}") { backStackEntry ->
             // Extract the previous order from the route
-            val previousOrderStr = backStackEntry.arguments?.getString("previousOrder")!!
+            val previousOrderStr = backStackEntry.arguments?.getString("previousOrder") ?: throw Exception("Kan vorige order niet vinden in route!")
             val previousOrder = Order.deserialize(previousOrderStr)
 
             // Get the customer ID from the order
@@ -145,7 +145,7 @@ fun App() {
         // Beheer: items: item
         composable("beheer/items/item/{itemId}") { backStackEntry ->
             // Extract the item ID from the route
-            val itemIdStr = backStackEntry.arguments?.getString("itemId")!!
+            val itemIdStr = backStackEntry.arguments?.getString("itemId") ?: throw Exception("Kan item niet vinden in route!")
             val itemId = itemIdStr.toInt()
 
             BeheerItemsItemScreen(
@@ -167,7 +167,7 @@ fun App() {
         // Beheer: customers: member
         composable("beheer/customers/member/{memberId}") { backStackEntry ->
             // Extract the member ID from the route
-            val memberIdStr = backStackEntry.arguments?.getString("memberId")!!
+            val memberIdStr = backStackEntry.arguments?.getString("memberId") ?: throw Exception("Kan lid niet vinden in route!")
             val memberId = memberIdStr.toInt()
 
             BeheerMemberScreen(
@@ -180,7 +180,7 @@ fun App() {
         // Beheer: customers: group
         composable("beheer/customers/group/{groupId}") { backStackEntry ->
             // Extract the member ID from the route
-            val groupIdStr = backStackEntry.arguments?.getString("groupId")!!
+            val groupIdStr = backStackEntry.arguments?.getString("groupId") ?: throw Exception("Kan groep niet vinden in route!")
             val groupId = groupIdStr.toInt()
 
             BeheerGroupScreen(

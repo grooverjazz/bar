@@ -43,7 +43,7 @@ class ItemRepository(
     }
 
     fun moveItem(itemId: Int, moveUp: Boolean) {
-        val item = lookupById(itemId)!!
+        val item = lookupById(itemId) ?: throw Exception("Error tijdens verplaatsen van item")
 
         // Check if movement is necessary
         if ((moveUp && data.first() == item) || (!moveUp && data.last() == item))

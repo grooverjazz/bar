@@ -46,11 +46,13 @@ fun BarTurvenCustomerScreen(
 
     // Look up current customer's name
     val currentCustomer = (memberRepository.lookupById(customerId)
-        ?: groupRepository.lookupById(customerId))!!
+        ?: groupRepository.lookupById(customerId))
+        ?: throw Exception("Kan gebruiker niet vinden!")
+
     val customerName = when (currentCustomer) {
         is Member -> currentCustomer.fullName
         is Group -> currentCustomer.name
-        else -> currentCustomer.toString()
+        else -> throw Exception()
     }
 
     val items = itemRepository.data

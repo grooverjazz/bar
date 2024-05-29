@@ -32,7 +32,15 @@ fun BeheerMemberScreen(
     memberRepository: MemberRepository,
     memberId: Int,
 ) {
-    val currentMember = memberRepository.lookupById(memberId)!!
+    val currentMember = memberRepository.lookupById(memberId)
+
+    if (currentMember == null) {
+        BeheerMemberError(
+            navigate = navigate,
+            memberId = memberId
+        )
+        return
+    }
 
     val finishEdit = { newVoornaam: String, newTussenvoegsel: String, newAchternaam: String ->
         // Change the member
@@ -47,6 +55,28 @@ fun BeheerMemberScreen(
         currentMember = currentMember,
         finishEdit = finishEdit,
     )
+}
+
+
+@Composable
+private fun BeheerMemberError(
+    navigate: (String) -> Unit,
+    memberId: Int,
+) {
+    VerticalGrid(
+        modifier = Modifier.padding(10.dp)
+    ) {
+        // Terug button
+        NavigateButton(
+            navigate = navigate,
+            text = "Terug",
+            route = "beheer/customers",
+            height = 60.dp,
+        )
+        Spacer(Modifier.size(20.dp))
+
+        TitleText("Lid met ID $memberId niet gevonden!")
+    }
 }
 
 

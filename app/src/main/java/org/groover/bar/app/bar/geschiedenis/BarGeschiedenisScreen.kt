@@ -28,7 +28,8 @@ fun BarGeschiedenisScreen(
 ) {
     val getCustomerName = { id: Int ->
         (memberRepository.lookupById(id)?.fullName ?:
-        groupRepository.lookupById(id)?.name)!!
+        groupRepository.lookupById(id)?.name) ?:
+        "Naam van ID $id niet gevonden!"
     }
 
     val orderOnClick = { order: Order ->

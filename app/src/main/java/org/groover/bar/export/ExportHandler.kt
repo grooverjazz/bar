@@ -31,7 +31,8 @@ class ExportHandler(
             // Get the customer (Member or Group) that took the order
             val customerId = order.customerId
             val customer = (memberRepository.lookupById(customerId)
-                ?: groupRepository.lookupById(customerId))!!
+                ?: groupRepository.lookupById(customerId))
+                ?: throw Exception("Kan gebruiker niet vinden!")
 
             // See if the order was done by a Member or a Group
             when (customer) {
@@ -57,7 +58,7 @@ class ExportHandler(
 
         // Map all total amounts to export rows
         val rows = totalAmounts.map { (memberId, totalAmount) ->
-            val member = memberRepository.lookupById(memberId)!!
+            val member = memberRepository.lookupById(memberId) ?: throw Exception("Kan lid met ID $memberId niet vinden!")
 
             ExportRow(
                 member.id,
