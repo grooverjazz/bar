@@ -2,13 +2,14 @@ package org.groover.bar.data.order
 
 import android.content.Context
 import org.groover.bar.data.item.Item
+import org.groover.bar.util.data.FileOpener
 import org.groover.bar.util.data.Repository
 import java.util.Date
 
 class OrderRepository(
-    context: Context
+    fileOpener: FileOpener,
 ) : Repository<Order>(
-    context,
+    fileOpener,
     "orders.csv",
     Order.Companion::serialize,
     Order.Companion::deserialize,

@@ -2,12 +2,13 @@ package org.groover.bar.data.item
 
 import android.content.Context
 import org.groover.bar.util.data.Cents
+import org.groover.bar.util.data.FileOpener
 import org.groover.bar.util.data.Repository
 
 class ItemRepository(
-    context: Context
+    fileOpener: FileOpener,
 ) : Repository<Item>(
-    context,
+    fileOpener,
     "items.csv",
     Item.Companion::serialize,
     Item.Companion::deserialize,

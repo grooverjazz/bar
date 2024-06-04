@@ -1,61 +1,46 @@
 package org.groover.bar.util.data
 
-import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
-import java.io.File
 
 abstract class Repository<T: BarData>(
-    context: Context,
+    private val fileOpener: FileOpener,
     val fileName: String,
-    val serialize: (T) -> String,
-    deserialize: (String) -> T,
+    private val serialize: (T) -> String,
+    private val deserialize: (String) -> T,
     val titleRow: List<String>
 ) {
-    val data: SnapshotStateList<T>
+    val data: SnapshotStateList<T> = emptyList<T>().toMutableStateList()
 
-    // Get the current directory
-    // (Android/data/org.groover.bartablet2/files)
-    private val dir = context.getExternalFilesDir("")
-
-    // (Initialization)
     init {
-        // Open a file for reading
-        val readFile = File(dir, fileName)
+        open()
+    }
 
-        // Read all lines if file exists, drop title row
-        val lines = if (readFile.exists())
-            readFile.readLines().drop(1)
-        else emptyList()
+    // (Loads/Reloads the data of the repository)
+    fun open() {
+        Log.i("Repository", "OPEN")
 
-        // Turn the values into T's
-        val values = lines
+        // Read data
+        val dataStr = fileOpener.read(fileName)
+
+        // Deserialize data
+        data.clear()
+        data += dataStr
             .map(String::trim)
             .filter { it != "" }
             .map(deserialize)
-
-        // Create snapshot state list
-        data = values.toMutableStateList()
+            .toMutableStateList()
     }
 
     // (Saves the data of the repository)
     fun save() {
-        // Open a file for writing
-        val writeFile = File(dir, fileName)
-        if (!writeFile.exists()) {
-            writeFile.createNewFile()
-        }
-
-        // Get title row string
+        // Serialize data
         val titleRowStr = CSV.serialize(titleRow)
+        val dataStr = listOf(titleRowStr) + data.map(serialize)
 
-        // Get data string
-        val dataStr = data
-            .joinToString("\n", transform = serialize)
-
-        // Write content to file
-        val data = titleRowStr + "\n" + dataStr
-        writeFile.writeText(data)
+        // Save data
+        fileOpener.write(fileName, dataStr)
     }
 
     // (Finds the corresponding element)

@@ -22,15 +22,19 @@ import org.groover.bar.data.order.Order
 import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.export.BTWHandler
 import org.groover.bar.export.ExportHandler
+import org.groover.bar.export.SessionHandler
+import org.groover.bar.util.data.FileOpener
 
 @Composable
 fun App() {
     val context = LocalContext.current
 
-    val memberRepository = MemberRepository(context)
-    val groupRepository = GroupRepository(context)
-    val itemRepository = ItemRepository(context)
-    val orderRepository = OrderRepository(context)
+    val fileOpener = FileOpener(context, "")
+
+    val memberRepository = MemberRepository(fileOpener)
+    val groupRepository = GroupRepository(fileOpener)
+    val itemRepository = ItemRepository(fileOpener)
+    val orderRepository = OrderRepository(fileOpener)
 
     val exportHandler = ExportHandler(
         context = context,

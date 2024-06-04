@@ -1,12 +1,13 @@
 package org.groover.bar.data.member
 
 import android.content.Context
+import org.groover.bar.util.data.FileOpener
 import org.groover.bar.util.data.Repository
 
 class MemberRepository(
-    context: Context
+    fileOpener: FileOpener,
 ) : Repository<Member>(
-    context,
+    fileOpener,
     "members.csv",
     Member.Companion::serialize,
     Member.Companion::deserialize,

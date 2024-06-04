@@ -1,11 +1,13 @@
 package org.groover.bar.data.group
 
 import android.content.Context
+import org.groover.bar.util.data.FileOpener
 import org.groover.bar.util.data.Repository
 
 class GroupRepository(
-    context: Context
-) : Repository<Group>(context,
+    fileOpener: FileOpener,
+) : Repository<Group>(
+    fileOpener,
     "groups.csv",
     Group.Companion::serialize,
     Group.Companion::deserialize,
