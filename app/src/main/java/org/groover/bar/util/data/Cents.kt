@@ -18,9 +18,9 @@ class Cents(
             val centsToSplit = (cents % n).toInt()
 
             return (
-                    List(centsToSplit) { baseAmount + Cents(1) } +
-                            List(n - centsToSplit) { baseAmount }
-                    ).shuffled()
+                List(centsToSplit) { baseAmount + Cents(1) } +
+                List(n - centsToSplit) { baseAmount }
+            ).shuffled()
         }
 
         fun fromString(str: String): Cents {

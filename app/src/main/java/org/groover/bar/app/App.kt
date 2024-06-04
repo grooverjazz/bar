@@ -1,5 +1,6 @@
 package org.groover.bar.app
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
@@ -15,6 +16,7 @@ import org.groover.bar.app.beheer.customers.group.BeheerGroupScreen
 import org.groover.bar.app.beheer.customers.member.BeheerMemberScreen
 import org.groover.bar.app.beheer.items.BeheerItemsScreen
 import org.groover.bar.app.beheer.items.item.BeheerItemsItemScreen
+import org.groover.bar.app.beheer.session.BeheerSessionScreen
 import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.member.MemberRepository
@@ -29,12 +31,37 @@ import org.groover.bar.util.data.FileOpener
 fun App() {
     val context = LocalContext.current
 
-    val fileOpener = FileOpener(context, "")
+    val sessionHandler = SessionHandler(context)
+    sessionHandler.open()
+
+    val fileOpener = FileOpener(context, sessionHandler.sessionName)
 
     val memberRepository = MemberRepository(fileOpener)
     val groupRepository = GroupRepository(fileOpener)
     val itemRepository = ItemRepository(fileOpener)
     val orderRepository = OrderRepository(fileOpener)
+
+    // (Reloads the repositories)
+    val reload: (String, Boolean) -> Unit = { newSessionName, copyGlobalData ->
+        // Change session name
+        sessionHandler.changeSession(newSessionName)
+        fileOpener.relativePath = newSessionName
+
+        // Don't open if copying over data from current session
+        if (!copyGlobalData) {
+            memberRepository.open()
+            groupRepository.open()
+            itemRepository.open()
+        }
+        else {
+            memberRepository.save()
+            groupRepository.save()
+            itemRepository.save()
+        }
+
+        // (Always) open orders
+        orderRepository.open()
+    }
 
     val exportHandler = ExportHandler(
         context = context,
@@ -61,6 +88,7 @@ fun App() {
         composable("home") {
             HomeScreen(
                 navigate = navigate,
+                sessionName = sessionHandler.sessionName
             )
         }
 
@@ -192,6 +220,20 @@ fun App() {
                 memberRepository = memberRepository,
                 groupRepository = groupRepository,
                 groupId = groupId,
+            )
+        }
+
+        // Beheer: session
+        composable("beheer/session") {
+            BeheerSessionScreen(
+                navigate = navigate,
+                oldSessionName = sessionHandler.sessionName,
+                allSessions = sessionHandler.getAllSessions(),
+                finish = { newSessionName, copyGlobalData ->
+                    navigate("home")
+
+                    reload(newSessionName, copyGlobalData)
+                },
             )
         }
     }

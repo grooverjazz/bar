@@ -19,10 +19,8 @@ abstract class Repository<T: BarData>(
 
     // (Loads/Reloads the data of the repository)
     fun open() {
-        Log.i("Repository", "OPEN")
-
         // Read data
-        val dataStr = fileOpener.read(fileName)
+        val dataStr = fileOpener.read(fileName, dropFirst = true)
 
         // Deserialize data
         data.clear()

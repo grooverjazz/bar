@@ -70,6 +70,15 @@ private fun BeheerContent(
             route = "beheer/items",
         )
 
+        Spacer(Modifier.size(30.dp))
+
+        // Items button
+        NavigateButton(
+            navigate = navigate,
+            text = "Sessie",
+            route = "beheer/session",
+        )
+
         Spacer(Modifier.size(50.dp))
 
         Button(
