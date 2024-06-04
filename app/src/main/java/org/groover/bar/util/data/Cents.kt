@@ -24,7 +24,9 @@ class Cents(
         }
 
         fun fromString(str: String): Cents {
-            val (eurosStr, centsStr) = str.split(".")
+            val formattedStr = "0" + str.replace(",-",",00") + ",00"
+
+            val (eurosStr, centsStr) = formattedStr.split(',')
             return Cents(100 * eurosStr.toInt() + centsStr.take(2).toInt())
         }
     }

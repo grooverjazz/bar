@@ -115,7 +115,7 @@ private fun BeheerItemsItemContent(
         // New price field
         TextField(
             value = newPriceStr,
-            onValueChange = { newPriceStr = it.replace(",",".") },
+            onValueChange = { newPriceStr = it.replace('.',',') },
             placeholder = { Text("Naam") }
         )
         Spacer(modifier = Modifier.size(20.dp))
