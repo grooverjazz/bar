@@ -1,12 +1,15 @@
 package org.groover.bar.util.app
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import org.groover.bar.data.item.Item
@@ -20,9 +23,8 @@ fun OrderList(
     onClick: (Order) -> Unit,
 ) {
     // UI
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
-        modifier = Modifier.padding(10.dp)
+    LazyColumn(
+        modifier = Modifier.padding(10.dp).background(Color.LightGray).height(800.dp)
     ) {
         orders.forEach { order ->
             item {
@@ -32,6 +34,7 @@ fun OrderList(
                 val totalPrice = order.getTotalPriceString(items)
 
                 Button(
+                    modifier = Modifier.fillMaxWidth(),
                     shape = RectangleShape,
                     onClick = { onClick(order) }
                 ) { Text("$customerName ($totalPrice)") }

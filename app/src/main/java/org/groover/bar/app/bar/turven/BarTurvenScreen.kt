@@ -6,14 +6,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import org.groover.bar.data.group.Group
 import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.member.Member
 import org.groover.bar.data.member.MemberRepository
+import org.groover.bar.util.app.CustomerList
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
-import org.groover.bar.util.app.CustomerList
 import org.groover.bar.util.app.VerticalGrid
 
 @Composable

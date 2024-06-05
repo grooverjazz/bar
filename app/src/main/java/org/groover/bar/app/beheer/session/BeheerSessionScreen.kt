@@ -1,11 +1,15 @@
 package org.groover.bar.app.beheer.session
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -14,7 +18,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.groover.bar.util.app.ClickableCheckbox
 import org.groover.bar.util.app.NavigateButton
@@ -31,7 +37,7 @@ fun BeheerSessionScreen(
     finish: (String, Boolean) -> Unit,
 ) {
     val exampleStrStart = SimpleDateFormat("yyyy-MM-dd").format(Date())
-    val exampleStrEnd = SimpleDateFormat("d MMM yyyy").format(Date())
+    val exampleStrEnd = SimpleDateFormat("d MMMM yyyy").format(Date())
     val exampleStr = "$exampleStrStart Pandavond $exampleStrEnd"
 
     BeheerSessionContent(
@@ -78,25 +84,28 @@ private fun BeheerSessionContent(
             onValueChange = { newSessionName = it },
             placeholder = { Text("Naam") }
         )
-        Spacer(modifier = Modifier.size(20.dp))
 
         // Example name button
+        val colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
         Button(
+            colors = colors,
             shape = RectangleShape,
             onClick = {
                 newSessionName = exampleStr
             }
-        ) { Text(exampleStr) }
-        Spacer(modifier = Modifier.size(20.dp))
+        ) { Text("Wat dacht je van \"$exampleStr\"?") }
+        Spacer(modifier = Modifier.size(40.dp))
 
         // List of all sessions
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(1),
-            modifier = Modifier.padding(10.dp)
+        Text("Alle sessies:", textAlign = TextAlign.Center)
+
+        LazyColumn(
+            modifier = Modifier.padding(10.dp).background(Color.LightGray).height(200.dp)
         ) {
             allSessions.forEach { session ->
                 item {
                     Button(
+                        modifier = Modifier.fillMaxWidth(),
                         shape = RectangleShape,
                         onClick = {
                             newSessionName = session
@@ -106,7 +115,7 @@ private fun BeheerSessionContent(
                 }
             }
         }
-        Spacer(modifier = Modifier.size(10.dp))
+        Spacer(modifier = Modifier.size(30.dp))
 
         // Copy global data checkbox
         ClickableCheckbox(

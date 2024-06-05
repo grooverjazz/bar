@@ -1,11 +1,13 @@
 package org.groover.bar.util.app
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.android.awaitFrame
@@ -111,16 +114,16 @@ private fun MemberList(
 ) {
     val filteredMembers = members
         .filter { it.toString().contains(searchText) }
-        .take(20)
+        .take(if (searchText == "") 1000 else 20)
 
     // UI
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
-        modifier = Modifier.padding(10.dp)
+    LazyColumn(
+        modifier = Modifier.padding(10.dp).background(color = Color.LightGray).height(600.dp)
     ) {
         filteredMembers.forEach { member ->
             item {
                 Button(
+                    modifier = Modifier.fillMaxWidth(),
                     shape = RectangleShape,
                     onClick = { onClick(member) }
                 ) { Text(member.toString()) }
@@ -152,13 +155,13 @@ private fun GroupsList(
         .take(20)
 
     // UI
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
-        modifier = Modifier.padding(10.dp)
+    LazyColumn(
+        modifier = Modifier.padding(10.dp).background(color = Color.LightGray).height(600.dp)
     ) {
         filteredGroups.forEach { group ->
             item {
                 Button(
+                    modifier = Modifier.fillMaxWidth(),
                     shape = RectangleShape,
                     onClick = { onClick(group) }
                 ) { Text(group.toString()) }

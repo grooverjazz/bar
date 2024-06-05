@@ -18,7 +18,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import org.groover.bar.data.group.Group
 import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.item.Item
@@ -30,7 +29,6 @@ import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.util.app.ItemList
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.VerticalGrid
-import org.groover.bar.util.data.BarData
 
 @Composable
 fun BarTurvenCustomerScreen(

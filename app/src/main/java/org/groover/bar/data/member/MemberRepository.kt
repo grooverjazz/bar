@@ -1,6 +1,5 @@
 package org.groover.bar.data.member
 
-import android.content.Context
 import org.groover.bar.util.data.FileOpener
 import org.groover.bar.util.data.Repository
 

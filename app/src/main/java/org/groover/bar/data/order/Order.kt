@@ -5,7 +5,6 @@ import org.groover.bar.util.data.BarData
 import org.groover.bar.util.data.CSV
 import org.groover.bar.util.data.Cents
 import java.util.Date
-import java.util.Locale
 
 data class Order(
     override val id: Int,

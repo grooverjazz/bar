@@ -3,7 +3,6 @@ package org.groover.bar.data.item
 import org.groover.bar.util.data.BarData
 import org.groover.bar.util.data.CSV
 import org.groover.bar.util.data.Cents
-import java.util.Locale
 
 data class Item(
     override val id: Int,

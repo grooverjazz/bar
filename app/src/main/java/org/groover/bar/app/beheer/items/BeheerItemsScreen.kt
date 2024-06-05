@@ -1,5 +1,6 @@
 package org.groover.bar.app.beheer.items
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -7,8 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
@@ -20,9 +20,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.util.app.NavigateButton
@@ -90,9 +90,8 @@ private fun BeheerItemsContent(
         Spacer(modifier = Modifier.size(20.dp))
 
         // Items edit list
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(1),
-            modifier = Modifier.padding(5.dp)
+        LazyColumn(
+            modifier = Modifier.padding(10.dp).background(Color.LightGray).height(800.dp)
         ) {
             items.forEach { item ->
                 item {
@@ -118,7 +117,7 @@ fun ItemEditItem(
     onDeleteClick: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.padding(vertical = 5.dp)
+        modifier = Modifier.padding(vertical = 5.dp).fillMaxWidth()
     ) {
         Button(modifier = Modifier
             .fillMaxWidth()

@@ -1,6 +1,5 @@
 package org.groover.bar.app
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
@@ -16,6 +15,7 @@ import org.groover.bar.app.beheer.customers.group.BeheerGroupScreen
 import org.groover.bar.app.beheer.customers.member.BeheerMemberScreen
 import org.groover.bar.app.beheer.items.BeheerItemsScreen
 import org.groover.bar.app.beheer.items.item.BeheerItemsItemScreen
+import org.groover.bar.app.beheer.password.BeheerPasswordScreen
 import org.groover.bar.app.beheer.session.BeheerSessionScreen
 import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.item.ItemRepository
@@ -24,17 +24,17 @@ import org.groover.bar.data.order.Order
 import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.export.BTWHandler
 import org.groover.bar.export.ExportHandler
-import org.groover.bar.export.SessionHandler
+import org.groover.bar.export.OptionsHandler
 import org.groover.bar.util.data.FileOpener
 
 @Composable
 fun App() {
     val context = LocalContext.current
 
-    val sessionHandler = SessionHandler(context)
-    sessionHandler.open()
+    val optionsHandler = OptionsHandler(context)
+    optionsHandler.open()
 
-    val fileOpener = FileOpener(context, sessionHandler.sessionName)
+    val fileOpener = FileOpener(context, optionsHandler.sessionName)
 
     val memberRepository = MemberRepository(fileOpener)
     val groupRepository = GroupRepository(fileOpener)
@@ -44,7 +44,7 @@ fun App() {
     // (Reloads the repositories)
     val reload: (String, Boolean) -> Unit = { newSessionName, copyGlobalData ->
         // Change session name
-        sessionHandler.changeSession(newSessionName)
+        optionsHandler.changeSession(newSessionName)
         fileOpener.relativePath = newSessionName
 
         // Don't open if copying over data from current session
@@ -88,7 +88,7 @@ fun App() {
         composable("home") {
             HomeScreen(
                 navigate = navigate,
-                sessionName = sessionHandler.sessionName
+                sessionName = optionsHandler.sessionName
             )
         }
 
@@ -161,6 +161,7 @@ fun App() {
         composable("beheer") {
             BeheerScreen(
                 navigate = navigate,
+                correctPassword = optionsHandler.beheerPassword,
                 exportHandler = exportHandler,
                 btwHandler = btwHandler,
             )
@@ -227,13 +228,24 @@ fun App() {
         composable("beheer/session") {
             BeheerSessionScreen(
                 navigate = navigate,
-                oldSessionName = sessionHandler.sessionName,
-                allSessions = sessionHandler.getAllSessions(),
+                oldSessionName = optionsHandler.sessionName,
+                allSessions = optionsHandler.getAllSessions(),
                 finish = { newSessionName, copyGlobalData ->
                     navigate("home")
 
                     reload(newSessionName, copyGlobalData)
                 },
+            )
+        }
+
+        // Beheer: session
+        composable("beheer/password") {
+            BeheerPasswordScreen(
+                navigate = navigate,
+                finish = { newPassword ->
+                    optionsHandler.beheerPassword = newPassword
+                    optionsHandler.save()
+                }
             )
         }
     }
