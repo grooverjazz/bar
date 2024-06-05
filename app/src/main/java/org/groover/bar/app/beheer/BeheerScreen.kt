@@ -21,92 +21,18 @@ import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 
-private enum class BeheerState {
-    INLOG, SCREEN
-}
-
-
 @Composable
 fun BeheerScreen(
     navigate: (String) -> Unit,
-    correctPassword: String,
     exportHandler: ExportHandler,
     btwHandler: BTWHandler
 ) {
-    val context = LocalContext.current
-
-    var state: BeheerState by remember { mutableStateOf(BeheerState.INLOG) }
-
-    val logIn: (String) -> Unit = { currentPassword ->
-        if (currentPassword == correctPassword) {
-            state = BeheerState.SCREEN
-        }
-        else {
-            Toast.makeText(context, "Incorrect password!", Toast.LENGTH_SHORT)
-                .show()
-        }
-    }
-
-    // Give screen
-    when (state) {
-        BeheerState.INLOG -> BeheerInlog(
-            navigate = navigate,
-            logIn = logIn
-        )
-        BeheerState.SCREEN -> BeheerContent(
-            navigate = navigate,
-            export = exportHandler::export,
-            exportBtw = btwHandler::export,
-        )
-    }
+    BeheerContent(
+        navigate = navigate,
+        export = exportHandler::export,
+        exportBtw = btwHandler::export,
+    )
 }
-
-
-@Composable
-private fun BeheerInlog(
-    navigate: (String) -> Unit,
-    logIn: (String) -> Unit,
-) {
-    // Remember current password
-    var currentPassword: String by remember { mutableStateOf("") }
-
-    VerticalGrid(
-        modifier = Modifier
-            .padding(10.dp)
-    ) {
-        // Terug button
-        NavigateButton(
-            navigate = navigate,
-            text = "Terug",
-            route = "home",
-            height = 60.dp,
-        )
-
-        Spacer(Modifier.size(100.dp))
-
-        // Title
-        TitleText("Beheer: Inlog")
-
-        Spacer(Modifier.size(80.dp))
-
-        // Password field
-        TextField(
-            value = currentPassword,
-            onValueChange = { currentPassword = it },
-            placeholder = { Text("Wachtwoord") }
-        )
-        Spacer(modifier = Modifier.size(20.dp))
-
-        // Login button
-        Button(onClick = {
-            // Change the session
-            logIn(currentPassword)
-        }) {
-            Text("Inloggen")
-        }
-    }
-}
-
 
 @Composable
 private fun BeheerContent(

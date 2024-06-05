@@ -52,7 +52,7 @@ private fun HomeContent(
         NavigateButton(
             navigate = navigate,
             text = "Beheer",
-            route = "beheer",
+            route = "beheer/login",
         )
 
         Spacer(Modifier.size(50.dp))

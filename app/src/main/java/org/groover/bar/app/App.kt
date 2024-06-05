@@ -9,6 +9,7 @@ import org.groover.bar.app.bar.BarScreen
 import org.groover.bar.app.bar.geschiedenis.BarGeschiedenisScreen
 import org.groover.bar.app.bar.turven.BarTurvenScreen
 import org.groover.bar.app.bar.turven.customer.BarTurvenCustomerScreen
+import org.groover.bar.app.beheer.BeheerLoginScreen
 import org.groover.bar.app.beheer.BeheerScreen
 import org.groover.bar.app.beheer.customers.BeheerCustomersScreen
 import org.groover.bar.app.beheer.customers.group.BeheerGroupScreen
@@ -161,9 +162,16 @@ fun App() {
         composable("beheer") {
             BeheerScreen(
                 navigate = navigate,
-                correctPassword = optionsHandler.beheerPassword,
                 exportHandler = exportHandler,
                 btwHandler = btwHandler,
+            )
+        }
+
+        // Beheer
+        composable("beheer/login") {
+            BeheerLoginScreen(
+                navigate = navigate,
+                correctPassword = optionsHandler.beheerPassword,
             )
         }
 
