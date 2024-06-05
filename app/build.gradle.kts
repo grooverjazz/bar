@@ -50,6 +50,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.poi)
+    implementation(libs.poi.ooxml)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
