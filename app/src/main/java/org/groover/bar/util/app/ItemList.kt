@@ -38,19 +38,19 @@ fun ItemList(
     ) {
         items.forEachIndexed { index, item ->
             item {
-                ItemListEntry(item, index, amounts[index], setAmount = { amounts[index] = it })
+                ItemListEntry(item, item.colorC, amounts[index], setAmount = { amounts[index] = it })
             }
         }
     }
 }
 
 @Composable
-fun ItemListEntry(item: Item, index: Int, amount: Int, setAmount: (Int) -> Unit) {
+fun ItemListEntry(item: Item, color: Color, amount: Int, setAmount: (Int) -> Unit) {
     Row(
         modifier = Modifier
             .height(60.dp)
             .fillMaxWidth()
-            .background(if (index % 2 == 0) Color.LightGray else Color.White)
+            .background(color)
             .padding(5.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,

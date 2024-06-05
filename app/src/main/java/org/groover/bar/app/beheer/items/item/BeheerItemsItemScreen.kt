@@ -1,9 +1,14 @@
 package org.groover.bar.app.beheer.items.item
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -12,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
@@ -38,9 +44,9 @@ fun BeheerItemsItemScreen(
     }
 
     // Finishes editing the item
-    val finishEdit = { newName: String, newPrice: Cents, newBtwPercentage: Int ->
+    val finishEdit = { newName: String, newPrice: Cents, newBtwPercentage: Int, newColor: Int ->
         // Change the item
-        itemRepository.changeItem(itemId, newName, newPrice, newBtwPercentage)
+        itemRepository.changeItem(itemId, newName, newPrice, newBtwPercentage, newColor)
 
         // Navigate back
         navigate("beheer/items")
@@ -80,12 +86,13 @@ private fun BeheerItemsItemError(
 private fun BeheerItemsItemContent(
     navigate: (String) -> Unit,
     item: Item,
-    finishEdit: (String, Cents, Int) -> Unit
+    finishEdit: (String, Cents, Int, Int) -> Unit
 ) {
     // Remember name, price and BTW percentage
     var newName: String by remember { mutableStateOf(item.name) }
     var newPriceStr: String by remember { mutableStateOf(item.priceStringNoEuro) }
     var newBtwPercentageStr: String by remember { mutableStateOf(item.btwPercentage.toString()) }
+    var newColorFloat: Float by remember { mutableStateOf(item.color.toFloat() / 360f) }
 
     VerticalGrid(
         modifier = Modifier
@@ -126,6 +133,16 @@ private fun BeheerItemsItemContent(
             placeholder = { Text("Naam") }
         )
 
+        Slider(
+            value = newColorFloat,
+            onValueChange = { newColorFloat = it }
+        )
+        Spacer(modifier = Modifier.size(20.dp))
+
+        val color = Color.hsv(newColorFloat * 360f, 1f, 1f)
+        Box(
+            modifier = Modifier.height(30.dp).background(color = color)
+        )
         Spacer(modifier = Modifier.size(30.dp))
 
         // Save button
@@ -134,7 +151,8 @@ private fun BeheerItemsItemContent(
             finishEdit(
                 newName,
                 Cents.fromString(newPriceStr),
-                newBtwPercentageStr.toInt()
+                newBtwPercentageStr.toInt(),
+                (newColorFloat * 360f).toInt(),
             )
         }) {
             Text("Opslaan")

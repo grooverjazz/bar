@@ -14,6 +14,7 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -53,7 +54,7 @@ fun BeheerItemsScreen(
 private fun BeheerItemsContent(
     navigate: (String) -> Unit,
     items: List<Item>,
-    addItem: (String, Cents, Int) -> Unit,
+    addItem: (String, Cents, Int, Int) -> Unit,
     itemMoveUp: (Int) -> Unit,
     itemMoveDown: (Int) -> Unit,
     itemRemove: (Int) -> Unit,
@@ -82,6 +83,7 @@ private fun BeheerItemsContent(
                 "Tijdelijk item",
                 Cents(0),
                 0,
+                0,
             )
         }) {
             Text("Add item")
@@ -97,6 +99,7 @@ private fun BeheerItemsContent(
                 item {
                     ItemEditItem(
                         title = item.name,
+                        color = item.colorC,
                         onTitleClick = { navigate("beheer/items/item/${item.id}") },
                         onUpClick = { itemMoveUp(item.id) },
                         onDownClick = { itemMoveDown(item.id) },
@@ -111,6 +114,7 @@ private fun BeheerItemsContent(
 @Composable
 fun ItemEditItem(
     title: String,
+    color: Color,
     onTitleClick: () -> Unit,
     onUpClick: () -> Unit,
     onDownClick: () -> Unit,
@@ -122,11 +126,13 @@ fun ItemEditItem(
         Button(modifier = Modifier
             .fillMaxWidth()
             .height(70.dp),
-            onClick = onTitleClick
+            onClick = onTitleClick,
+            colors = ButtonDefaults.buttonColors(containerColor = color),
         ) {
             Text(
                 text = title,
-                fontSize = 15.sp
+                fontSize = 15.sp,
+                color = Color.Black,
             )
         }
 

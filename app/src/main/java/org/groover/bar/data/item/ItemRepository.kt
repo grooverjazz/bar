@@ -13,13 +13,14 @@ class ItemRepository(
     Item.Companion::deserialize,
     listOf("ID", "Name", "Price", "BTW Percentage"),
 ) {
-    fun addItem(name: String, price: Cents, btwPercentage: Int) {
+    fun addItem(name: String, price: Cents, btwPercentage: Int, color: Int) {
         // Create new item
         val newItem = Item(
             generateId(),
             name,
             price,
-            btwPercentage
+            btwPercentage,
+            color
         )
 
         // Add to data
@@ -29,13 +30,14 @@ class ItemRepository(
         save()
     }
 
-    fun changeItem(itemId: Int, newName: String, newPrice: Cents, newBtwPercentage: Int) {
+    fun changeItem(itemId: Int, newName: String, newPrice: Cents, newBtwPercentage: Int, newColor: Int) {
         // Create new item
         val newItem = Item(
             itemId,
             newName,
             newPrice,
-            newBtwPercentage
+            newBtwPercentage,
+            newColor,
         )
 
         // Replace the old one
