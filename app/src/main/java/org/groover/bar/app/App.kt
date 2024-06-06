@@ -66,6 +66,7 @@ fun App() {
 
     val exportHandler = ExportHandler(
         context = context,
+        fileOpener = fileOpener,
         memberRepository = memberRepository,
         groupRepository = groupRepository,
         itemRepository = itemRepository,

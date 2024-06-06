@@ -1,6 +1,7 @@
 package org.groover.bar.export
 
 import android.content.Context
+import android.widget.Toast
 import org.groover.bar.data.group.Group
 import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.item.ItemRepository
@@ -9,10 +10,12 @@ import org.groover.bar.data.member.MemberRepository
 import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.util.data.CSV
 import org.groover.bar.util.data.Cents
+import org.groover.bar.util.data.FileOpener
 import java.io.File
 
 class ExportHandler(
-    val context: Context,
+    private val context: Context,
+    private val fileOpener: FileOpener,
     private val memberRepository: MemberRepository,
     private val groupRepository: GroupRepository,
     private val itemRepository: ItemRepository,
@@ -75,20 +78,11 @@ class ExportHandler(
 
 
     fun export() {
+        val fileName = "export_Incasso.csv"
+
+        // Get export rows
         val exportRows = getExportRows()
-
-        // TODO: in sessie-mapje
-        val fileName = "export_Incasso"
-
-        // Get the current directory
-        // (Android/data/org.groover.bar/files)
-        val dir = context.getExternalFilesDir("")
-
-        // Open a file for writing
-        // TODO: opslaan in export-map
-        val writeFile = File(dir, "$fileName.csv")
-        assert(!writeFile.exists()) { "Export bestaat al!" }
-        writeFile.createNewFile()
+        val exportRowsStr = exportRows.map(ExportRow::serialize)
 
         // Get title row string
         val titleRowStr = CSV.serialize(
@@ -99,12 +93,11 @@ class ExportHandler(
             fileName
         )
 
-        // Get data string
-        val dataStr = exportRows
-            .joinToString("\n", transform = ExportRow.Companion::serialize)
+        fileOpener.write(fileName, listOf(titleRowStr) + exportRowsStr)
 
-        // Write content to file
-        val data = titleRowStr + "\n" + dataStr
-        writeFile.writeText(data)
+        // Show toast
+        Toast
+            .makeText(context, "Incasso aangemaakt (${exportRowsStr.size} rijen)!", Toast.LENGTH_SHORT)
+            .show()
     }
 }
