@@ -39,7 +39,7 @@ fun BarGeschiedenisScreen(
 
     BarGeschiedenisContent(
         navigate = navigate,
-        orders = orderRepository.data,
+        orders = orderRepository.data.reversed(),
         items = itemRepository.data,
         getCustomerName = getCustomerName,
         orderOnClick = orderOnClick

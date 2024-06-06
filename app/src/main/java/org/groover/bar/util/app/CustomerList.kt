@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +25,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.android.awaitFrame
 import org.groover.bar.data.group.Group
 import org.groover.bar.data.member.Member
@@ -52,16 +55,24 @@ fun CustomerList(
     if (listState == null) {
         Row {
             Button(
-                modifier = Modifier.weight(1f),
-                enabled = (state != CustomerListState.MEMBERS),
+                modifier = Modifier.weight(1f).height(80.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (state == CustomerListState.MEMBERS)
+                        MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.secondary
+                ),
                 onClick = { state = CustomerListState.MEMBERS }
-            ) { Text("Leden") }
+            ) { Text(text = "Leden", fontSize = 25.sp) }
 
             Button(
-                modifier = Modifier.weight(1f),
-                enabled = (state != CustomerListState.GROUPS),
+                modifier = Modifier.weight(1f).height(80.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (state == CustomerListState.GROUPS)
+                        MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.secondary
+                ),
                 onClick = { state = CustomerListState.GROUPS }
-            ) { Text("Groepen") }
+            ) { Text(text = "Groepen", fontSize = 25.sp) }
         }
     }
 
@@ -78,8 +89,8 @@ fun CustomerList(
         onValueChange = { newSearchText: String ->
             searchText = newSearchText
         },
-        placeholder = { Text("Zoek op naam") },
-        modifier = Modifier.focusRequester(keyboardFocus)
+        modifier = Modifier.focusRequester(keyboardFocus).height(80.dp),
+        textStyle = TextStyle.Default.copy(fontSize = 28.sp)
     )
 
     // Show current list
@@ -117,26 +128,24 @@ private fun MemberList(
         .take(if (searchText == "") 1000 else 20)
 
     // UI
-    LazyColumn(
-        modifier = Modifier.padding(10.dp).background(color = Color.LightGray).height(600.dp)
-    ) {
+    BigList {
         filteredMembers.forEach { member ->
             item {
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RectangleShape,
+                BigButton(
+                    text = member.toString(),
                     onClick = { onClick(member) }
-                ) { Text(member.toString()) }
+                )
             }
         }
 
         if (showAddNewButton && searchText != "") {
             item {
-                Button(
-                    shape = RectangleShape,
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+                BigButton(
+                    text = "Nieuw tijdelijk lid '$searchText' toevoegen",
+                    color = MaterialTheme.colorScheme.secondary,
                     onClick = { addTempMember(searchText) },
-                ) { Text("Nieuw tijdelijk lid '$searchText' toevoegen") }
+                    hasSpacer = false,
+                )
             }
         }
     }
@@ -155,16 +164,18 @@ private fun GroupsList(
         .take(20)
 
     // UI
-    LazyColumn(
-        modifier = Modifier.padding(10.dp).background(color = Color.LightGray).height(600.dp)
-    ) {
+//    BigButtonList(
+//        entries = filteredGroups,
+//        onClick = onClick,
+//    )
+
+    BigList {
         filteredGroups.forEach { group ->
             item {
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RectangleShape,
-                    onClick = { onClick(group) }
-                ) { Text(group.toString()) }
+                BigButton(
+                    text = group.toString(),
+                    onClick = { onClick(group) },
+                )
             }
         }
 
@@ -172,12 +183,51 @@ private fun GroupsList(
             item {
                 Spacer(Modifier.size(80.dp))
 
-                Button(
-                    shape = RectangleShape,
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+                BigButton(
+                    text = "Nieuwe lege groep '$searchText' toevoegen",
+                    color = MaterialTheme.colorScheme.secondary,
                     onClick = { addGroup(searchText) },
-                ) { Text("Nieuwe lege groep '$searchText' toevoegen") }
+                    hasSpacer = false,
+                )
             }
         }
     }
+}
+
+@Composable
+private fun BigList(
+    content: LazyListScope.() -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier
+            .padding(10.dp)
+            .background(color = Color.LightGray)
+            .height(700.dp),
+        content = content
+    )
+}
+
+@Composable
+private fun BigButton(
+    text: String,
+    color: Color = MaterialTheme.colorScheme.primary,
+    onClick: () -> Unit = { },
+    hasSpacer: Boolean = true
+) {
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = color),
+        shape = RectangleShape,
+        onClick = onClick
+    ) {
+        Text(
+            text = text,
+            fontSize = 25.sp
+        )
+    }
+
+    if (hasSpacer)
+        Spacer(modifier = Modifier.size(20.dp))
 }
