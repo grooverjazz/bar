@@ -58,7 +58,7 @@ private fun BeheerPasswordContent(
         // Password field
         TextField(
             value = newPassword,
-            onValueChange = { newPassword = it },
+            onValueChange = { newPassword = it.trim() },
             placeholder = { Text("Nieuw wachtwoord") }
         )
         Spacer(modifier = Modifier.size(20.dp))
@@ -69,7 +69,7 @@ private fun BeheerPasswordContent(
             finish(newPassword)
             navigate("beheer")
         }) {
-            Text("Inloggen")
+            Text("Wachtwoord veranderen")
         }
     }
 }

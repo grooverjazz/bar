@@ -14,6 +14,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
@@ -74,7 +76,8 @@ private fun BeheerLoginContent(
         // Password field
         TextField(
             value = currentPassword,
-            onValueChange = { currentPassword = it },
+            visualTransformation = PasswordVisualTransformation(),
+            onValueChange = { currentPassword = it.trim() },
             placeholder = { Text("Wachtwoord") }
         )
         Spacer(modifier = Modifier.size(20.dp))
