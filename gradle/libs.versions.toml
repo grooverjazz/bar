@@ -1,5 +1,6 @@
 [versions]
 agp = "8.4.1"
+fuzzyMatcher = "1.2.1"
 kotlin = "1.9.0"
 coreKtx = "1.13.0"
 junit = "4.13.2"
@@ -14,6 +15,7 @@ poiOoxml = "5.2.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+fuzzy-matcher = { module = "com.intuit.fuzzymatcher:fuzzy-matcher", version.ref = "fuzzyMatcher" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

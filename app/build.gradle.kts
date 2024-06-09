@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "org.groover.bar"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "0.1"
@@ -52,6 +52,9 @@ android {
 dependencies {
 //    implementation(libs.poi)
 //    implementation(libs.poi.ooxml)
+
+    // Fuzzy matcher (used for search)
+    implementation(libs.fuzzy.matcher)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

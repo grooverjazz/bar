@@ -14,7 +14,7 @@ data class Member(
         .filter { it.isNotBlank() }
         .joinToString(" ")
 
-    override fun toString(): String = "$id: $fullName"
+    override fun toString(): String = fullName
 
     companion object {
         // (Serializes the user)

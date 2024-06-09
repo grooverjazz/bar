@@ -26,11 +26,14 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.android.awaitFrame
 import org.groover.bar.data.group.Group
 import org.groover.bar.data.member.Member
+import org.groover.bar.util.data.SearchHandler
+import java.util.Locale
 
 enum class CustomerListState {
     MEMBERS,
@@ -94,7 +97,7 @@ fun CustomerList(
     )
 
     // Show current list
-    val formattedSearchText = searchText.trim().replaceFirstChar(Char::uppercaseChar)
+    val formattedSearchText = searchText.lowercase(Locale.ROOT)
 
     when (state) {
         CustomerListState.MEMBERS -> MemberList(
@@ -123,8 +126,7 @@ private fun MemberList(
     showAddNewButton: Boolean,
     addTempMember: (String) -> Unit,
 ) {
-    val filteredMembers = members
-        .filter { it.toString().contains(searchText) }
+    val filteredMembers = SearchHandler.search(searchText, members) { it.fullName }
         .take(if (searchText == "") 1000 else 20)
 
     // UI
