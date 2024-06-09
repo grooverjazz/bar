@@ -15,7 +15,7 @@ class OrderRepository(
     listOf("ID", "Customer ID", "Timestamp", "Amounts...")
 ) {
     fun placeOrder(amounts: List<Int>, customerId: Int, items: List<Item>) {
-        val amountsMap = items.zip(amounts).associate { (item, amount) ->
+        val amountsMap = (items zip amounts).associate { (item, amount) ->
             item.id to amount
         }.toMutableMap()
 

@@ -127,26 +127,24 @@ private fun MemberList(
     addTempMember: (String) -> Unit,
 ) {
     val filteredMembers = SearchHandler.search(searchText, members) { it.fullName }
-        .take(if (searchText == "") 1000 else 20)
 
     // UI
     BigList {
-        filteredMembers.forEach { member ->
-            item {
-                BigButton(
-                    text = member.toString(),
-                    onClick = { onClick(member) }
-                )
-            }
-        }
-
         if (showAddNewButton && searchText != "") {
             item {
                 BigButton(
                     text = "Nieuw tijdelijk lid '$searchText' toevoegen",
                     color = MaterialTheme.colorScheme.secondary,
                     onClick = { addTempMember(searchText) },
-                    hasSpacer = false,
+                )
+            }
+        }
+
+        filteredMembers.forEach { member ->
+            item {
+                BigButton(
+                    text = member.toString(),
+                    onClick = { onClick(member) }
                 )
             }
         }
@@ -163,24 +161,9 @@ private fun GroupsList(
 ) {
     val filteredGroups = groups
         .filter { it.toString().contains(searchText) }
-        .take(20)
 
     // UI
-//    BigButtonList(
-//        entries = filteredGroups,
-//        onClick = onClick,
-//    )
-
     BigList {
-        filteredGroups.forEach { group ->
-            item {
-                BigButton(
-                    text = group.toString(),
-                    onClick = { onClick(group) },
-                )
-            }
-        }
-
         if (showAddNewButton && searchText != "") {
             item {
                 Spacer(Modifier.size(80.dp))
@@ -189,7 +172,15 @@ private fun GroupsList(
                     text = "Nieuwe lege groep '$searchText' toevoegen",
                     color = MaterialTheme.colorScheme.secondary,
                     onClick = { addGroup(searchText) },
-                    hasSpacer = false,
+                )
+            }
+        }
+
+        filteredGroups.forEach { group ->
+            item {
+                BigButton(
+                    text = group.toString(),
+                    onClick = { onClick(group) },
                 )
             }
         }
@@ -214,7 +205,6 @@ private fun BigButton(
     text: String,
     color: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit = { },
-    hasSpacer: Boolean = true
 ) {
     Button(
         modifier = Modifier
@@ -230,6 +220,5 @@ private fun BigButton(
         )
     }
 
-    if (hasSpacer)
-        Spacer(modifier = Modifier.size(20.dp))
+    Spacer(modifier = Modifier.size(20.dp))
 }
