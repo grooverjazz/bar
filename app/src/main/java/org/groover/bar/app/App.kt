@@ -1,5 +1,7 @@
 package org.groover.bar.app
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
@@ -82,12 +84,16 @@ fun App() {
     val navController = rememberNavController()
     val navigate: (String) -> Unit = { navController.navigate(it) }
 
+    val BackBehavior: @Composable (String) -> Unit = { BackHandler { navigate(it) } }
+
     NavHost(
         navController = navController,
         startDestination = "Home",
     ) {
         // Home
         composable("home") {
+            BackHandler { (context as Activity).finish() }
+
             HomeScreen(
                 navigate = navigate,
                 sessionName = optionsHandler.sessionName
@@ -96,6 +102,8 @@ fun App() {
 
         // Bar
         composable("bar") {
+            BackBehavior("home")
+
             BarScreen(
                 navigate = navigate,
             )
@@ -103,6 +111,8 @@ fun App() {
 
         // Bar: turven
         composable("bar/turven") {
+            BackBehavior("bar")
+
             BarTurvenScreen(
                 navigate = navigate,
                 memberRepository = memberRepository,
@@ -112,6 +122,8 @@ fun App() {
 
         // Bar: turven: member
         composable("bar/turven/customer/{customerId}") { backStackEntry ->
+            BackBehavior("bar/turven")
+
             // Extract the member ID from the route
             val customerIdStr = backStackEntry.arguments?.getString("customerId") ?: throw Exception("Kan klant niet vinden in route!")
             val customerId = customerIdStr.toInt()
@@ -129,6 +141,8 @@ fun App() {
 
         // Bar: geschiedenis
         composable("bar/geschiedenis") {
+            BackBehavior("bar")
+
             BarGeschiedenisScreen(
                 navigate = navigate,
                 orderRepository = orderRepository,
@@ -140,6 +154,8 @@ fun App() {
 
         // Bar: geschiedenis: aanpassing
         composable("bar/geschiedenis/edit/{previousOrder}") { backStackEntry ->
+            BackBehavior("bar/geschiedenis")
+
             // Extract the previous order from the route
             val previousOrderStr = backStackEntry.arguments?.getString("previousOrder") ?: throw Exception("Kan vorige order niet vinden in route!")
             val previousOrder = Order.deserialize(previousOrderStr)
@@ -161,6 +177,8 @@ fun App() {
 
         // Beheer
         composable("beheer") {
+            BackBehavior("home")
+
             BeheerScreen(
                 navigate = navigate,
                 exportHandler = exportHandler,
@@ -170,6 +188,8 @@ fun App() {
 
         // Beheer
         composable("beheer/login") {
+            BackBehavior("home")
+
             BeheerLoginScreen(
                 navigate = navigate,
                 correctPassword = optionsHandler.beheerPassword,
@@ -178,6 +198,8 @@ fun App() {
 
         // Beheer: items
         composable("beheer/items") {
+            BackBehavior("beheer")
+
             BeheerItemsScreen(
                 navigate = navigate,
                 itemRepository = itemRepository,
@@ -186,6 +208,8 @@ fun App() {
 
         // Beheer: items: item
         composable("beheer/items/item/{itemId}") { backStackEntry ->
+            BackBehavior("beheer/items")
+
             // Extract the item ID from the route
             val itemIdStr = backStackEntry.arguments?.getString("itemId") ?: throw Exception("Kan item niet vinden in route!")
             val itemId = itemIdStr.toInt()
@@ -199,6 +223,8 @@ fun App() {
 
         // Beheer: customers
         composable("beheer/customers") {
+            BackBehavior("beheer")
+
             BeheerCustomersScreen(
                 navigate = navigate,
                 memberRepository = memberRepository,
@@ -208,6 +234,8 @@ fun App() {
 
         // Beheer: customers: member
         composable("beheer/customers/member/{memberId}") { backStackEntry ->
+            BackBehavior("beheer/customers")
+
             // Extract the member ID from the route
             val memberIdStr = backStackEntry.arguments?.getString("memberId") ?: throw Exception("Kan lid niet vinden in route!")
             val memberId = memberIdStr.toInt()
@@ -221,6 +249,8 @@ fun App() {
 
         // Beheer: customers: group
         composable("beheer/customers/group/{groupId}") { backStackEntry ->
+            BackBehavior("beheer/customers")
+
             // Extract the member ID from the route
             val groupIdStr = backStackEntry.arguments?.getString("groupId") ?: throw Exception("Kan groep niet vinden in route!")
             val groupId = groupIdStr.toInt()
@@ -235,6 +265,8 @@ fun App() {
 
         // Beheer: session
         composable("beheer/session") {
+            BackBehavior("beheer")
+
             BeheerSessionScreen(
                 navigate = navigate,
                 oldSessionName = optionsHandler.sessionName,
@@ -249,6 +281,8 @@ fun App() {
 
         // Beheer: session
         composable("beheer/password") {
+            BackBehavior("beheer")
+
             BeheerPasswordScreen(
                 navigate = navigate,
                 finish = { newPassword ->
