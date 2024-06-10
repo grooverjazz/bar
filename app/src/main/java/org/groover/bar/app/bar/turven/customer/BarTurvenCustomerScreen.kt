@@ -29,6 +29,7 @@ import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.util.app.ItemList
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.VerticalGrid
+import org.groover.bar.util.data.Cents
 
 @Composable
 fun BarTurvenCustomerScreen(
@@ -54,6 +55,8 @@ fun BarTurvenCustomerScreen(
     }
 
     val items = itemRepository.data
+
+    val customerTotal = orderRepository.getTotalByCustomer(customerId, items)
 
     val finishOrder = { currentOrder: List<Int> ->
         orderRepository.placeOrder(currentOrder, customerId, items)
@@ -83,6 +86,7 @@ fun BarTurvenCustomerScreen(
         items = items,
         previousOrder = previousOrder,
         customerName = customerName,
+        customerTotal = customerTotal,
         finishOrder = finishOrder,
     )
 }
@@ -93,6 +97,7 @@ private fun BarTurvenCustomerContent(
     items: List<Item>,
     previousOrder: Order?,
     customerName: String,
+    customerTotal: Cents,
     finishOrder: (List<Int>) -> Unit,
 ) {
     // Initialize (use zeroes if no amounts specified)
@@ -118,13 +123,22 @@ private fun BarTurvenCustomerContent(
             text = customerName,
             fontFamily = FontFamily.Serif,
             fontWeight = FontWeight.ExtraBold,
-            fontSize = 40.sp,
+            fontSize = 60.sp,
             textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
 
-        Spacer(modifier = Modifier.size(20.dp))
+        // Member total
+        Text(
+            text = "Voorlopige rekening: ${customerTotal.stringWithEuro}",
+            fontFamily = FontFamily.Serif,
+            fontWeight = FontWeight.Medium,
+            fontSize = 30.sp,
+            textAlign = TextAlign.Center,
+        )
+
+        Spacer(modifier = Modifier.size(30.dp))
 
         // Items
         ItemList(items, currentOrder)
