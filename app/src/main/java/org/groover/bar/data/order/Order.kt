@@ -34,7 +34,7 @@ data class Order(
                 listOf(
                     order.id.toString(),
                     order.customerId.toString(),
-                    CSV.serializeDate(order.timestamp)
+                    CSV.serializeTimestamp(order.timestamp)
                 ) + amountsStrs
             )
         }
@@ -48,7 +48,7 @@ data class Order(
             val (idStr, customerIdStr, timestampStr) = data
             val id = idStr.toInt()
             val customerId = customerIdStr.toInt()
-            val timestamp = CSV.deserializeDate(timestampStr)
+            val timestamp = CSV.deserializeTimestamp(timestampStr)
 
             // Get amounts
             val amountsStr = data.drop(3)

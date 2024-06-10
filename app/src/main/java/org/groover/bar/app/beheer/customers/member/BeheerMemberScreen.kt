@@ -1,14 +1,20 @@
 package org.groover.bar.app.beheer.customers.member
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +29,9 @@ import org.groover.bar.data.member.MemberRepository
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
+import org.groover.bar.util.data.DateUtils
+import java.time.Instant
+import java.util.Date
 
 @Composable
 fun BeheerMemberScreen(
@@ -40,9 +49,9 @@ fun BeheerMemberScreen(
         return
     }
 
-    val finishEdit = { newVoornaam: String, newTussenvoegsel: String, newAchternaam: String ->
+    val finishEdit = { newRoepnaam: String, newVoornaam: String, newTussenvoegsel: String, newAchternaam: String, newVerjaardag: Date ->
         // Change the member
-        memberRepository.changeMember(memberId, newVoornaam, newTussenvoegsel, newAchternaam)
+        memberRepository.changeMember(memberId, newRoepnaam, newVoornaam, newTussenvoegsel, newAchternaam, newVerjaardag)
 
         // Navigate back
         navigate("beheer/customers")
@@ -77,17 +86,19 @@ private fun BeheerMemberError(
     }
 }
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BeheerMemberContent(
     navigate: (String) -> Unit,
     currentMember: Member,
-    finishEdit: (String, String, String) -> Unit,
+    finishEdit: (String, String, String, String, Date) -> Unit,
 ) {
-    // Remember voornaam, tussenvoegsel, achternaam
+    // Remember parameters
+    var newRoepnaam: String by remember { mutableStateOf(currentMember.roepnaam) }
     var newVoornaam: String by remember { mutableStateOf(currentMember.voornaam) }
     var newTussenvoegsel: String by remember { mutableStateOf(currentMember.tussenvoegsel) }
     var newAchternaam: String by remember { mutableStateOf(currentMember.achternaam) }
+    val newVerjaardagState = rememberDatePickerState(initialSelectedDateMillis = DateUtils.dateToMillis(currentMember.verjaardag))
 
     VerticalGrid(
         modifier = Modifier.padding(10.dp)
@@ -103,6 +114,14 @@ private fun BeheerMemberContent(
 
         TitleText("Lid bewerken")
         Spacer(Modifier.size(20.dp))
+
+        // Roepnaam field
+        TextField(
+            value = newRoepnaam,
+            onValueChange = { newRoepnaam = it },
+            placeholder = { Text("Roepnaam") }
+        )
+        Spacer(modifier = Modifier.size(20.dp))
 
         // Voornaam field
         TextField(
@@ -126,24 +145,30 @@ private fun BeheerMemberContent(
             onValueChange = { newAchternaam = it },
             placeholder = { Text("Achternaam") }
         )
-        
-        if (newVoornaam != currentMember.voornaam || newTussenvoegsel != currentMember.tussenvoegsel || newAchternaam != currentMember.achternaam) {
-            Spacer(modifier = Modifier.size(20.dp))
+        Spacer(modifier = Modifier.size(20.dp))
 
-            Icon(Icons.Rounded.Warning, null, tint=Color.Red)
+        // Verjaardag field
+        Text("Verjaardag")
+        DatePicker(
+            state = newVerjaardagState,
+            modifier = Modifier.padding(horizontal = 150.dp, vertical = 0.dp),
+            title = { }
+        )
 
-            Text(
-                text = "Pas op: deze gegevens worden overgeschreven bij import vanuit de ledenadmin!",
-                textAlign = TextAlign.Center,
-            )
-        }
+        Icon(Icons.Rounded.Warning, null, tint=Color.Red)
+
+        Text(
+            text = "Pas op: deze gegevens worden overgeschreven bij import vanuit de ledenadmin!",
+            textAlign = TextAlign.Center,
+        )
 
         Spacer(modifier = Modifier.size(30.dp))
 
         // Save button
         Button(onClick = {
             // Finish editing
-            finishEdit(newVoornaam, newTussenvoegsel, newAchternaam)
+            val newVerjaardag = DateUtils.millisToDate(newVerjaardagState.selectedDateMillis!!)
+            finishEdit(newRoepnaam, newVoornaam, newTussenvoegsel, newAchternaam, newVerjaardag)
         }) {
             Text("Opslaan")
         }

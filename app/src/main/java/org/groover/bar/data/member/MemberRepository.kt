@@ -2,6 +2,7 @@ package org.groover.bar.data.member
 
 import org.groover.bar.util.data.FileOpener
 import org.groover.bar.util.data.Repository
+import java.util.Date
 
 class MemberRepository(
     fileOpener: FileOpener,
@@ -17,9 +18,11 @@ class MemberRepository(
         // Construct temporary member
         val newMember = Member(
             id = 1000000 + data.size,
-            voornaam = tempName,
+            roepnaam = tempName,
+            voornaam = "",
             tussenvoegsel = "",
-            achternaam = ""
+            achternaam = "",
+            verjaardag = Date(),
         )
 
         // Add the new member
@@ -27,9 +30,9 @@ class MemberRepository(
         save()
     }
 
-    fun changeMember(memberId: Int, newVoornaam: String, newTussenvoegsel: String, newAchternaam: String) {
+    fun changeMember(memberId: Int, newRoepnaam: String, newVoornaam: String, newTussenvoegsel: String, newAchternaam: String, newVerjaardag: Date) {
         // Create new member
-        val newMember = Member(memberId, newVoornaam, newTussenvoegsel, newAchternaam)
+        val newMember = Member(memberId, newRoepnaam, newVoornaam, newTussenvoegsel, newAchternaam, newVerjaardag)
 
         replaceById(memberId, newMember)
     }

@@ -16,10 +16,13 @@ class CSV {
 
         // TODO: ???
         @SuppressLint("SimpleDateFormat")
-        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val timestampFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
-        // Date methods
-        fun serializeDate(date: Date): String = formatter.format(date)
-        fun deserializeDate(str: String): Date = formatter.parse(str) ?: Date()
+
+        // Timestamp methods
+        fun serializeTimestamp(timestamp: Date): String = timestampFormat.format(timestamp)
+        fun deserializeTimestamp(str: String): Date = timestampFormat.parse(str) ?: Date()
+
+
     }
 }

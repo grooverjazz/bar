@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +31,7 @@ import org.groover.bar.util.app.ItemList
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.VerticalGrid
 import org.groover.bar.util.data.Cents
+import org.groover.bar.util.data.DateUtils
 
 @Composable
 fun BarTurvenCustomerScreen(
@@ -57,6 +59,14 @@ fun BarTurvenCustomerScreen(
     val items = itemRepository.data
 
     val customerTotal = orderRepository.getTotalByCustomer(customerId, items)
+
+    val minderjarigMessage = when (currentCustomer) {
+        is Member -> if (!DateUtils.isOlderThan18(currentCustomer.verjaardag)) "Dit lid is minderjarig!" else ""
+        is Group -> if (currentCustomer.memberIds.any {
+                !DateUtils.isOlderThan18(memberRepository.lookupById(it)!!.verjaardag)
+            }) "Deze groep bevat minderjarigen!" else ""
+        else -> ""
+    }
 
     val finishOrder = { currentOrder: List<Int> ->
         orderRepository.placeOrder(currentOrder, customerId, items)
@@ -87,6 +97,7 @@ fun BarTurvenCustomerScreen(
         previousOrder = previousOrder,
         customerName = customerName,
         customerTotal = customerTotal,
+        minderjarigMessage = minderjarigMessage,
         finishOrder = finishOrder,
     )
 }
@@ -98,6 +109,7 @@ private fun BarTurvenCustomerContent(
     previousOrder: Order?,
     customerName: String,
     customerTotal: Cents,
+    minderjarigMessage: String,
     finishOrder: (List<Int>) -> Unit,
 ) {
     // Initialize (use zeroes if no amounts specified)
@@ -139,6 +151,19 @@ private fun BarTurvenCustomerContent(
         )
 
         Spacer(modifier = Modifier.size(30.dp))
+
+        if (minderjarigMessage != "") {
+            Text(
+                text = minderjarigMessage,
+                color = Color.Red,
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Medium,
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center,
+            )
+
+            Spacer(modifier = Modifier.size(30.dp))
+        }
 
         // Items
         ItemList(items, currentOrder)
