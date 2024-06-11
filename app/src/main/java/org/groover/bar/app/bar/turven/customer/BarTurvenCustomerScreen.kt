@@ -91,6 +91,10 @@ fun BarTurvenCustomerScreen(
         }
     }
 
+    val getOrderCost: (List<Int>) -> Cents = { amounts ->
+        orderRepository.getOrderCost(amounts, items)
+    }
+
     BarTurvenCustomerContent(
         navigate = navigate,
         items = items,
@@ -98,6 +102,7 @@ fun BarTurvenCustomerScreen(
         customerName = customerName,
         customerTotal = customerTotal,
         minderjarigMessage = minderjarigMessage,
+        getOrderCost = getOrderCost,
         finishOrder = finishOrder,
     )
 }
@@ -110,6 +115,7 @@ private fun BarTurvenCustomerContent(
     customerName: String,
     customerTotal: Cents,
     minderjarigMessage: String,
+    getOrderCost: (List<Int>) -> Cents,
     finishOrder: (List<Int>) -> Unit,
 ) {
     // Initialize (use zeroes if no amounts specified)
@@ -171,11 +177,12 @@ private fun BarTurvenCustomerContent(
         Spacer(modifier = Modifier.size(20.dp))
 
         // Submit button
+        val orderCost = getOrderCost(currentOrder)
         Button(
             modifier = Modifier.height(60.dp),
             onClick = { finishOrder(currentOrder) },
         ) {
-            Text("Bestelling afronden",
+            Text("Bestelling afronden (${orderCost.stringWithEuro})",
                 fontSize = 30.sp
             )
         }

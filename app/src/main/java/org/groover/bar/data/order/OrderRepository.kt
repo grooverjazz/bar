@@ -2,6 +2,7 @@ package org.groover.bar.data.order
 
 import org.groover.bar.data.item.Item
 import org.groover.bar.util.data.Cents
+import org.groover.bar.util.data.Cents.Companion.sum
 import org.groover.bar.util.data.FileOpener
 import org.groover.bar.util.data.Repository
 import java.util.Date
@@ -41,6 +42,12 @@ class OrderRepository(
         return data
             .filter { it.customerId == customerId }
             .map { it.getTotalPrice(items) }
-            .fold(Cents(0), Cents::plus)
+            .sum()
+    }
+
+    fun getOrderCost(amounts: List<Int>, items: List<Item>): Cents {
+        return (items zip amounts)
+            .map { (item, amount) -> item.price * amount }
+            .sum()
     }
 }

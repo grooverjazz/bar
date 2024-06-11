@@ -12,7 +12,11 @@ class Cents(
     operator fun div(other: Int) = Cents(amount / other)
     operator fun rem(other: Int) = Cents(amount % other)
 
+    operator fun times(other: Int) = Cents(other * amount)
+
     companion object {
+        fun Iterable<Cents>.sum(): Cents = fold(Cents(0), Cents::plus)
+
         fun split(cents: Cents, n: Int): List<Cents> {
             val baseAmount = cents / n
             val centsToSplit = (cents % n).toInt()
