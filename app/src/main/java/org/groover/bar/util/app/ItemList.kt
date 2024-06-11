@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -33,9 +34,7 @@ fun ItemList(
     items: List<Item>,
     amounts: MutableList<Int>,
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
-    ) {
+    BigList {
         items.forEachIndexed { index, item ->
             item {
                 ItemListEntry(item, item.colorC, amounts[index], setAmount = { amounts[index] = it })
@@ -48,7 +47,7 @@ fun ItemList(
 fun ItemListEntry(item: Item, color: Color, amount: Int, setAmount: (Int) -> Unit) {
     Row(
         modifier = Modifier
-            .height(60.dp)
+            .height(80.dp)
             .fillMaxWidth()
             .background(color)
             .padding(5.dp),
@@ -59,13 +58,14 @@ fun ItemListEntry(item: Item, color: Color, amount: Int, setAmount: (Int) -> Uni
         Text(
             item.name,
             fontWeight = FontWeight.Bold,
-            fontSize = 25.sp,
-            modifier = Modifier.weight(0.3f),
+            fontSize = 30.sp,
+            modifier = Modifier.weight(0.4f).padding(start = 15.dp),
         )
 
         Text(
             item.priceString,
-            modifier = Modifier.weight(0.3f),
+            modifier = Modifier.weight(0.1f),
+            textAlign = TextAlign.Center,
         )
 
         // Amount buttons
@@ -77,8 +77,8 @@ fun ItemListEntry(item: Item, color: Color, amount: Int, setAmount: (Int) -> Uni
             Button(
                 modifier = Modifier.fillMaxHeight(),
                 shape = RectangleShape,
-                onClick = { setAmount(max(0, amount - 1)) },
-            ) { Text("-") }
+                onClick = { setAmount(amount + 1) },
+            ) { Text("+", fontSize = 30.sp) }
 
             Text(
                 amount.toString(),
@@ -90,8 +90,8 @@ fun ItemListEntry(item: Item, color: Color, amount: Int, setAmount: (Int) -> Uni
             Button(
                 modifier = Modifier.fillMaxHeight(),
                 shape = RectangleShape,
-                onClick = { setAmount(amount + 1) },
-            ) { Text("+") }
+                onClick = { setAmount(max(0, amount - 1)) },
+            ) { Text("-", fontSize = 30.sp) }
 
             // Clear button
             Button(

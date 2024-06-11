@@ -187,18 +187,7 @@ private fun GroupsList(
     }
 }
 
-@Composable
-private fun BigList(
-    content: LazyListScope.() -> Unit
-) {
-    LazyColumn(
-        modifier = Modifier
-            .padding(10.dp)
-            .background(color = Color.LightGray)
-            .height(700.dp),
-        content = content
-    )
-}
+
 
 @Composable
 private fun BigButton(

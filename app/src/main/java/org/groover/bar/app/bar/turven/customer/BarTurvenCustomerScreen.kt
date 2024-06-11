@@ -157,7 +157,7 @@ private fun BarTurvenCustomerContent(
                 text = minderjarigMessage,
                 color = Color.Red,
                 fontFamily = FontFamily.Serif,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.Bold,
                 fontSize = 30.sp,
                 textAlign = TextAlign.Center,
             )
