@@ -1,5 +1,6 @@
 package org.groover.bar.app.beheer.items
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,11 +29,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
+import org.groover.bar.util.app.BigList
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
@@ -100,20 +103,22 @@ private fun BeheerItemsContent(
         Spacer(modifier = Modifier.size(20.dp))
 
         // Add item button
-        Button(onClick = {
-            addItem("Tijdelijk item", Cents(0), 0, 0,)
-        }) {
-            Text("Add item")
+        Button(
+            modifier = Modifier.height(70.dp),
+            onClick = {
+                addItem("Item", Cents(0), 0, 0)
+            },
+        ) {
+            Text("Voeg item toe",
+                fontSize = 30.sp,
+            )
         }
 
         Spacer(modifier = Modifier.size(20.dp))
 
         // Items edit list
-        LazyColumn(
-            modifier = Modifier
-                .padding(10.dp)
-                .background(Color.LightGray)
-                .height(800.dp)
+        BigList(
+            size = 800.dp
         ) {
             items.forEach { item ->
                 item {
@@ -125,6 +130,8 @@ private fun BeheerItemsContent(
                         onDownClick = { itemMoveDown(item.id) },
                         onDeleteClick = { itemRemoveState = item }
                     )
+
+                    Spacer(modifier = Modifier.size(10.dp))
                 }
             }
         }
@@ -142,7 +149,6 @@ fun ItemEditItem(
 ) {
     Column(
         modifier = Modifier
-            .padding(vertical = 5.dp)
             .fillMaxWidth()
     ) {
         Button(modifier = Modifier
@@ -150,34 +156,35 @@ fun ItemEditItem(
             .height(70.dp),
             onClick = onTitleClick,
             colors = ButtonDefaults.buttonColors(containerColor = color),
+            shape = RectangleShape
         ) {
             Text(
                 text = title,
-                fontSize = 15.sp,
+                fontSize = 25.sp,
                 color = Color.Black,
             )
         }
 
-        val colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
-
         Row {
-            Button(modifier = Modifier.weight(1f),
-                colors = colors,
+            Button(modifier = Modifier.weight(1f).height(50.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                onClick = onDeleteClick
+            ) {
+                Icon(Icons.Rounded.Delete, null)
+            }
+
+            val c = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
+            Button(modifier = Modifier.weight(2f).height(50.dp),
+                colors = c,
                 onClick = onUpClick
             ) {
                 Icon(Icons.Rounded.KeyboardArrowUp, null)
             }
-            Button(modifier = Modifier.weight(1f),
-                colors = colors,
+            Button(modifier = Modifier.weight(2f).height(50.dp),
+                colors = c,
                 onClick = onDownClick
             ) {
                 Icon(Icons.Rounded.KeyboardArrowDown, null)
-            }
-            Button(modifier = Modifier.weight(1f),
-                colors = colors,
-                onClick = onDeleteClick
-            ) {
-                Icon(Icons.Rounded.Delete, null)
             }
         }
     }
