@@ -70,7 +70,6 @@ private fun BeheerSessionContent(
             navigate = navigate,
             text = "Terug",
             route = "beheer",
-            height = 60.dp,
         )
 
         // Title

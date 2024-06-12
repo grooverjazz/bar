@@ -78,7 +78,6 @@ private fun BeheerMemberError(
             navigate = navigate,
             text = "Terug",
             route = "beheer/customers",
-            height = 60.dp,
         )
         Spacer(Modifier.size(20.dp))
 
@@ -108,7 +107,6 @@ private fun BeheerMemberContent(
             navigate = navigate,
             text = "Terug",
             route = "beheer/customers",
-            height = 60.dp,
         )
         Spacer(Modifier.size(20.dp))
 

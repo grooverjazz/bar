@@ -5,15 +5,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TitleText(text: String) {
+fun TitleText(
+    text: String
+) {
     Text(
         text = text,
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Bold,
-        fontSize = 50.sp,
-        textAlign = TextAlign.Center
+        fontFamily = FontFamily.Serif,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 60.sp,
+        textAlign = TextAlign.Center,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
     )
 }

@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 fun NavigateButton(
     navigate: (String) -> Unit,
     text: String,
-    fontSize: TextUnit = 30.sp,
+    fontSize: TextUnit = 38.sp,
     height: Dp = 100.dp,
     route: String,
     color: Color = MaterialTheme.colorScheme.secondary,

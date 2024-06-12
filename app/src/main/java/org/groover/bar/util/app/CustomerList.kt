@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -57,23 +59,33 @@ fun CustomerList(
     // Leden / Groepen button
     if (listState == null) {
         Row {
+            val modifier = Modifier.weight(1f).height(80.dp)
+            val modifierShadow = modifier.innerShadow(
+                shape = RectangleShape,
+                blur = 12.dp,
+                offsetX = 3.dp,
+                offsetY = 3.dp,
+            )
+
             Button(
-                modifier = Modifier.weight(1f).height(80.dp),
+                modifier = if (state == CustomerListState.MEMBERS) modifierShadow else modifier,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (state == CustomerListState.MEMBERS)
                         MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.secondary
                 ),
+                shape = RectangleShape,
                 onClick = { state = CustomerListState.MEMBERS }
             ) { Text(text = "Leden", fontSize = 25.sp) }
 
             Button(
-                modifier = Modifier.weight(1f).height(80.dp),
+                modifier = if (state == CustomerListState.GROUPS) modifierShadow else modifier,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (state == CustomerListState.GROUPS)
                         MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.secondary
                 ),
+                shape = RectangleShape,
                 onClick = { state = CustomerListState.GROUPS }
             ) { Text(text = "Groepen", fontSize = 25.sp) }
         }
@@ -209,5 +221,5 @@ private fun BigButton(
         )
     }
 
-    Spacer(modifier = Modifier.size(20.dp))
+    Spacer(modifier = Modifier.size(10.dp))
 }

@@ -49,7 +49,6 @@ private fun BeheerContent(
             navigate = navigate,
             text = "Terug",
             route = "home",
-            height = 60.dp,
         )
 
         Spacer(Modifier.size(100.dp))

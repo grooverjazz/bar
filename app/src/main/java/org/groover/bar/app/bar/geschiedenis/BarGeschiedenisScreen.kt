@@ -63,7 +63,6 @@ private fun BarGeschiedenisContent(
             navigate = navigate,
             text = "Terug",
             route = "bar",
-            height = 60.dp,
         )
 
         Spacer(modifier = Modifier.size(20.dp))

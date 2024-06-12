@@ -61,12 +61,7 @@ fun OrderList(
     )
 
     // UI
-    LazyColumn(
-        modifier = Modifier
-            .padding(10.dp)
-            .background(Color.LightGray)
-            .height(900.dp)
-    ) {
+    BigList {
         filteredOrders.forEach { order ->
             item {
                 // Get printable name of customer

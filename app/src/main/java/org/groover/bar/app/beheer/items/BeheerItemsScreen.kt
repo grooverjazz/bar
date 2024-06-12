@@ -92,7 +92,6 @@ private fun BeheerItemsContent(
             navigate = navigate,
             text = "Terug",
             route = "beheer",
-            height = 60.dp,
         )
 
         // Title

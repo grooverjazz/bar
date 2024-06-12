@@ -73,7 +73,6 @@ private fun BeheerItemsItemError(
             navigate = navigate,
             text = "Terug",
             route = "beheer/items",
-            height = 60.dp,
         )
         Spacer(modifier = Modifier.size(20.dp))
 
@@ -103,7 +102,6 @@ private fun BeheerItemsItemContent(
             navigate = navigate,
             text = "Terug",
             route = "beheer/items",
-            height = 60.dp,
         )
         Spacer(modifier = Modifier.size(20.dp))
 

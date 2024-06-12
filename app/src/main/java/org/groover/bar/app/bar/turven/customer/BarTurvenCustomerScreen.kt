@@ -16,7 +16,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.groover.bar.data.group.Group
@@ -29,6 +28,7 @@ import org.groover.bar.data.order.Order
 import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.util.app.ItemList
 import org.groover.bar.util.app.NavigateButton
+import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 import org.groover.bar.util.data.Cents
 import org.groover.bar.util.data.DateUtils
@@ -68,7 +68,7 @@ fun BarTurvenCustomerScreen(
         else -> ""
     }
 
-    val finishOrder = { currentOrder: List<Int> ->
+    val placeOrder = { currentOrder: List<Int> ->
         orderRepository.placeOrder(currentOrder, customerId, items)
 
         if (previousOrder == null) {
@@ -78,8 +78,7 @@ fun BarTurvenCustomerScreen(
             Toast
                 .makeText(context, "Bestelling geplaatst!", Toast.LENGTH_SHORT)
                 .show()
-        }
-        else {
+        } else {
             orderRepository.removeOrder(previousOrder.id)
 
             navigate("bar/geschiedenis")
@@ -89,6 +88,27 @@ fun BarTurvenCustomerScreen(
                 .makeText(context, "Bestelling aangepast!", Toast.LENGTH_SHORT)
                 .show()
         }
+    }
+
+    val deleteOrder = {
+        orderRepository.removeOrder(previousOrder!!.id)
+
+        navigate("bar/geschiedenis")
+
+        // Show toast
+        Toast
+            .makeText(context, "Bestelling verwijderd!", Toast.LENGTH_SHORT)
+            .show()
+    }
+
+    val finishOrder = { currentOrder: List<Int> ->
+        // Check if the order needs to be deleted
+        val delete = currentOrder.sum() == 0 && previousOrder != null
+
+        if (delete)
+            deleteOrder()
+        else
+            placeOrder(currentOrder)
     }
 
     val getOrderCost: (List<Int>) -> Cents = { amounts ->
@@ -131,21 +151,12 @@ private fun BarTurvenCustomerContent(
             navigate = navigate,
             text = "Terug",
             route = backRoute,
-            height = 60.dp,
         )
 
         Spacer(modifier = Modifier.size(20.dp))
 
         // Member name
-        Text(
-            text = customerName,
-            fontFamily = FontFamily.Serif,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 60.sp,
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+        TitleText(customerName)
 
         // Member total
         Text(
@@ -178,11 +189,21 @@ private fun BarTurvenCustomerContent(
 
         // Submit button
         val orderCost = getOrderCost(currentOrder)
+        val hasItems = orderCost.amount != 0
+        val newOrder = previousOrder == null
+
         Button(
             modifier = Modifier.height(60.dp),
             onClick = { finishOrder(currentOrder) },
+            enabled = hasItems || !newOrder,
         ) {
-            Text("Bestelling afronden (${orderCost.stringWithEuro})",
+            val text = when {
+                hasItems -> "Bestelling afronden (${orderCost.stringWithEuro})"
+                !hasItems && !newOrder -> "Bestelling verwijderen"
+                else -> "..."
+            }
+
+            Text(text,
                 fontSize = 30.sp
             )
         }

@@ -30,7 +30,6 @@ private fun BarContent(
             navigate = navigate,
             text = "Terug",
             route = "home",
-            height = 60.dp,
         )
 
         Spacer(modifier = Modifier.size(80.dp))

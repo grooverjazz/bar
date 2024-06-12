@@ -95,7 +95,6 @@ fun BeheerGroupError(
             navigate = navigate,
             text = "Terug",
             route = "beheer/customers",
-            height = 60.dp,
         )
         Spacer(Modifier.size(20.dp))
 
@@ -125,7 +124,6 @@ fun BeheerGroupContent(
             navigate = navigate,
             text = "Terug",
             route = "beheer/customers",
-            height = 60.dp,
         )
         Spacer(Modifier.size(20.dp))
 
