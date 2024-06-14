@@ -1,7 +1,9 @@
 package org.groover.bar.util.data
 
 import android.content.Context
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
+import java.io.FileOutputStream
 
 class FileOpener(
     val context: Context,
@@ -13,7 +15,6 @@ class FileOpener(
         context.getExternalFilesDir("")?.path + "/" +
         relativePath +
         (if (relativePath == "") "" else "/")
-
 
     fun listDirs(): List<String> {
         return File(dir)
@@ -49,5 +50,11 @@ class FileOpener(
 
         val dataStr = data.joinToString("\n");
         writeFile.writeText(dataStr)
+    }
+
+    fun write(fileName: String, data: XSSFWorkbook) {
+        FileOutputStream(File(dir, fileName)).use { fileOut ->
+            data.write(fileOut)
+        }
     }
 }

@@ -50,8 +50,9 @@ android {
 }
 
 dependencies {
-//    implementation(libs.poi)
-//    implementation(libs.poi.ooxml)
+    // Apache POI (used for Excel export)
+    implementation(libs.poi)
+    implementation(libs.poi.ooxml)
 
     // Fuzzy matcher (used for search)
     implementation(libs.fuzzy.matcher)

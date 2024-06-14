@@ -13,7 +13,7 @@ data class Member(
     val achternaam: String,
     val verjaardag: Date,
 ): BarData() {
-    private val roepVoornaam = if (roepnaam == "") voornaam else roepnaam
+    val roepVoornaam = if (roepnaam == "") voornaam else roepnaam
 
     val fullName: String = listOf(roepVoornaam, tussenvoegsel, achternaam)
         .filter { it.isNotBlank() }

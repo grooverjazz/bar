@@ -10,6 +10,15 @@ data class ExportRow (
     val achternaam: String,
     val amount: Cents
 ) {
+    fun serialize(): List<String> {
+        return listOf(
+            id.toString(),
+            voornaam,
+            tussenvoegsel,
+            achternaam,
+        )
+    }
+
     companion object {
         fun serialize(exportRow: ExportRow): String {
             return CSV.serialize(

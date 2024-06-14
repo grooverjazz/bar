@@ -29,7 +29,7 @@ fun BeheerScreen(
 ) {
     BeheerContent(
         navigate = navigate,
-        export = exportHandler::export,
+        export = {},
         exportBtw = btwHandler::export,
     )
 }
