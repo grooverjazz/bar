@@ -25,8 +25,6 @@ import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.member.MemberRepository
 import org.groover.bar.data.order.Order
 import org.groover.bar.data.order.OrderRepository
-import org.groover.bar.export.BTWHandler
-import org.groover.bar.export.ExcelHandler
 import org.groover.bar.export.ExportHandler
 import org.groover.bar.export.OptionsHandler
 import org.groover.bar.util.data.FileOpener
@@ -70,30 +68,17 @@ fun App() {
     val exportHandler = ExportHandler(
         context = context,
         fileOpener = fileOpener,
+        optionsHandler = optionsHandler,
         memberRepository = memberRepository,
         groupRepository = groupRepository,
         itemRepository = itemRepository,
-        orderRepository = orderRepository,
-    )
-
-    val btwHandler = BTWHandler(
-        context = context,
-        orderRepository = orderRepository,
-        itemRepository = itemRepository,
+        orderRepository = orderRepository
     )
 
     val navController = rememberNavController()
     val navigate: (String) -> Unit = { navController.navigate(it) }
 
     val BackBehavior: @Composable (String) -> Unit = { BackHandler { navigate(it) } }
-
-    ExcelHandler(
-        context = context,
-        fileOpener = fileOpener,
-        itemRepository = itemRepository,
-        memberRepository = memberRepository,
-        exportHandler = exportHandler,
-    ).export()
 
     NavHost(
         navController = navController,
@@ -190,8 +175,7 @@ fun App() {
 
             BeheerScreen(
                 navigate = navigate,
-                exportHandler = exportHandler,
-                btwHandler = btwHandler,
+                export = { exportHandler.export() }
             )
         }
 
