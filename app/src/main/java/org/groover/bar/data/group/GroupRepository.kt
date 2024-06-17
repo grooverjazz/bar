@@ -12,6 +12,10 @@ class GroupRepository(
     Group.Companion::deserialize,
     listOf("ID", "Name", "Member IDs...")
 ) {
+    init {
+        open()
+    }
+
     fun addGroup(newGroupName: String) {
         val newGroup = Group(
             id = 2000000 + generateId(),

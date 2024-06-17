@@ -12,6 +12,7 @@ data class Member(
     val tussenvoegsel: String,
     val achternaam: String,
     val verjaardag: Date,
+    val isExtra: Boolean = false,
 ): BarData() {
     val roepVoornaam = if (roepnaam == "") voornaam else roepnaam
 
@@ -19,7 +20,7 @@ data class Member(
         .filter { it.isNotBlank() }
         .joinToString(" ")
 
-    override fun toString(): String = fullName
+    override fun toString(): String = if (isExtra) "(($fullName))" else fullName
 
     companion object {
         // (Serializes the user)

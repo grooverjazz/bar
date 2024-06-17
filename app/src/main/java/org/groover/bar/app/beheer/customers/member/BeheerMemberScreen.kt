@@ -51,7 +51,7 @@ fun BeheerMemberScreen(
 
     val finishEdit = { newRoepnaam: String, newVoornaam: String, newTussenvoegsel: String, newAchternaam: String, newVerjaardag: Date ->
         // Change the member
-        memberRepository.changeMember(memberId, newRoepnaam, newVoornaam, newTussenvoegsel, newAchternaam, newVerjaardag)
+        memberRepository.changeMember(memberId, newRoepnaam, newVoornaam, newTussenvoegsel, newAchternaam, newVerjaardag, currentMember.isExtra)
 
         // Navigate back
         navigate("beheer/customers")

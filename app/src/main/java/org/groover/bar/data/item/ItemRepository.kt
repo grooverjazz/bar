@@ -13,6 +13,10 @@ class ItemRepository(
     Item.Companion::deserialize,
     listOf("ID", "Name", "Price", "BTW Percentage"),
 ) {
+    init {
+        open()
+    }
+
     fun addItem(name: String, price: Cents, btwPercentage: Int, color: Int) {
         // Create new item
         val newItem = Item(

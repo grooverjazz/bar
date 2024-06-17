@@ -143,7 +143,7 @@ private fun MemberList(
     addTempMember: (String) -> Unit,
     height: Dp,
 ) {
-    val filteredMembers = SearchHandler.search(searchText, members) { it.fullName }
+    val filteredMembers = SearchHandler.search(searchText, members) { it.toString() }
 
     // UI
     BigList(height = height) {
@@ -161,6 +161,7 @@ private fun MemberList(
             item {
                 BigButton(
                     text = member.toString(),
+                    color = if (member.isExtra) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
                     onClick = { onClick(member) }
                 )
             }

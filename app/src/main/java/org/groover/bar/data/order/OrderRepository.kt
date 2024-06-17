@@ -16,6 +16,10 @@ class OrderRepository(
     Order.Companion::deserialize,
     listOf("ID", "Customer ID", "Timestamp", "Amounts...")
 ) {
+    init {
+        open()
+    }
+
     fun placeOrder(amounts: List<Int>, customerId: Int, items: List<Item>) {
         val amountsMap = (items zip amounts).associate { (item, amount) ->
             item.id to amount

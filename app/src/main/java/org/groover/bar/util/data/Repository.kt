@@ -12,32 +12,38 @@ abstract class Repository<T: BarData>(
 ) {
     val data: SnapshotStateList<T> = emptyList<T>().toMutableStateList()
 
-    init {
-        open()
-    }
+//    open val asdf: SnapshotStateList<T> get() = data
 
     // (Loads/Reloads the data of the repository)
-    fun open() {
+    open fun open() {
+        // Read from file
+        data.clear()
+        data += openFile(fileName)
+    }
+
+    protected fun openFile(f: String): List<T> {
         // Read data
-        val dataStr = fileOpener.read(fileName, dropFirst = true)
+        val dataStr = fileOpener.read(f, dropFirst = true)
 
         // Deserialize data
-        data.clear()
-        data += dataStr
+        return dataStr
             .map(String::trim)
             .filter { it != "" }
             .map(deserialize)
-            .toMutableStateList()
     }
 
     // (Saves the data of the repository)
-    fun save() {
+    open fun save() {
+        saveFile(data, fileName)
+    }
+
+    protected fun saveFile(list: List<T>, f: String) {
         // Serialize data
         val titleRowStr = CSV.serialize(titleRow)
-        val dataStr = listOf(titleRowStr) + data.map(serialize)
+        val dataStr = listOf(titleRowStr) + list.map(serialize)
 
         // Save data
-        fileOpener.write(fileName, dataStr)
+        fileOpener.write(f, dataStr)
     }
 
     // (Finds the corresponding element)
@@ -55,8 +61,19 @@ abstract class Repository<T: BarData>(
     }
 
     // (Replaces the element)
-    fun replaceById(id: Int, new: T) {
+    fun replaceById(id: Int, new: T, inPlace: Boolean = true) {
         assert(new.id == id) { "Incorrect ID" }
+
+        if (!inPlace) {
+            // Remove and re-add
+            data.remove(lookupById(id))
+            data += new
+
+            // Save
+            save()
+
+            return
+        }
 
         // Get all items before and after the specified item
         val before = data.takeWhile { it.id != id }
