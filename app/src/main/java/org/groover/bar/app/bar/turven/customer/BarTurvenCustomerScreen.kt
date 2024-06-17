@@ -145,17 +145,8 @@ private fun BarTurvenCustomerContent(
     VerticalGrid(
         modifier = Modifier.padding(10.dp)
     ) {
-        // Terug button
-        val backRoute = if (previousOrder == null) "bar/turven" else "bar/geschiedenis"
-        NavigateButton(
-            navigate = navigate,
-            text = "Terug",
-            route = backRoute,
-        )
-
-        Spacer(modifier = Modifier.size(20.dp))
-
         // Member name
+        Spacer(modifier = Modifier.size(20.dp))
         TitleText(customerName)
 
         // Member total

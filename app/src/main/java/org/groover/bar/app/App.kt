@@ -84,6 +84,7 @@ fun App() {
         navController = navController,
         startDestination = "Home",
     ) {
+
         // Home
         composable("home") {
             BackHandler { (context as Activity).finish() }

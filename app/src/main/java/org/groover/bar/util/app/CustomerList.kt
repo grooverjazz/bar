@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.toLowerCase
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.android.awaitFrame
@@ -52,6 +53,7 @@ fun CustomerList(
     showAddNewButton: Boolean = false,
     addTempMember: (String) -> Unit,
     addGroup: (String) -> Unit,
+    height: Dp = 800.dp,
 ) {
     var state by remember { mutableStateOf(listState ?: CustomerListState.MEMBERS) }
     var searchText by remember { mutableStateOf("") }
@@ -118,6 +120,7 @@ fun CustomerList(
             onClick = memberOnClick,
             showAddNewButton = showAddNewButton,
             addTempMember = addTempMember,
+            height = height,
         )
 
         CustomerListState.GROUPS -> GroupsList(
@@ -125,7 +128,8 @@ fun CustomerList(
             searchText = formattedSearchText,
             onClick = groupOnClick,
             showAddNewButton = showAddNewButton,
-            addGroup = addGroup
+            addGroup = addGroup,
+            height = height,
         )
     }
 }
@@ -137,11 +141,12 @@ private fun MemberList(
     onClick: (Member) -> Unit,
     showAddNewButton: Boolean,
     addTempMember: (String) -> Unit,
+    height: Dp,
 ) {
     val filteredMembers = SearchHandler.search(searchText, members) { it.fullName }
 
     // UI
-    BigList {
+    BigList(height = height) {
         if (showAddNewButton && searchText != "") {
             item {
                 BigButton(
@@ -169,17 +174,16 @@ private fun GroupsList(
     searchText: String,
     onClick: (Group) -> Unit,
     showAddNewButton: Boolean,
-    addGroup: (String) -> Unit
+    addGroup: (String) -> Unit,
+    height: Dp,
 ) {
     val filteredGroups = groups
         .filter { it.toString().contains(searchText) }
 
     // UI
-    BigList {
+    BigList(height = height) {
         if (showAddNewButton && searchText != "") {
             item {
-                Spacer(Modifier.size(80.dp))
-
                 BigButton(
                     text = "Nieuwe lege groep '$searchText' toevoegen",
                     color = MaterialTheme.colorScheme.secondary,
@@ -201,25 +205,3 @@ private fun GroupsList(
 
 
 
-@Composable
-private fun BigButton(
-    text: String,
-    color: Color = MaterialTheme.colorScheme.primary,
-    onClick: () -> Unit = { },
-) {
-    Button(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = color),
-        shape = RectangleShape,
-        onClick = onClick
-    ) {
-        Text(
-            text = text,
-            fontSize = 25.sp
-        )
-    }
-
-    Spacer(modifier = Modifier.size(10.dp))
-}

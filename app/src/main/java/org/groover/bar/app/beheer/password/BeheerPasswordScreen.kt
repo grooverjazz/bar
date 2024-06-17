@@ -40,16 +40,8 @@ private fun BeheerPasswordContent(
         modifier = Modifier
             .padding(10.dp)
     ) {
-        // Terug button
-        NavigateButton(
-            navigate = navigate,
-            text = "Terug",
-            route = "home",
-        )
-
-        Spacer(Modifier.size(100.dp))
-
         // Title
+        Spacer(Modifier.size(100.dp))
         TitleText("Wachtwoord aanpassen")
 
         Spacer(Modifier.size(80.dp))

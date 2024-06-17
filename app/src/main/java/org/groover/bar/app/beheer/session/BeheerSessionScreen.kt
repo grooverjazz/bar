@@ -65,14 +65,6 @@ private fun BeheerSessionContent(
         modifier = Modifier
             .padding(10.dp)
     ) {
-        // Terug button
-        NavigateButton(
-            navigate = navigate,
-            text = "Terug",
-            route = "beheer",
-        )
-
-        // Title
         Spacer(modifier = Modifier.size(20.dp))
         TitleText("Sessies")
         Spacer(modifier = Modifier.size(20.dp))

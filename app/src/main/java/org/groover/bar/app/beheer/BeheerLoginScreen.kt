@@ -58,16 +58,8 @@ private fun BeheerLoginContent(
         modifier = Modifier
             .padding(10.dp)
     ) {
-        // Terug button
-        NavigateButton(
-            navigate = navigate,
-            text = "Terug",
-            route = "home",
-        )
-
-        Spacer(Modifier.size(100.dp))
-
         // Title
+        Spacer(Modifier.size(100.dp))
         TitleText("Beheer: Inlog")
 
         Spacer(Modifier.size(80.dp))

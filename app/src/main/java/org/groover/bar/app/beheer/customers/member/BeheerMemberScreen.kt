@@ -73,14 +73,6 @@ private fun BeheerMemberError(
     VerticalGrid(
         modifier = Modifier.padding(10.dp)
     ) {
-        // Terug button
-        NavigateButton(
-            navigate = navigate,
-            text = "Terug",
-            route = "beheer/customers",
-        )
-        Spacer(Modifier.size(20.dp))
-
         TitleText("Lid met ID $memberId niet gevonden!")
     }
 }
@@ -102,14 +94,7 @@ private fun BeheerMemberContent(
     VerticalGrid(
         modifier = Modifier.padding(10.dp)
     ) {
-        // Terug button
-        NavigateButton(
-            navigate = navigate,
-            text = "Terug",
-            route = "beheer/customers",
-        )
         Spacer(Modifier.size(20.dp))
-
         TitleText("Lid bewerken")
         Spacer(Modifier.size(20.dp))
 

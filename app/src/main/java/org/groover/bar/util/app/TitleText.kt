@@ -16,7 +16,7 @@ fun TitleText(
         text = text,
         fontFamily = FontFamily.Serif,
         fontWeight = FontWeight.ExtraBold,
-        fontSize = 60.sp,
+        fontSize = 70.sp,
         textAlign = TextAlign.Center,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis

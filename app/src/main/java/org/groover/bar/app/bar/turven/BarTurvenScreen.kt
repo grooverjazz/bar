@@ -51,13 +51,6 @@ private fun BarTurvenContent(
     VerticalGrid(
         modifier = Modifier.padding(10.dp)
     ) {
-        // Terug button
-        NavigateButton(
-            navigate = navigate,
-            text = "Terug",
-            route = "bar",
-        )
-
         Spacer(modifier = Modifier.size(20.dp))
         TitleText("Turven")
         Spacer(modifier = Modifier.size(20.dp))

@@ -90,15 +90,7 @@ private fun BeheerItemsContent(
             )
         }
 
-        // Terug button
-        NavigateButton(
-            navigate = navigate,
-            text = "Terug",
-            route = "beheer",
-        )
-
         // Title
-        Spacer(modifier = Modifier.size(20.dp))
         TitleText("Items")
         Spacer(modifier = Modifier.size(20.dp))
 
@@ -117,9 +109,7 @@ private fun BeheerItemsContent(
         Spacer(modifier = Modifier.size(20.dp))
 
         // Items edit list
-        BigList(
-            size = 800.dp
-        ) {
+        BigList {
             items.forEach { item ->
                 item {
                     ItemEditItem(

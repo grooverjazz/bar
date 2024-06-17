@@ -58,13 +58,6 @@ private fun BarGeschiedenisContent(
     VerticalGrid(
         modifier = Modifier.padding(10.dp)
     ) {
-        // Terug button
-        NavigateButton(
-            navigate = navigate,
-            text = "Terug",
-            route = "bar",
-        )
-
         Spacer(modifier = Modifier.size(20.dp))
         TitleText("Geschiedenis")
         Spacer(modifier = Modifier.size(20.dp))

@@ -68,14 +68,6 @@ private fun BeheerItemsItemError(
         modifier = Modifier
             .padding(10.dp)
     ) {
-        // Terug button
-        NavigateButton(
-            navigate = navigate,
-            text = "Terug",
-            route = "beheer/items",
-        )
-        Spacer(modifier = Modifier.size(20.dp))
-
         TitleText("Kan item met ID $itemId niet vinden!")
     }
 }
@@ -97,14 +89,6 @@ private fun BeheerItemsItemContent(
         modifier = Modifier
             .padding(10.dp)
     ) {
-        // Terug button
-        NavigateButton(
-            navigate = navigate,
-            text = "Terug",
-            route = "beheer/items",
-        )
-        Spacer(modifier = Modifier.size(20.dp))
-
         TitleText("Item bewerken")
         Spacer(Modifier.size(20.dp))
 

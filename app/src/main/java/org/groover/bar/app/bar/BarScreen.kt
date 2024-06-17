@@ -25,16 +25,8 @@ private fun BarContent(
     VerticalGrid(
         modifier = Modifier.padding(10.dp)
     ) {
-        // Terug button
-        NavigateButton(
-            navigate = navigate,
-            text = "Terug",
-            route = "home",
-        )
-
-        Spacer(modifier = Modifier.size(80.dp))
-
         // Title
+        Spacer(modifier = Modifier.size(100.dp))
         TitleText("Bar")
 
         Spacer(Modifier.size(80.dp))

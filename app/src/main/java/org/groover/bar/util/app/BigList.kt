@@ -17,14 +17,14 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun BigList(
-    size: Dp = 700.dp,
+    height: Dp = 800.dp,
     content: LazyListScope.() -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
             .padding(10.dp)
 //            .background(color = Color.LightGray)
-            .height(size)
+            .height(height)
             .innerShadow(
                 shape = RoundedCornerShape(16.dp),
                 blur = 12.dp,

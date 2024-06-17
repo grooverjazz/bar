@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -20,11 +22,18 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.groover.bar.data.group.Group
 import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.member.Member
 import org.groover.bar.data.member.MemberRepository
+import org.groover.bar.util.app.BigButton
+import org.groover.bar.util.app.BigList
 import org.groover.bar.util.app.CustomerList
 import org.groover.bar.util.app.CustomerListState
 import org.groover.bar.util.app.NavigateButton
@@ -90,14 +99,6 @@ fun BeheerGroupError(
     VerticalGrid(
         modifier = Modifier.padding(10.dp)
     ) {
-        // Terug button
-        NavigateButton(
-            navigate = navigate,
-            text = "Terug",
-            route = "beheer/customers",
-        )
-        Spacer(Modifier.size(20.dp))
-
         // Name field
         TitleText("Groep met ID $groupId niet gevonden!")
     }
@@ -119,50 +120,30 @@ fun BeheerGroupContent(
     VerticalGrid(
         modifier = Modifier.padding(10.dp)
     ) {
-        // Terug button
-        NavigateButton(
-            navigate = navigate,
-            text = "Terug",
-            route = "beheer/customers",
-        )
-        Spacer(Modifier.size(20.dp))
+        Spacer(modifier = Modifier.size(20.dp))
+        TitleText("Groep bewerken")
+        Spacer(Modifier.size(40.dp))
 
         // Name field
+        Text(
+            text = "Naam groep:",
+            fontSize = 20.sp,
+        )
         TextField(
             value = newName,
             onValueChange = { newName = it },
             placeholder = { Text("Naam") }
         )
-        Spacer(modifier = Modifier.size(20.dp))
-
-        // Members to remove
-        LazyColumn(
-            modifier = Modifier.padding(10.dp).background(Color.LightGray).height(200.dp)
-        ) {
-            newMembers.forEach {  member ->
-                item {
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RectangleShape,
-                        onClick = { removeMember(member) }
-                    ) { Text("$member") }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.size(30.dp))
-
-        // Save button
-        Button(onClick = {
-            // Finish editing
-            finishEdit(newName, newMembers.map { it.id })
-        }) {
-            Text("Opslaan")
-        }
+        Spacer(modifier = Modifier.size(40.dp))
 
         // Members to add
+        Text(
+            text = "Leden om toe te voegen:",
+            fontSize = 30.sp,
+            textAlign = TextAlign.Center,
+        )
         CustomerList(
-            members = members,
+            members = members.filter { !newMembers.contains(it) },
             groups = emptyList(),
             listState = CustomerListState.MEMBERS,
             memberOnClick = addMember,
@@ -170,6 +151,36 @@ fun BeheerGroupContent(
             showAddNewButton = false,
             addTempMember = { },
             addGroup = { },
+            height = 250.dp,
         )
+        Spacer(modifier = Modifier.size(40.dp))
+
+        // Members to remove
+        Text(
+            text = "Leden in groep (tik om te verwijderen):",
+            fontSize = 30.sp,
+            textAlign = TextAlign.Center,
+        )
+        BigList(height = 250.dp) {
+            newMembers.forEach { member ->
+                item {
+                    BigButton(
+                        color = MaterialTheme.colorScheme.tertiary,
+                        text = member.toString(),
+                        onClick = { removeMember(member) }
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.size(40.dp))
+
+        Button(
+            modifier = Modifier.height(60.dp),
+            onClick = { finishEdit(newName, newMembers.map { it.id }) },
+        ) {
+            Text("Opslaan",
+                fontSize = 30.sp
+            )
+        }
     }
 }
