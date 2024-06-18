@@ -12,8 +12,6 @@ abstract class Repository<T: BarData>(
 ) {
     val data: SnapshotStateList<T> = emptyList<T>().toMutableStateList()
 
-//    open val asdf: SnapshotStateList<T> get() = data
-
     // (Loads/Reloads the data of the repository)
     open fun open() {
         // Read from file

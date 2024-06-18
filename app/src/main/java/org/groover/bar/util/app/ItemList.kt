@@ -36,7 +36,7 @@ fun ItemList(
     items: List<Item>,
     amounts: MutableList<Int>,
 ) {
-    BigList {
+    BigList(height = 900.dp) {
         items.forEachIndexed { index, item ->
             item {
                 ItemListEntry(item, item.colorC, amounts[index], setAmount = { amounts[index] = it })

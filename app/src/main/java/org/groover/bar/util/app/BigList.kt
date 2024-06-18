@@ -1,6 +1,7 @@
 package org.groover.bar.util.app
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,6 +33,7 @@ fun BigList(
                 offsetY = 3.dp,
             )
             .clip(RoundedCornerShape(16.dp)),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
         content = content
     )
 }

@@ -13,7 +13,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.groover.bar.R
 import org.groover.bar.util.app.NavigateButton
-import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 
 @Composable

@@ -2,6 +2,7 @@ package org.groover.bar.app.beheer.items
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -91,6 +92,7 @@ private fun BeheerItemsContent(
         }
 
         // Title
+        Spacer(modifier = Modifier.size(20.dp))
         TitleText("Items")
         Spacer(modifier = Modifier.size(20.dp))
 
@@ -109,7 +111,7 @@ private fun BeheerItemsContent(
         Spacer(modifier = Modifier.size(20.dp))
 
         // Items edit list
-        BigList {
+        BigList(height = 900.dp) {
             items.forEach { item ->
                 item {
                     ItemEditItem(
@@ -120,8 +122,6 @@ private fun BeheerItemsContent(
                         onDownClick = { itemMoveDown(item.id) },
                         onDeleteClick = { itemRemoveState = item }
                     )
-
-                    Spacer(modifier = Modifier.size(10.dp))
                 }
             }
         }
@@ -155,9 +155,12 @@ fun ItemEditItem(
             )
         }
 
-        Row {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             Button(modifier = Modifier.weight(1f).height(50.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                shape = RectangleShape,
                 onClick = onDeleteClick
             ) {
                 Icon(Icons.Rounded.Delete, null)
@@ -166,12 +169,14 @@ fun ItemEditItem(
             val c = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
             Button(modifier = Modifier.weight(2f).height(50.dp),
                 colors = c,
+                shape = RectangleShape,
                 onClick = onUpClick
             ) {
                 Icon(Icons.Rounded.KeyboardArrowUp, null)
             }
             Button(modifier = Modifier.weight(2f).height(50.dp),
                 colors = c,
+                shape = RectangleShape,
                 onClick = onDownClick
             ) {
                 Icon(Icons.Rounded.KeyboardArrowDown, null)
@@ -198,12 +203,12 @@ fun PopupDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text(dismissText)
+                Text(confirmText)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(confirmText)
+                Text(dismissText)
             }
         }
     )

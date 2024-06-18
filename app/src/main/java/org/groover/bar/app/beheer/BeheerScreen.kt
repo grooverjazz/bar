@@ -3,13 +3,10 @@ package org.groover.bar.app.beheer
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import org.groover.bar.util.app.BigButton
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
@@ -76,10 +73,9 @@ private fun BeheerContent(
 
         Spacer(Modifier.size(50.dp))
 
-        Button(
-            onClick = export
-        ) {
-            Text("Hele zooi afrekenen")
-        }
+        BigButton(text = "Hele zooi afrekenen",
+            onClick = export,
+            rounded = true,
+        )
     }
 }

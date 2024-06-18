@@ -20,20 +20,19 @@ fun BigButton(
     text: String,
     color: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit = { },
+    rounded: Boolean = false,
 ) {
     Button(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp),
+            .height(95.dp),
         colors = ButtonDefaults.buttonColors(containerColor = color),
-        shape = RectangleShape,
+        shape = if (rounded) ButtonDefaults.shape else RectangleShape,
         onClick = onClick
     ) {
         Text(
             text = text,
-            fontSize = 25.sp
+            fontSize = 30.sp
         )
     }
-
-    Spacer(modifier = Modifier.size(10.dp))
 }

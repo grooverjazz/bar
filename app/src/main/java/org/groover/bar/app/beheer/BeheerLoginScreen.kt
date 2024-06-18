@@ -17,6 +17,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import org.groover.bar.util.app.BigButton
+import org.groover.bar.util.app.LabeledTextField
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
@@ -60,22 +62,23 @@ private fun BeheerLoginContent(
     ) {
         // Title
         Spacer(Modifier.size(100.dp))
-        TitleText("Beheer: Inlog")
+        TitleText("Beheer")
 
         Spacer(Modifier.size(80.dp))
 
         // Password field
-        TextField(
+        LabeledTextField(
+            text = "Wachtwoord",
             value = currentPassword,
-            visualTransformation = PasswordVisualTransformation(),
             onValueChange = { currentPassword = it.trim() },
-            placeholder = { Text("Wachtwoord") }
+            isPassword = true,
         )
-        Spacer(modifier = Modifier.size(20.dp))
+        Spacer(modifier = Modifier.size(40.dp))
 
         // Login button
-        Button(onClick = { logIn(currentPassword) }) {
-            Text("Inloggen")
-        }
+        BigButton(text = "Inloggen",
+            onClick = { logIn(currentPassword) },
+            rounded = true,
+        )
     }
 }

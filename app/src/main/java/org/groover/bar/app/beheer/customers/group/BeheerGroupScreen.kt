@@ -1,14 +1,20 @@
 package org.groover.bar.app.beheer.customers.group
 
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -22,12 +28,14 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.groover.bar.app.beheer.items.PopupDialog
 import org.groover.bar.data.group.Group
 import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.member.Member
@@ -36,6 +44,7 @@ import org.groover.bar.util.app.BigButton
 import org.groover.bar.util.app.BigList
 import org.groover.bar.util.app.CustomerList
 import org.groover.bar.util.app.CustomerListState
+import org.groover.bar.util.app.LabeledTextField
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
@@ -80,6 +89,20 @@ fun BeheerGroupScreen(
         newMembers -= member
     }
 
+    val context = LocalContext.current
+    val remove = {
+        // Remove the member
+        groupRepository.removeById(groupId)
+
+        // Navigate back
+        navigate("beheer/customers")
+
+        // Show toast
+        Toast
+            .makeText(context, "Groep verwijderd!", Toast.LENGTH_SHORT)
+            .show()
+    }
+
     BeheerGroupContent(
         navigate = navigate,
         members = memberRepository.data,
@@ -88,6 +111,7 @@ fun BeheerGroupScreen(
         newMembers = newMembers,
         addMember = addMember,
         removeMember = removeMember,
+        remove = remove,
     )
 }
 
@@ -113,26 +137,49 @@ fun BeheerGroupContent(
     newMembers: SnapshotStateList<Member>,
     addMember: (Member) -> Unit,
     removeMember: (Member) -> Unit,
+    remove: () -> Unit,
 ) {
-    // Remember name, memberIds
+    // Remember name
     var newName: String by remember { mutableStateOf(currentGroup.name) }
+
+    var delete: Boolean by remember { mutableStateOf(false) }
+
+    if (delete) {
+        PopupDialog(
+            confirmText = "Verwijderen",
+            dismissText = "Annuleren",
+            onConfirm = remove,
+            onDismiss = { delete = false },
+            dialogTitle = "Item verwijderen",
+            dialogText = "Weet je zeker dat je dit lid (${currentGroup}) wilt verwijderen?",
+            icon = Icons.Rounded.Delete,
+        )
+    }
 
     VerticalGrid(
         modifier = Modifier.padding(10.dp)
     ) {
-        Spacer(modifier = Modifier.size(20.dp))
-        TitleText("Groep bewerken")
+        Spacer(Modifier.size(20.dp))
+        Row {
+            TitleText("Groep",
+                modifier = Modifier.weight(.85f))
+
+            Button(modifier = Modifier
+                .weight(.15f)
+                .height(100.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                onClick = { delete = true }
+            ) {
+                Icon(Icons.Rounded.Delete, null, Modifier.size(40.dp))
+            }
+        }
         Spacer(Modifier.size(40.dp))
 
         // Name field
-        Text(
-            text = "Naam groep:",
-            fontSize = 20.sp,
-        )
-        TextField(
+        LabeledTextField(
+            text = "Naam",
             value = newName,
             onValueChange = { newName = it },
-            placeholder = { Text("Naam") }
         )
         Spacer(modifier = Modifier.size(40.dp))
 
@@ -142,6 +189,7 @@ fun BeheerGroupContent(
             fontSize = 30.sp,
             textAlign = TextAlign.Center,
         )
+        Spacer(modifier = Modifier.height(10.dp))
         CustomerList(
             members = members.filter { !newMembers.contains(it) },
             groups = emptyList(),
@@ -161,11 +209,12 @@ fun BeheerGroupContent(
             fontSize = 30.sp,
             textAlign = TextAlign.Center,
         )
+        Spacer(modifier = Modifier.height(10.dp))
         BigList(height = 250.dp) {
             newMembers.forEach { member ->
                 item {
                     BigButton(
-                        color = MaterialTheme.colorScheme.tertiary,
+                        color = if (member.isExtra) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
                         text = member.toString(),
                         onClick = { removeMember(member) }
                     )
