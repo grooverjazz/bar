@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -21,6 +22,7 @@ fun BigButton(
     color: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit = { },
     rounded: Boolean = false,
+    fontSize: TextUnit = 30.sp
 ) {
     Button(
         modifier = Modifier
@@ -32,7 +34,7 @@ fun BigButton(
     ) {
         Text(
             text = text,
-            fontSize = 30.sp
+            fontSize = fontSize,
         )
     }
 }

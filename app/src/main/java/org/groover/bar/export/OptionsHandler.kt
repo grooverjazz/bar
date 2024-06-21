@@ -38,5 +38,5 @@ class OptionsHandler(
         fileOpener.write("session.csv", dataStr)
     }
 
-    fun getAllSessions(): List<String> = fileOpener.listDirs()
+    fun getAllSessions(): List<String> = fileOpener.listDirs().sortedDescending()
 }

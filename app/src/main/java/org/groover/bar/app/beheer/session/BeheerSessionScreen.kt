@@ -22,6 +22,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import org.groover.bar.util.app.BigButton
+import org.groover.bar.util.app.BigList
 import org.groover.bar.util.app.ClickableCheckbox
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
@@ -77,32 +80,30 @@ private fun BeheerSessionContent(
         )
 
         // Example name button
-        val colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
-        Button(
-            colors = colors,
-            shape = RectangleShape,
+        BigButton(text = "Wat dacht je van \"$exampleStr\"?",
             onClick = {
                 newSessionName = exampleStr
-            }
-        ) { Text("Wat dacht je van \"$exampleStr\"?") }
+            },
+            color = MaterialTheme.colorScheme.tertiary,
+            rounded = true,
+            fontSize = 24.sp,
+        )
         Spacer(modifier = Modifier.size(40.dp))
 
         // List of all sessions
         Text("Alle sessies:", textAlign = TextAlign.Center)
 
-        LazyColumn(
-            modifier = Modifier.padding(10.dp).background(Color.LightGray).height(200.dp)
-        ) {
-            allSessions.forEach { session ->
+        BigList(height = 600.dp) {
+            for (session in allSessions) {
+                if (session == oldSessionName) continue
+
                 item {
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RectangleShape,
+                    BigButton(text = session,
                         onClick = {
                             newSessionName = session
                             copyGlobalData = false
-                        }
-                    ) { Text(session) }
+                        },
+                    )
                 }
             }
         }
@@ -117,11 +118,13 @@ private fun BeheerSessionContent(
         Spacer(modifier = Modifier.size(10.dp))
 
         // Save button
-        Button(onClick = {
-            // Change the session
-            finish(newSessionName.trim(), copyGlobalData)
-        }) {
-            Text(if (allSessions.contains(newSessionName.trim())) "Sessie openen" else "Sessie aanmaken")
-        }
+        val saveText = if (allSessions.contains(newSessionName.trim())) "Sessie openen" else "Sessie aanmaken"
+        BigButton(text = saveText,
+            onClick = {
+                // Change the session
+                finish(newSessionName.trim(), copyGlobalData)
+            },
+            rounded = true,
+        )
     }
 }
