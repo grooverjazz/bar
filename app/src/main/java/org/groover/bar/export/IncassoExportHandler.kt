@@ -29,11 +29,17 @@ class IncassoExportHandler(
         )
         currentRowIndex += 1
 
+        var refRowIndex = 6
+
         val members = memberRepository.data
         val itemsCount = itemRepository.data.size
-        members.forEach { member ->
+        for (member in members) {
             // Define reference to total in overzicht sheet
-            val totalRefFormula = ExcelHandler.ExcelFormula("Overzicht!" + ExcelHandler.cellStr(currentRowIndex + 4, itemsCount + 5))
+            val totalRefFormula = ExcelHandler.ExcelFormula("Overzicht!" + ExcelHandler.cellStr(refRowIndex, itemsCount + 5))
+            refRowIndex += 1
+
+            // Skip extra members
+            if (member.isExtra) continue
 
             val memberRow = sheet.createRow(currentRowIndex)
             ExcelHandler.writeRow(

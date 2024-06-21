@@ -80,8 +80,6 @@ fun OrderList(
                         fontSize = 25.sp
                     )
                 }
-
-                Spacer(modifier = Modifier.size(20.dp))
             }
         }
     }

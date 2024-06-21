@@ -22,7 +22,7 @@ class ExportHandler(
     private val itemRepository: ItemRepository,
     private val orderRepository: OrderRepository,
 ) {
-    fun export() {
+    fun export(exportName: String) {
         // Create a new workbook
         val workbook = XSSFWorkbook()
 
@@ -50,7 +50,7 @@ class ExportHandler(
         ).export(workbook.createSheet("Incasso"))
 
         // Export and close
-        fileOpener.write("Export.xlsx", workbook)
+        fileOpener.write("$exportName.xlsx", workbook)
         workbook.close()
 
         // Show toast

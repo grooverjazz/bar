@@ -2,6 +2,7 @@ package org.groover.bar.app
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
@@ -27,6 +28,8 @@ import org.groover.bar.data.order.Order
 import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.export.ExportHandler
 import org.groover.bar.export.OptionsHandler
+import org.groover.bar.export.OverzichtExportHandler
+import org.groover.bar.util.data.Cents.Companion.sum
 import org.groover.bar.util.data.FileOpener
 
 @Composable
@@ -176,7 +179,7 @@ fun App() {
 
             BeheerScreen(
                 navigate = navigate,
-                export = { exportHandler.export() }
+                export = { exportHandler.export("Export ${optionsHandler.sessionName}") }
             )
         }
 

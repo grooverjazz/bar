@@ -12,7 +12,7 @@ class OverzichtExportHandler(
     private val itemRepository: ItemRepository,
     private val orderRepository: OrderRepository,
 ) {
-    private fun getOrders(): Map<Int, List<Int>> {
+    fun getOrders(): Map<Int, List<Int>> {
         val orders = orderRepository.data
         val items = itemRepository.data
         val members = memberRepository.data
