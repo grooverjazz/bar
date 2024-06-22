@@ -46,7 +46,7 @@ class IncassoExportHandler(
                 memberRow,
                 listOf(
                     member.id,
-                    member.roepVoornaam,
+                    member.voornaam,
                     member.tussenvoegsel,
                     member.achternaam,
                     totalRefFormula,

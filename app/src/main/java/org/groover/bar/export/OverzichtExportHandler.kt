@@ -74,7 +74,7 @@ class OverzichtExportHandler(
 
             val values = listOf(
                 member.id,
-                member.roepVoornaam,
+                if (member.isExtra) member.roepVoornaam else member.voornaam,
                 member.tussenvoegsel,
                 member.achternaam,
                 aanwezig
