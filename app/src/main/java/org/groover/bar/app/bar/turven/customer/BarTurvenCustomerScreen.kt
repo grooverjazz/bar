@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -138,9 +139,11 @@ private fun BarTurvenCustomerContent(
     getOrderCost: (List<Int>) -> Cents,
     finishOrder: (List<Int>) -> Unit,
 ) {
-    // Initialize (use zeroes if no amounts specified)
-    val initialAmounts = items.map { item -> previousOrder?.getAmount(item.id) ?: 0 }
-    val currentOrder = remember { mutableStateListOf(*initialAmounts.toTypedArray()) }
+    // Initialize initial amounts (or zeroes if not specified)
+    val currentOrder = remember {
+        items.map { item -> previousOrder?.getAmount(item.id) ?: 0 }
+            .toMutableStateList()
+    }
 
     VerticalGrid(
         modifier = Modifier.padding(10.dp)

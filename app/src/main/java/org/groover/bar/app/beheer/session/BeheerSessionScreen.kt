@@ -1,14 +1,8 @@
 package org.groover.bar.app.beheer.session
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -18,15 +12,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.groover.bar.util.app.BigButton
-import org.groover.bar.util.app.BigList
+import org.groover.bar.util.app.LazyBigList
 import org.groover.bar.util.app.ClickableCheckbox
-import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 import java.text.SimpleDateFormat
@@ -93,7 +84,7 @@ private fun BeheerSessionContent(
         // List of all sessions
         Text("Alle sessies:", textAlign = TextAlign.Center)
 
-        BigList(height = 600.dp) {
+        LazyBigList(height = 600.dp) {
             for (session in allSessions) {
                 if (session == oldSessionName) continue
 

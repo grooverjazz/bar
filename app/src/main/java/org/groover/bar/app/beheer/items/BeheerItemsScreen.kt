@@ -1,7 +1,5 @@
 package org.groover.bar.app.beheer.items
 
-import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
@@ -36,8 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
-import org.groover.bar.util.app.BigList
-import org.groover.bar.util.app.NavigateButton
+import org.groover.bar.util.app.LazyBigList
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 import org.groover.bar.util.data.Cents
@@ -111,18 +108,16 @@ private fun BeheerItemsContent(
         Spacer(modifier = Modifier.size(20.dp))
 
         // Items edit list
-        BigList(height = 900.dp) {
-            items.forEach { item ->
-                item {
-                    ItemEditItem(
-                        title = item.name,
-                        color = item.colorC,
-                        onTitleClick = { navigate("beheer/items/item/${item.id}") },
-                        onUpClick = { itemMoveUp(item.id) },
-                        onDownClick = { itemMoveDown(item.id) },
-                        onDeleteClick = { itemRemoveState = item }
-                    )
-                }
+        LazyBigList(height = 900.dp) {
+            items(items) { item ->
+                ItemEditItem(
+                    title = item.name,
+                    color = item.colorC,
+                    onTitleClick = { navigate("beheer/items/item/${item.id}") },
+                    onUpClick = { itemMoveUp(item.id) },
+                    onDownClick = { itemMoveDown(item.id) },
+                    onDeleteClick = { itemRemoveState = item }
+                )
             }
         }
     }
