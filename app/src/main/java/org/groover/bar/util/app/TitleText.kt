@@ -1,8 +1,10 @@
 package org.groover.bar.util.app
 
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -13,6 +15,7 @@ import androidx.compose.ui.unit.sp
 fun TitleText(
     text: String,
     modifier: Modifier = Modifier,
+    style: TextStyle = TextStyle(),
 ) {
     Text(
         modifier = modifier,
@@ -22,6 +25,7 @@ fun TitleText(
         fontSize = 70.sp,
         textAlign = TextAlign.Center,
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
+        style = style,
     )
 }
