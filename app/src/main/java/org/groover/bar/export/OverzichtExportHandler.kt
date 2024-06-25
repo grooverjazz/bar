@@ -36,26 +36,106 @@ class OverzichtExportHandler(
         return allAmounts
     }
 
+    private fun groupMemberRowSum(rowIndex: Int, memberCount: Int, groupCount: Int): Pair<String, String> {
+        val memberStartCell = ExcelHandler.cellStr(6, rowIndex)
+        val memberEndCell = ExcelHandler.cellStr(6 + memberCount - 1, rowIndex)
+
+        val groupStartCell = ExcelHandler.cellStr(6 + memberCount + 2 + 1, rowIndex)
+        val groupEndCell = ExcelHandler.cellStr(6 + memberCount + 2 + groupCount + 1 - 1, rowIndex)
+
+        return Pair("$memberStartCell:$memberEndCell", "$groupStartCell:$groupEndCell")
+    }
+
     fun export(sheet: XSSFSheet) {
         val members = memberRepository.data
         val groups = groupRepository.data
         val items = itemRepository.data
         val orderExport = getOrders()
 
-        var currentRowIndex = 4
+        var currentRowIndex = 0
 
-        val pricesRow = sheet.createRow(currentRowIndex)
-        ExcelHandler.writeRow(
-            pricesRow,
-            listOf("PRIJZEN") + items.map { it.price },
-            startIndex = 4
+        // Leden table
+        val aantalLedenValues = listOf(
+            "aantal leden",
+            members.size
         )
-        val pricesRangeStr = "${ExcelHandler.cellStr(currentRowIndex, 5)}:${ExcelHandler.cellStr(currentRowIndex, 4 + items.size)}"
+        val aantalVerzonnenLedenValues = listOf(
+            "aantal verzonnen leden",
+            members.count { it.isExtra }
+        )
+        val aantalAanwezigeLedenValues = listOf(
+            "aantal aanwezige leden",
+            groupMemberRowSum(4, members.size, groups.size).let { (memberSumStr, groupSumStr) ->
+                ExcelHandler.ExcelFormula("countif($memberSumStr, \"ja\") + countif($groupSumStr, \"nee\")")
+            }
+        )
+
+        // Afzet row
+        ExcelHandler.writeRow(
+            sheet.createRow(currentRowIndex),
+            listOf(
+                "", "", "", "",
+                "AFZET",
+            ) + List(items.size) { index ->
+                groupMemberRowSum(5 + index, members.size, groups.size).let { (memberSumStr, groupSumStr) ->
+                    ExcelHandler.ExcelFormula("sum($memberSumStr, $groupSumStr)")
+                }
+            }
+        )
         currentRowIndex += 1
 
-        val memberHeaderRow = sheet.createRow(currentRowIndex)
+        // Omzet row
         ExcelHandler.writeRow(
-            memberHeaderRow,
+            sheet.createRow(currentRowIndex),
+            listOf("")
+            + aantalLedenValues
+            + listOf(
+                "",
+                "OMZET"
+            )
+            + List(items.size) { index ->
+                val afzetCell = ExcelHandler.cellStr(0, 5 + index)
+                val prijsCell = ExcelHandler.cellStr(4, 5 + index)
+                ExcelHandler.ExcelFormula("$afzetCell * $prijsCell")
+            }
+        )
+        currentRowIndex += 1
+
+        // Verzonnen leden row
+        ExcelHandler.writeRow(
+            sheet.createRow(currentRowIndex),
+            listOf("")
+            + aantalVerzonnenLedenValues
+        )
+        currentRowIndex += 1
+
+        // BTW row
+        ExcelHandler.writeRow(
+            sheet.createRow(currentRowIndex),
+            listOf("")
+            + aantalAanwezigeLedenValues
+            + listOf(
+                "",
+                "BTW",
+            )
+            + items.map { it.btwPercentage }
+        )
+        currentRowIndex += 1
+
+        // Define range of prices (used in sumproduct of total)
+        val pricesRangeStr = "${ExcelHandler.cellStr(currentRowIndex, 5)}:${ExcelHandler.cellStr(currentRowIndex, 4 + items.size)}"
+        // Prices row
+        ExcelHandler.writeRow(
+            sheet.createRow(currentRowIndex),
+            listOf("PRIJZEN")
+            + items.map { it.price },
+            startIndex = 4
+        )
+        currentRowIndex += 1
+
+        // Member header row
+        ExcelHandler.writeRow(
+            sheet.createRow(currentRowIndex),
             listOf(
                 "id",
                 "voornaam",
@@ -63,68 +143,88 @@ class OverzichtExportHandler(
                 "achternaam",
                 "aanwezig",
             ) + items.map { it.name }
+            + groups.map { it.name }
+            + listOf("OMZET"),
         )
         currentRowIndex += 1
 
+        // Members
         members.forEach { member ->
             val memberOrders: List<Int> = orderExport[member.id]!!
-            val aanwezig = if (memberOrders.sum() > 0) "ja" else "nee"
 
-            val row = sheet.createRow(currentRowIndex)
+            // Get range of items
+            val rowWidth = 5 + memberOrders.size
+            val ordersRangeStr = "${ExcelHandler.cellStr(currentRowIndex, 5)}:${ExcelHandler.cellStr(currentRowIndex, rowWidth - 1)}"
+            val groupRangeStr = "${ExcelHandler.cellStr(currentRowIndex, rowWidth)}:${ExcelHandler.cellStr(currentRowIndex, rowWidth + groups.size - 1)}"
 
-            val values = listOf(
-                member.id,
-                if (member.isExtra) member.roepVoornaam else member.voornaam,
-                member.tussenvoegsel,
-                member.achternaam,
-                aanwezig
-            ) + memberOrders
+            // Create formulas
+            val aanwezig = ExcelHandler.ExcelFormula("if(sum($ordersRangeStr),\"ja\",\"nee\")")
+            val total = ExcelHandler.ExcelFormula("sumproduct($pricesRangeStr, $ordersRangeStr) + sum($groupRangeStr)")
 
+            val memberGroupOrders = groups.mapIndexed { index, group ->
+                if (group.memberIds.contains(member.id)) {
+                    val str = ExcelHandler.cellStr(6 + members.size + 2 + 1 + index, 4 + items.size + 1)
+                    ExcelHandler.ExcelFormula("$str / ${group.memberIds.size}")
+                }
+                else {
+                    ""
+                }
+            }
+
+            // Write row
             ExcelHandler.writeRow(
-                row,
-                values
+                sheet.createRow(currentRowIndex),
+                listOf(
+                    member.id,
+                    if (member.isExtra) member.roepVoornaam else member.voornaam,
+                    member.tussenvoegsel,
+                    member.achternaam,
+                    aanwezig
+                )
+                + memberOrders
+                + memberGroupOrders
+                + listOf(total)
             )
-
-            // Add total
-            val ordersRangeStr = "${ExcelHandler.cellStr(currentRowIndex, 5)}:${ExcelHandler.cellStr(currentRowIndex, values.size - 1)}"
-            row.createCell(values.size).cellFormula = "sumproduct($pricesRangeStr, $ordersRangeStr)"
 
             currentRowIndex += 1
         }
-
         currentRowIndex += 2
 
-        val groupHeaderRow = sheet.createRow(currentRowIndex)
+        // Group header row
         ExcelHandler.writeRow(
-            groupHeaderRow,
+            sheet.createRow(currentRowIndex),
             listOf(
                 "id",
                 "naam",
                 "aanwezig"
-            ) + items.map { it.name },
+            ) + items.map { it.name }
+            + listOf("OMZET"),
             startIndex = 2
         )
         currentRowIndex += 1
+
+        // Groups
         groups.forEach { group ->
             val groupOrders: List<Int> = orderExport[group.id]!!
-            val aanwezig = if (groupOrders.sum() > 0) "ja" else "nee"
 
-            val row = sheet.createRow(currentRowIndex)
+            // Get range of items
+            val rowWidth = 5 + groupOrders.size
+            val ordersRangeStr = "${ExcelHandler.cellStr(currentRowIndex, 5)}:${ExcelHandler.cellStr(currentRowIndex, rowWidth - 1)}"
 
-            // Define total
-            val ordersRangeStr = "${ExcelHandler.cellStr(currentRowIndex, 5)}:${ExcelHandler.cellStr(currentRowIndex, 5 + groupOrders.size)}"
-            val totalFormula = ExcelHandler.ExcelFormula("sumproduct($pricesRangeStr, $ordersRangeStr)")
+            // Create formulas
+            val aanwezig = ExcelHandler.ExcelFormula("if(sum($ordersRangeStr),\"ja\",\"nee\")")
+            val total = ExcelHandler.ExcelFormula("sumproduct($pricesRangeStr, $ordersRangeStr)")
 
-            val values = listOf(
-                group.id,
-                group.name,
-                aanwezig,
-                totalFormula,
-            ) + groupOrders
-
+            // Write row
             ExcelHandler.writeRow(
-                row,
-                values,
+                sheet.createRow(currentRowIndex),
+                listOf(
+                    group.id,
+                    group.name,
+                    aanwezig,
+                )
+                + groupOrders
+                + listOf(total),
                 startIndex = 2
             )
 
