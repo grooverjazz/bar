@@ -46,19 +46,22 @@ fun BigList(
     height: Dp = 800.dp,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .padding(10.dp)
-            .height(height)
-            .verticalScroll(rememberScrollState())
-            .innerShadow(
-                shape = RoundedCornerShape(16.dp),
-                blur = 12.dp,
-                offsetX = 3.dp,
-                offsetY = 3.dp,
-            )
-            .clip(RoundedCornerShape(16.dp)),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        content = content,
-    )
+    Box(modifier = Modifier
+        .padding(10.dp)
+        .height(height)
+
+        .innerShadow(
+            shape = RoundedCornerShape(16.dp),
+            blur = 12.dp,
+            offsetX = 3.dp,
+            offsetY = 3.dp,
+        )
+        .clip(RoundedCornerShape(16.dp)),
+    ) {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            content = content,
+        )
+    }
 }
