@@ -8,15 +8,19 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.android.awaitFrame
 import org.groover.bar.util.app.BigButton
 import org.groover.bar.util.app.LabeledTextField
 import org.groover.bar.util.app.NavigateButton
@@ -53,6 +57,14 @@ private fun BeheerLoginContent(
     navigate: (String) -> Unit,
     logIn: (String) -> Unit,
 ) {
+    // Keyboard focus for search box
+    val keyboardFocus = remember { FocusRequester() }
+    LaunchedEffect(keyboardFocus) {
+        awaitFrame()
+        keyboardFocus.freeFocus()
+        keyboardFocus.requestFocus()
+    }
+
     // Remember current password
     var currentPassword: String by remember { mutableStateOf("") }
 
@@ -68,6 +80,7 @@ private fun BeheerLoginContent(
 
         // Password field
         LabeledTextField(
+            modifier = Modifier.focusRequester(keyboardFocus),
             text = "Wachtwoord",
             value = currentPassword,
             onValueChange = { currentPassword = it.trim() },

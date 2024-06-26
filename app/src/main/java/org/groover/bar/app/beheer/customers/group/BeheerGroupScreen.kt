@@ -152,11 +152,11 @@ fun BeheerGroupContent(
     ) {
         Spacer(Modifier.size(20.dp))
         Row {
-            TitleText("Groep",
-                modifier = Modifier.weight(.85f))
+            TitleText("Groep bewerken",
+                modifier = Modifier.weight(.88f))
 
             Button(modifier = Modifier
-                .weight(.15f)
+                .weight(.12f)
                 .height(100.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                 onClick = { delete = true }

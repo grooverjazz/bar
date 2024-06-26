@@ -137,11 +137,11 @@ private fun BeheerMemberContent(
     ) {
         Spacer(Modifier.size(20.dp))
         Row {
-            TitleText("Lid",
-                modifier = Modifier.weight(.85f))
+            TitleText("Lid bewerken",
+                modifier = Modifier.weight(.88f))
 
             Button(modifier = Modifier
-                .weight(.15f)
+                .weight(.12f)
                 .height(100.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                 onClick = { delete = true }
@@ -185,7 +185,7 @@ private fun BeheerMemberContent(
 
         // Verjaardag field
         Text(
-            text = "Verjaardag",
+            text = "Verjaardag:",
             fontSize = 20.sp,
         )
         DatePicker(

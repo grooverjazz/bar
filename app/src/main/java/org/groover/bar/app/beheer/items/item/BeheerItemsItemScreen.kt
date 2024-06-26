@@ -19,8 +19,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
+import org.groover.bar.util.app.BigButton
+import org.groover.bar.util.app.LabeledTextField
 import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
@@ -89,32 +92,40 @@ private fun BeheerItemsItemContent(
         modifier = Modifier
             .padding(10.dp)
     ) {
+        Spacer(modifier = Modifier.size(20.dp))
         TitleText("Item bewerken")
         Spacer(Modifier.size(20.dp))
 
         // Name field
-        TextField(
+        LabeledTextField(
+            text = "Naam",
             value = newName,
             onValueChange = { newName = it },
-            placeholder = { Text("Naam") }
         )
         Spacer(modifier = Modifier.size(20.dp))
 
         // New price field
-        TextField(
+        LabeledTextField(
+            text = "Prijs",
             value = newPriceStr,
             onValueChange = { newPriceStr = it.replace('.',',') },
-            placeholder = { Text("Naam") }
         )
         Spacer(modifier = Modifier.size(20.dp))
 
         // New BTW percentage field
-        TextField(
+        LabeledTextField(
+            text = "BTW-percentage",
             value = newBtwPercentageStr,
             onValueChange = { newBtwPercentageStr = it },
-            placeholder = { Text("Naam") }
         )
+        Spacer(modifier = Modifier.size(20.dp))
 
+        // New color field
+        Text(
+            text = "Kleur:",
+            fontSize = 20.sp,
+        )
+        Spacer(modifier = Modifier.height(5.dp))
         Slider(
             value = newColorFloat,
             onValueChange = { newColorFloat = it }
@@ -123,21 +134,24 @@ private fun BeheerItemsItemContent(
 
         val color = Color.hsv(newColorFloat * 360f, 1f, 1f)
         Box(
-            modifier = Modifier.height(30.dp).background(color = color)
+            modifier = Modifier
+                .height(30.dp)
+                .background(color = color)
         )
         Spacer(modifier = Modifier.size(30.dp))
 
         // Save button
-        Button(onClick = {
-            // Convert new price and BTW percentage, finish
-            finishEdit(
-                newName,
-                Cents.fromString(newPriceStr),
-                newBtwPercentageStr.toInt(),
-                (newColorFloat * 360f).toInt(),
-            )
-        }) {
-            Text("Opslaan")
-        }
+        BigButton(text = "Opslaan",
+            onClick = {
+                // Convert new price and BTW percentage, finish
+                finishEdit(
+                    newName,
+                    Cents.fromString(newPriceStr),
+                    newBtwPercentageStr.toInt(),
+                    (newColorFloat * 360f).toInt(),
+                )
+            },
+            rounded = true,
+        )
     }
 }

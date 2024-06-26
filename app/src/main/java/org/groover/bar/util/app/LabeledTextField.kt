@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun LabeledTextField(
+    modifier: Modifier = Modifier,
     text: String,
     value: String,
     onValueChange: (String) -> Unit,
@@ -24,6 +25,7 @@ fun LabeledTextField(
     )
     Spacer(modifier = Modifier.height(5.dp))
     TextField(
+        modifier = modifier,
         value = value,
         onValueChange = onValueChange,
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,

@@ -201,7 +201,7 @@ private fun BarTurvenCustomerContent(
         )
 
         if (warningMessage != "") {
-            Spacer(modifier = Modifier.size(30.dp))
+            Spacer(modifier = Modifier.size(10.dp))
 
             Text(
                 text = warningMessage,
@@ -213,12 +213,12 @@ private fun BarTurvenCustomerContent(
             )
         }
 
-        Spacer(modifier = Modifier.size(20.dp))
+        Spacer(modifier = Modifier.size(10.dp))
 
         // Items
         ItemList(items, currentOrder)
 
-        Spacer(modifier = Modifier.size(20.dp))
+        Spacer(modifier = Modifier.size(10.dp))
 
         // Submit button
         val orderCost = getOrderCost(currentOrder)
