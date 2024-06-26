@@ -61,8 +61,9 @@ fun BarTurvenCustomerScreen(
     }
 
     val items = itemRepository.data
+    val groups = groupRepository.data
 
-    val customerTotal = orderRepository.getTotalByCustomer(customerId, items)
+    val customerTotal = orderRepository.getTotalByCustomer(customerId, groups, items)
 
     val warningMessage = when (currentCustomer) {
         is Member -> {
@@ -199,9 +200,9 @@ private fun BarTurvenCustomerContent(
             textAlign = TextAlign.Center,
         )
 
-        Spacer(modifier = Modifier.size(30.dp))
-
         if (warningMessage != "") {
+            Spacer(modifier = Modifier.size(30.dp))
+
             Text(
                 text = warningMessage,
                 color = Color.Red,
@@ -210,9 +211,9 @@ private fun BarTurvenCustomerContent(
                 fontSize = 30.sp,
                 textAlign = TextAlign.Center,
             )
-
-            Spacer(modifier = Modifier.size(30.dp))
         }
+
+        Spacer(modifier = Modifier.size(20.dp))
 
         // Items
         ItemList(items, currentOrder)

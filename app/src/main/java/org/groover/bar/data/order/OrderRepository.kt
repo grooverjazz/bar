@@ -1,5 +1,7 @@
 package org.groover.bar.data.order
 
+import org.groover.bar.data.group.Group
+import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.item.Item
 import org.groover.bar.util.data.Cents
 import org.groover.bar.util.data.Cents.Companion.sum
@@ -42,11 +44,23 @@ class OrderRepository(
 
     fun removeOrder(orderId: Int) = removeById(orderId)
 
-    fun getTotalByCustomer(customerId: Int, items: List<Item>): Cents {
-        return data
-            .filter { it.customerId == customerId }
+    fun getTotalByCustomer(customerId: Int, groups: List<Group>, items: List<Item>): Cents {
+        val userTotal = data
+            .filter { it.customerId == customerId}
             .map { it.getTotalPrice(items) }
             .sum()
+
+        val groupTotal = groups
+            .filter { it.memberIds.contains(customerId) }
+            .map { group ->
+                data
+                    .filter { it.customerId == group.id }
+                    .map { it.getTotalPrice(items) }
+                    .sum() / group.memberIds.size
+            }
+            .sum()
+
+        return userTotal + groupTotal
     }
 
     fun getOrderCost(amounts: List<Int>, items: List<Item>): Cents {
