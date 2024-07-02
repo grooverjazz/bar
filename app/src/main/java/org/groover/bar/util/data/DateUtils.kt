@@ -9,7 +9,10 @@ import java.time.ZoneId
 import java.util.Date
 
 class DateUtils {
+    @SuppressLint("SimpleDateFormat")
     companion object {
+
+
         fun millisToDate(millis: Long): Date = Date.from(Instant.ofEpochMilli(millis))
         fun dateToMillis(date: Date): Long = date.time + 10_000_000 // Don't ask
 
@@ -48,9 +51,12 @@ class DateUtils {
         }
 
         // Date methods
-        @SuppressLint("SimpleDateFormat")
         val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+
+        val Y2K: Date = dateFormat.parse("01/01/2000")!!
+
         fun serializeDate(date: Date): String = dateFormat.format(date)
+
         fun deserializeDate(str: String): Date = removeTime(if (str == "") Date() else dateFormat.parse(str) ?: Date())
 
         private fun removeTime(date: Date): Date {

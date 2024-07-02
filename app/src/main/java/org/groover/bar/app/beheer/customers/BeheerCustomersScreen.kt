@@ -11,7 +11,6 @@ import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.member.Member
 import org.groover.bar.data.member.MemberRepository
 import org.groover.bar.util.app.CustomerList
-import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 
@@ -35,8 +34,8 @@ fun BeheerCustomersScreen(
         groups = groupRepository.data,
         memberOnClick = memberOnClick,
         groupOnClick = groupOnClick,
-        addTempMember = memberRepository::addTempMember,
-        addGroup = groupRepository::addGroup
+        addTempMember = memberRepository::addExtraMember,
+        addGroup = { groupRepository.addGroup(it, memberRepository.generateExtraId()) }
     )
 }
 

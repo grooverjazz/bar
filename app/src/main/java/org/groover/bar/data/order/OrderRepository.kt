@@ -1,7 +1,6 @@
 package org.groover.bar.data.order
 
 import org.groover.bar.data.group.Group
-import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.item.Item
 import org.groover.bar.util.data.Cents
 import org.groover.bar.util.data.Cents.Companion.sum
@@ -22,6 +21,7 @@ class OrderRepository(
         open()
     }
 
+    // (Places an order)
     fun placeOrder(amounts: List<Int>, customerId: Int, items: List<Item>) {
         val amountsMap = (items zip amounts).associate { (item, amount) ->
             item.id to amount
@@ -35,21 +35,20 @@ class OrderRepository(
             amountsMap,
         )
 
-        // Add the order
-        data += newOrder
-
-        // Save
-        save()
+        // Prepend
+        prepend(newOrder)
     }
 
-    fun removeOrder(orderId: Int) = removeById(orderId)
-
+    // (Gets the total order price for a customer)
     fun getTotalByCustomer(customerId: Int, groups: List<Group>, items: List<Item>): Cents {
-        val userTotal = data
+        // Get the total for the customer
+        val total = data
             .filter { it.customerId == customerId}
             .map { it.getTotalPrice(items) }
             .sum()
 
+        // Get the total for all groups that they are in
+        //  (NOTE: Members only)
         val groupTotal = groups
             .filter { it.memberIds.contains(customerId) }
             .map { group ->
@@ -60,12 +59,6 @@ class OrderRepository(
             }
             .sum()
 
-        return userTotal + groupTotal
-    }
-
-    fun getOrderCost(amounts: List<Int>, items: List<Item>): Cents {
-        return (items zip amounts)
-            .map { (item, amount) -> item.price * amount }
-            .sum()
+        return total + groupTotal
     }
 }

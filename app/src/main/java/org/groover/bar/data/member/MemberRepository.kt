@@ -1,8 +1,10 @@
 package org.groover.bar.data.member
 
+import org.groover.bar.util.data.DateUtils
 import org.groover.bar.util.data.FileOpener
 import org.groover.bar.util.data.Repository
 import java.util.Date
+import kotlin.math.min
 
 class MemberRepository(
     fileOpener: FileOpener,
@@ -17,48 +19,74 @@ class MemberRepository(
         open()
     }
 
+    // (OVERRIDE: Loads/reloads the data of the repository)
     override fun open() {
         // Read from file, add extra members
-        data.clear()
-        data += openFile("extraMembers.csv")
+        mutableData.clear()
+
+        // Add extra members
+        mutableData += openFile("extraMembers.csv")
             .map { it.copy(isExtra = true) }
-        data += openFile(fileName)
+
+        // Add regular members
+        mutableData += openFile(fileName)
+
+        // Add Hospitality if not present
+        if (find(0) == null)
+            prepend(Member(0, "Hospitality", "", "", "", DateUtils.Y2K, true))
     }
 
+    // (OVERRIDE: Saves the data of the repository)
     override fun save() {
+        // Partition extra members
         val (extraMembers, members) = data.partition { it.isExtra }
 
+        // Save separately
         saveFile(members, fileName)
         saveFile(extraMembers, "extraMembers.csv")
     }
 
-    // (Adds a temporary new member to the repository)
-    fun addTempMember(tempName: String) {
-        // Construct temporary member
-        val newMember = Member(
-            id = 1000000 + data.size,
+    // (Adds an extra member)
+    fun addExtraMember(tempName: String) {
+        // Create extra member
+        val extraMember = Member(
+            id = generateExtraId(),
             roepnaam = tempName,
             voornaam = "",
             tussenvoegsel = "",
             achternaam = "",
-            verjaardag = Date(),
+            verjaardag = DateUtils.Y2K,
             isExtra = true,
         )
 
-        // Add the new member
-        data += newMember
-        save()
+        // Prepend
+        prepend(extraMember)
     }
 
-    fun changeMember(memberId: Int, newRoepnaam: String, newVoornaam: String, newTussenvoegsel: String, newAchternaam: String, newVerjaardag: Date, isExtra: Boolean) {
+    // (Changes a member)
+    fun changeMember(
+        memberId: Int,
+        newRoepnaam: String,
+        newVoornaam: String,
+        newTussenvoegsel: String,
+        newAchternaam: String,
+        newVerjaardag: Date,
+        isExtra: Boolean
+    ) {
         // Create new member
-        val newMember = Member(memberId, newRoepnaam, newVoornaam, newTussenvoegsel, newAchternaam, newVerjaardag, isExtra)
+        val newMember = Member(
+            memberId,
+            newRoepnaam,
+            newVoornaam,
+            newTussenvoegsel,
+            newAchternaam,
+            newVerjaardag,
+            isExtra
+        )
 
-        replaceById(memberId, newMember, inPlace = false)
-
-        val (extraMembers, members) = data.partition { it.isExtra }
-        data.clear()
-        data += extraMembers
-        data += members
+        // Replace
+        replace(memberId, newMember)
     }
+
+    fun generateExtraId(): Int = min(super.generateId(), 1000000)
 }

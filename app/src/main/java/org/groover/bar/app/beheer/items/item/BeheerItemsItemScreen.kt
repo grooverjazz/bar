@@ -3,14 +3,11 @@ package org.groover.bar.app.beheer.items.item
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,7 +21,6 @@ import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.util.app.BigButton
 import org.groover.bar.util.app.LabeledTextField
-import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 import org.groover.bar.util.data.Cents
@@ -36,7 +32,7 @@ fun BeheerItemsItemScreen(
     itemId: Int
 ) {
     // Get item
-    val item = itemRepository.lookupById(itemId)
+    val item = itemRepository.find(itemId)
 
     if (item == null) {
         BeheerItemsItemError(

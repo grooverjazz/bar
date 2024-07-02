@@ -35,7 +35,7 @@ fun OrderList(
 
     val formattedSearchText = searchText.lowercase(Locale.ROOT)
     val filteredOrders = SearchHandler
-        .search(formattedSearchText, orders.reversed()) { getCustomerName(it.customerId) }
+        .search(formattedSearchText, orders) { getCustomerName(it.customerId) }
 
     // Keyboard focus for search box
     val keyboardFocus = remember { FocusRequester() }

@@ -48,7 +48,7 @@ fun BeheerGroupScreen(
     groupRepository: GroupRepository,
     groupId: Int,
 ) {
-    val currentGroup = groupRepository.lookupById(groupId)
+    val currentGroup = groupRepository.find(groupId)
 
     if (currentGroup == null) {
         BeheerGroupError(
@@ -67,7 +67,7 @@ fun BeheerGroupScreen(
     }
 
     val initialMembers = currentGroup.memberIds.map {
-        memberRepository.lookupById(it) ?: throw Exception("Kan lid met ID $it niet vinden!")
+        memberRepository.find(it) ?: throw Exception("Kan lid met ID $it niet vinden!")
     }
     var newMembers = remember { mutableStateListOf(*initialMembers.toTypedArray()) }
 
@@ -83,7 +83,7 @@ fun BeheerGroupScreen(
     val context = LocalContext.current
     val remove = {
         // Remove the member
-        groupRepository.removeById(groupId)
+        groupRepository.remove(groupId)
 
         // Navigate back
         navigate("beheer/customers")

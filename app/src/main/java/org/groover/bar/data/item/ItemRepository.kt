@@ -1,6 +1,7 @@
 package org.groover.bar.data.item
 
 import org.groover.bar.util.data.Cents
+import org.groover.bar.util.data.Cents.Companion.sum
 import org.groover.bar.util.data.FileOpener
 import org.groover.bar.util.data.Repository
 
@@ -17,6 +18,7 @@ class ItemRepository(
         open()
     }
 
+    // (Adds an item)
     fun addItem(name: String, price: Cents, btwPercentage: Int, color: Int) {
         // Create new item
         val newItem = Item(
@@ -27,14 +29,18 @@ class ItemRepository(
             color
         )
 
-        // Add to data
-        data += newItem
-
-        // Save
-        save()
+        // Prepend
+        prepend(newItem)
     }
 
-    fun changeItem(itemId: Int, newName: String, newPrice: Cents, newBtwPercentage: Int, newColor: Int) {
+    // (Changes an item)
+    fun changeItem(
+        itemId: Int,
+        newName: String,
+        newPrice: Cents,
+        newBtwPercentage: Int,
+        newColor: Int
+    ) {
         // Create new item
         val newItem = Item(
             itemId,
@@ -44,32 +50,14 @@ class ItemRepository(
             newColor,
         )
 
-        // Replace the old one
-        replaceById(itemId, newItem)
+        // Replace
+        replace(itemId, newItem)
     }
 
-    fun moveItem(itemId: Int, moveUp: Boolean) {
-        val item = lookupById(itemId) ?: throw Exception("Error tijdens verplaatsen van item")
-
-        // Check if movement is necessary
-        if ((moveUp && data.first() == item) || (!moveUp && data.last() == item))
-            return
-
-        // Get all items before and after the specified item
-        val before = data.takeWhile { it.id != itemId }
-        val after = data.takeLastWhile { it.id != itemId }
-
-        // Shuffle them
-        val newData = if (moveUp)
-            before.dropLast(1) + listOf(item, before.last()) + after
-        else
-            before + listOf(after.first(), item) + after.drop(1)
-
-        // Reassign data
-        data.clear()
-        data += newData
-
-        // Save
-        save()
+    // (Gets the total cost of the specified amounts)
+    fun costProduct(amounts: List<Int>): Cents {
+        return (data zip amounts)
+            .map { (item, amount) -> item.price * amount }
+            .sum()
     }
 }

@@ -44,8 +44,8 @@ fun BeheerItemsScreen(
     navigate: (String) -> Unit,
     itemRepository: ItemRepository,
 ) {
-    val itemMoveUp = { id: Int -> itemRepository.moveItem(id, true) }
-    val itemMoveDown = { id: Int -> itemRepository.moveItem(id, false) }
+    val itemMoveUp = { id: Int -> itemRepository.move(id, moveUp = true) }
+    val itemMoveDown = { id: Int -> itemRepository.move(id, moveUp = false) }
 
     BeheerItemsContent(
         navigate = navigate,
@@ -53,7 +53,7 @@ fun BeheerItemsScreen(
         addItem = itemRepository::addItem,
         itemMoveUp = itemMoveUp,
         itemMoveDown = itemMoveDown,
-        itemRemove = itemRepository::removeById
+        itemRemove = itemRepository::remove
     )
 
 }

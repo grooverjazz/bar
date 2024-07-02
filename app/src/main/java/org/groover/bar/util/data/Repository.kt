@@ -3,39 +3,45 @@ package org.groover.bar.util.data
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 
-abstract class Repository<T: BarData>(
+abstract class Repository<Element: BarData>(
     private val fileOpener: FileOpener,
-    val fileName: String,
-    private val serialize: (T) -> String,
-    private val deserialize: (String) -> T,
-    val titleRow: List<String>
+    protected val fileName: String,
+    private val serialize: (Element) -> String,
+    private val deserialize: (String) -> Element,
+    private val titleRow: List<String>
 ) {
-    val data: SnapshotStateList<T> = emptyList<T>().toMutableStateList()
+    // Mutable, internal, list of elements
+    //  (only use when you know what you're doing!)
+    protected val mutableData: SnapshotStateList<Element> = emptyList<Element>().toMutableStateList()
 
-    // (Loads/Reloads the data of the repository)
+    // Immutable, external, list of elements
+    //  (points to 'mutableData', guarantees that the list isn't written to)
+    val data: List<Element> get() = mutableData
+
+    // (Loads/reloads the data of the repository)
     open fun open() {
         // Read from file
-        data.clear()
-        data += openFile(fileName)
+        mutableData.clear()
+        mutableData += openFile(fileName)
     }
 
-    protected fun openFile(f: String): List<T> {
+    // (Opens and deserializes a file)
+    protected fun openFile(f: String): List<Element> {
         // Read data
         val dataStr = fileOpener.read(f, dropFirst = true)
 
         // Deserialize data
         return dataStr
             .map(String::trim)
-            .filter { it != "" }
+            .filterNot { it.isBlank() }
             .map(deserialize)
     }
 
     // (Saves the data of the repository)
-    open fun save() {
-        saveFile(data, fileName)
-    }
+    open fun save() = saveFile(data, fileName)
 
-    protected fun saveFile(list: List<T>, f: String) {
+    // (Saves a list of elements to file)
+    protected fun saveFile(list: List<Element>, f: String) {
         // Serialize data
         val titleRowStr = CSV.serialize(titleRow)
         val dataStr = listOf(titleRowStr) + list.map(serialize)
@@ -45,52 +51,65 @@ abstract class Repository<T: BarData>(
     }
 
     // (Finds the corresponding element)
-    fun lookupById(id: Int): T? = data.firstOrNull { it.id == id }
+    fun find(id: Int): Element? = data.firstOrNull { element -> element.id == id }
+
+    // (Finds the index with specified ID)
+    fun findIndex(id: Int): Int = data.indexOfFirst { element -> element.id == id }
 
     // (Removes the corresponding element)
-    fun removeById(id: Int) {
-        // Look up the element, remove it if it exists
-        val element = lookupById(id)
-        if (element != null)
-            data -= element
+    fun remove(id: Int) {
+        // Remove the element
+        mutableData.removeIf { element -> element.id == id }
 
         // Save
         save()
     }
 
     // (Replaces the element)
-    fun replaceById(id: Int, new: T, inPlace: Boolean = true) {
-        assert(new.id == id) { "Incorrect ID" }
+    fun replace(id: Int, new: Element) {
+        // Assert indices are the same
+        if (new.id != id)
+            throw Exception("ID-error bij vervangen element")
 
-        if (!inPlace) {
-            // Remove and re-add
-            data.remove(lookupById(id))
-            data += new
+        // Get index
+        val index = findIndex(id)
+        if (index == -1)
+            throw Exception("Index-error bij vervangen element")
 
-            // Save
-            save()
+        // Reassign
+        mutableData[index] = new
 
+        // Save
+        save()
+    }
+
+    // (Prepends an element)
+    fun prepend(element: Element) {
+        // Prepend
+        mutableData.add(0, element)
+
+        // Save
+        save()
+    }
+
+    // (Moves an element up or down)
+    fun move(itemId: Int, moveUp: Boolean) {
+        val index = findIndex(itemId)
+        if (index == -1)
+            throw Exception("ID-Error tijdens verplaatsen van item")
+
+        // Check if movement is necessary
+        if ((moveUp && index == 0) || (!moveUp && index == data.lastIndex))
             return
-        }
 
-        // Get all items before and after the specified item
-        val before = data.takeWhile { it.id != id }
-        val after = data.takeLastWhile { it.id != id }
-
-        val newData = before + listOf(new) + after
-
-        // Reassign data
-        data.clear()
-        data += newData
+        // Remove and re-add the item
+        val element = mutableData.removeAt(index)
+        mutableData.add(index + (if (moveUp) -1 else 1), element)
 
         // Save
         save()
     }
 
     // (Finds the first available ID)
-    fun generateId(): Int {
-        // Get the item with the highest ID, add 1
-        val maxId = (data.maxByOrNull { it.id }?.id) ?: -1
-        return maxId + 1
-    }
+    fun generateId(): Int = data.maxByOrNull { it.id }?.id?.plus(1) ?: 0
 }

@@ -12,7 +12,6 @@ import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.member.MemberRepository
 import org.groover.bar.data.order.Order
 import org.groover.bar.data.order.OrderRepository
-import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.OrderList
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
@@ -26,8 +25,8 @@ fun BarGeschiedenisScreen(
     itemRepository: ItemRepository,
 ) {
     val getCustomerName = { id: Int ->
-        (memberRepository.lookupById(id)?.fullName ?:
-        groupRepository.lookupById(id)?.name) ?:
+        (memberRepository.find(id)?.fullName ?:
+        groupRepository.find(id)?.name) ?:
         "Naam van ID $id niet gevonden!"
     }
 

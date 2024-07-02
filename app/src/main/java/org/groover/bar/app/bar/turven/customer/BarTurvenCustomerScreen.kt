@@ -50,8 +50,8 @@ fun BarTurvenCustomerScreen(
     val context = LocalContext.current
 
     // Look up current customer's name
-    val currentCustomer = (memberRepository.lookupById(customerId)
-        ?: groupRepository.lookupById(customerId))
+    val currentCustomer = (memberRepository.find(customerId)
+        ?: groupRepository.find(customerId))
         ?: throw Exception("Kan gebruiker niet vinden!")
 
     val customerName = when (currentCustomer) {
@@ -78,11 +78,11 @@ fun BarTurvenCustomerScreen(
         }
         is Group -> {
             if (currentCustomer.memberIds.any {
-                memberRepository.lookupById(it)!!.isExtra
+                memberRepository.find(it)!!.isExtra
             })
                 "Deze groep bevat toegevoegde leden!"
             else if (currentCustomer.memberIds.any {
-                !DateUtils.isOlderThan18(memberRepository.lookupById(it)!!.verjaardag)
+                !DateUtils.isOlderThan18(memberRepository.find(it)!!.verjaardag)
             })
                 "Deze groep bevat minderjarigen!"
             else
@@ -102,7 +102,7 @@ fun BarTurvenCustomerScreen(
                 .makeText(context, "Bestelling geplaatst!", Toast.LENGTH_SHORT)
                 .show()
         } else {
-            orderRepository.removeOrder(previousOrder.id)
+            orderRepository.remove(previousOrder.id)
 
             navigate("bar/geschiedenis")
 
@@ -114,7 +114,7 @@ fun BarTurvenCustomerScreen(
     }
 
     val deleteOrder = {
-        orderRepository.removeOrder(previousOrder!!.id)
+        orderRepository.remove(previousOrder!!.id)
 
         navigate("bar/geschiedenis")
 
@@ -135,7 +135,7 @@ fun BarTurvenCustomerScreen(
     }
 
     val getOrderCost: (List<Int>) -> Cents = { amounts ->
-        orderRepository.getOrderCost(amounts, items)
+        itemRepository.costProduct(amounts)
     }
 
     BarTurvenCustomerContent(
