@@ -3,8 +3,8 @@ package org.groover.bar.util.data
 class Cents(
     val amount: Int
 ) {
-    val stringWithoutEuro = "${amount / 100},${"%02d".format(amount % 100)}"
-    val stringWithEuro = "€" + stringWithoutEuro
+    override fun toString(): String = "${amount / 100},${"%02d".format(amount % 100)}"
+    fun toStringWithEuro(): String = "€$this"
 
     fun toInt() = amount
 
@@ -17,6 +17,20 @@ class Cents(
     companion object {
         fun Iterable<Cents>.sum(): Cents = fold(Cents(0), Cents::plus)
 
+        fun String.toCents(): Cents {
+            // Format string
+            val formattedStr = "0" + this.replace(',','.').replace(".-",".00") + ".00"
+
+            // Split along point
+            val (eurosStr, centsStr) = formattedStr.split('.')
+            val correctCentsStr = if (centsStr.length == 1) centsStr + "0" else centsStr
+
+            // Construct Cents
+            return Cents(eurosStr.toInt() * 100 + correctCentsStr.take(2).toInt())
+        }
+
+        fun Cents.toDouble(): Double = amount.toDouble() / 100
+
         fun split(cents: Cents, n: Int): List<Cents> {
             val baseAmount = cents / n
             val centsToSplit = (cents % n).toInt()
@@ -25,13 +39,6 @@ class Cents(
                 List(centsToSplit) { baseAmount + Cents(1) } +
                 List(n - centsToSplit) { baseAmount }
             ).shuffled()
-        }
-
-        fun fromString(str: String): Cents {
-            val formattedStr = "0" + str.replace(",-",",00") + ",00"
-
-            val (eurosStr, centsStr) = formattedStr.split(',')
-            return Cents(100 * eurosStr.toInt() + centsStr.take(2).toInt())
         }
     }
 }

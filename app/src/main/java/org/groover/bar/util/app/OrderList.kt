@@ -50,7 +50,9 @@ fun OrderList(
         onValueChange = { newSearchText: String ->
             searchText = newSearchText
         },
-        modifier = Modifier.focusRequester(keyboardFocus).height(80.dp),
+        modifier = Modifier
+            .focusRequester(keyboardFocus)
+            .height(80.dp),
         textStyle = TextStyle.Default.copy(fontSize = 28.sp)
     )
 
@@ -61,7 +63,8 @@ fun OrderList(
                 // Get printable name of customer
                 val customerName = getCustomerName(order.customerId)
 
-                val totalPrice = order.getTotalPriceString(items)
+                // Get total price
+                val totalPrice = order.getTotalPrice(items)
 
                 Button(
                     modifier = Modifier
@@ -70,7 +73,7 @@ fun OrderList(
                     shape = RectangleShape,
                     onClick = { onClick(order) }
                 ) {
-                    Text("$customerName ($totalPrice)",
+                    Text("$customerName (${totalPrice.toStringWithEuro()})",
                         fontSize = 25.sp
                     )
                 }

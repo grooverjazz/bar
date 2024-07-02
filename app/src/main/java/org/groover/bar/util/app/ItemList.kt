@@ -33,7 +33,7 @@ fun ItemList(
 ) {
     BigList(height = 870.dp) {
         items.forEachIndexed { index, item ->
-            ItemListEntry(item, item.colorC, amounts[index], setAmount = { amounts[index] = it })
+            ItemListEntry(item, item.color, amounts[index], setAmount = { amounts[index] = it })
         }
     }
 }
@@ -60,7 +60,7 @@ fun ItemListEntry(item: Item, color: Color, amount: Int, setAmount: (Int) -> Uni
         )
 
         Text(
-            item.priceString,
+            item.price.toStringWithEuro(),
             modifier = Modifier.weight(0.1f),
             textAlign = TextAlign.Center,
         )

@@ -24,6 +24,7 @@ import org.groover.bar.util.app.LabeledTextField
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 import org.groover.bar.util.data.Cents
+import org.groover.bar.util.data.Cents.Companion.toCents
 
 @Composable
 fun BeheerItemsItemScreen(
@@ -43,9 +44,9 @@ fun BeheerItemsItemScreen(
     }
 
     // Finishes editing the item
-    val finishEdit = { newName: String, newPrice: Cents, newBtwPercentage: Int, newColor: Int ->
+    val finishEdit = { newName: String, newPrice: Cents, newBtwPercentage: Int, newHue: Float ->
         // Change the item
-        itemRepository.changeItem(itemId, newName, newPrice, newBtwPercentage, newColor)
+        itemRepository.changeItem(itemId, newName, newPrice, newBtwPercentage, newHue)
 
         // Navigate back
         navigate("beheer/items")
@@ -76,13 +77,13 @@ private fun BeheerItemsItemError(
 private fun BeheerItemsItemContent(
     navigate: (String) -> Unit,
     item: Item,
-    finishEdit: (String, Cents, Int, Int) -> Unit
+    finishEdit: (String, Cents, Int, Float) -> Unit
 ) {
     // Remember name, price and BTW percentage
     var newName: String by remember { mutableStateOf(item.name) }
-    var newPriceStr: String by remember { mutableStateOf(item.priceStringNoEuro) }
+    var newPriceStr: String by remember { mutableStateOf(item.price.toString()) }
     var newBtwPercentageStr: String by remember { mutableStateOf(item.btwPercentage.toString()) }
-    var newColorFloat: Float by remember { mutableStateOf(item.color.toFloat() / 360f) }
+    var newColorFloat: Float by remember { mutableStateOf(item.hue) }
 
     VerticalGrid(
         modifier = Modifier
@@ -118,7 +119,7 @@ private fun BeheerItemsItemContent(
 
         // New color field
         Text(
-            text = "Kleur:",
+            text = "Tint:",
             fontSize = 20.sp,
         )
         Spacer(modifier = Modifier.height(5.dp))
@@ -128,7 +129,7 @@ private fun BeheerItemsItemContent(
         )
         Spacer(modifier = Modifier.size(20.dp))
 
-        val color = Color.hsv(newColorFloat * 360f, 1f, 1f)
+        val color = Item.getColor(newColorFloat)
         Box(
             modifier = Modifier
                 .height(30.dp)
@@ -142,9 +143,9 @@ private fun BeheerItemsItemContent(
                 // Convert new price and BTW percentage, finish
                 finishEdit(
                     newName,
-                    Cents.fromString(newPriceStr),
+                    newPriceStr.toCents(),
                     newBtwPercentageStr.toInt(),
-                    (newColorFloat * 360f).toInt(),
+                    newColorFloat,
                 )
             },
             rounded = true,

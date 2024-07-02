@@ -14,18 +14,22 @@ data class Member(
     val verjaardag: Date,
     val isExtra: Boolean = false,
 ): BarData() {
+    // Roepnaam if present, else voornaam
     val roepVoornaam = if (roepnaam == "") voornaam else roepnaam
 
+    // Full name
     val fullName: String = listOf(roepVoornaam, tussenvoegsel, achternaam)
         .filter { it.isNotBlank() }
         .joinToString(" ")
 
+    // (Converts the Member to a String)
     override fun toString(): String = if (isExtra) "(($fullName))" else fullName
+
 
     companion object {
         // (Serializes the user)
         fun serialize(member: Member): String {
-            // Convert id to String
+            // Serialize ID
             val idStr = member.id.toString()
 
             // Return serialization
@@ -41,11 +45,13 @@ data class Member(
 
         // (Deserializes the user)
         fun deserialize(str: String): Member {
-            // Extract from split string, convert id to Int
-            val params = CSV.deserialize(str)
-            val (idStr, roepnaam, voornaam, tussenvoegsel, achternaam) = params
-            val verjaardagStr = params[5]
+            // Get properties
+            //  (destructuring a list works up until 5 items...)
+            val props = CSV.deserialize(str)
+            val (idStr, roepnaam, voornaam, tussenvoegsel, achternaam) = props
+            val verjaardagStr = props[5]
 
+            // Deserialize properties
             val id = idStr.toInt()
             val verjaardag = DateUtils.deserializeDate(verjaardagStr)
 

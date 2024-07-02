@@ -81,7 +81,7 @@ class MemberRepository(
             newTussenvoegsel,
             newAchternaam,
             newVerjaardag,
-            isExtra
+            isExtra,
         )
 
         // Replace

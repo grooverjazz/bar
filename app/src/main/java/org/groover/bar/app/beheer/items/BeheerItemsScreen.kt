@@ -62,7 +62,7 @@ fun BeheerItemsScreen(
 private fun BeheerItemsContent(
     navigate: (String) -> Unit,
     items: List<Item>,
-    addItem: (String, Cents, Int, Int) -> Unit,
+    addItem: (String, Cents, Int, Float) -> Unit,
     itemMoveUp: (Int) -> Unit,
     itemMoveDown: (Int) -> Unit,
     itemRemove: (Int) -> Unit,
@@ -97,7 +97,7 @@ private fun BeheerItemsContent(
         Button(
             modifier = Modifier.height(70.dp),
             onClick = {
-                addItem("Item", Cents(0), 0, 0)
+                addItem("Item", Cents(0), 0, 0f)
             },
         ) {
             Text("Voeg item toe",
@@ -112,7 +112,7 @@ private fun BeheerItemsContent(
             items(items) { item ->
                 ItemEditItem(
                     title = item.name,
-                    color = item.colorC,
+                    color = item.color,
                     onTitleClick = { navigate("beheer/items/item/${item.id}") },
                     onUpClick = { itemMoveUp(item.id) },
                     onDownClick = { itemMoveDown(item.id) },

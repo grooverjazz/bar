@@ -4,6 +4,7 @@ import org.groover.bar.data.item.Item
 import org.groover.bar.util.data.BarData
 import org.groover.bar.util.data.CSV
 import org.groover.bar.util.data.Cents
+import org.groover.bar.util.data.Cents.Companion.sum
 import java.util.Date
 
 data class Order(
@@ -12,20 +13,22 @@ data class Order(
     val timestamp: Date,
     private val amounts: MutableMap<Int, Int>, // (maps every item to an amount)
 ): BarData() {
-    // Get the total price of the order
-    fun getTotalPrice(items: List<Item>): Cents =
-        Cents(items.sumOf { item -> item.price.amount * getAmount(item.id) })
-
-    fun getTotalPriceString(items: List<Item>): String = getTotalPrice(items).stringWithEuro
-
+    // Gets the amount ordered of the specified item
+    //  (If the item does not exist, initialize it to 0)
     fun getAmount(itemId: Int): Int = amounts.getOrElse(itemId) {
         amounts[itemId] = 0
         return 0
     }
 
+    // (Gets the total price of the order)
+    fun getTotalPrice(items: List<Item>): Cents =
+        items.map { item -> item.price * getAmount(item.id) }.sum()
+
+
     companion object {
         // (Serializes the order)
         fun serialize(order: Order): String {
+            // Serialize amounts
             val amountsStrs = order.amounts
                 .map { (itemId, amount) -> "${itemId}:${amount}" }
 
@@ -41,21 +44,19 @@ data class Order(
 
         // (Deserializes the order)
         fun deserialize(str: String): Order {
-            // Extract from split string
-            val data = CSV.deserialize(str)
+            // Get properties
+            val props = CSV.deserialize(str)
+            val (idStr, customerIdStr, timestampStr) = props
+            val amountsStrs = props.drop(3)
 
-            // Get id, customer ID and timestamp
-            val (idStr, customerIdStr, timestampStr) = data
+            // Deserialize properties
             val id = idStr.toInt()
             val customerId = customerIdStr.toInt()
             val timestamp = CSV.deserializeTimestamp(timestampStr)
-
-            // Get amounts
-            val amountsStr = data.drop(3)
-            val amounts = amountsStr.associate { s ->
-                val (a, b) = s.split(":")
-
-                a.toInt() to b.toInt()
+            val amounts = amountsStrs.associate { amountsStr ->
+                amountsStr.split(':').let { (itemId, amount) ->
+                    itemId.toInt() to amount.toInt()
+                }
             }.toMutableMap()
 
             // Return order

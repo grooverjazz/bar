@@ -193,7 +193,7 @@ private fun BarTurvenCustomerContent(
 
         // Member total
         Text(
-            text = "Voorlopige rekening: ${customerTotal.stringWithEuro}",
+            text = "Voorlopige rekening: ${customerTotal.toStringWithEuro()}",
             fontFamily = FontFamily.Serif,
             fontWeight = FontWeight.Medium,
             fontSize = 30.sp,
@@ -231,7 +231,7 @@ private fun BarTurvenCustomerContent(
             enabled = hasItems || !newOrder,
         ) {
             val text = when {
-                hasItems -> "Bestelling afronden (${orderCost.stringWithEuro})"
+                hasItems -> "Bestelling afronden (${orderCost.toStringWithEuro()})"
                 !hasItems && !newOrder -> "Bestelling verwijderen"
                 else -> "..."
             }

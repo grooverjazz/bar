@@ -4,6 +4,7 @@ import org.apache.poi.ss.util.CellReference
 import org.apache.poi.xssf.usermodel.XSSFCell
 import org.apache.poi.xssf.usermodel.XSSFRow
 import org.groover.bar.util.data.Cents
+import org.groover.bar.util.data.Cents.Companion.toDouble
 
 class ExcelHandler {
     data class ExcelFormula(val formula: String)
@@ -21,7 +22,7 @@ class ExcelHandler {
                 is String -> cell.setCellValue(value)
                 is Int -> cell.setCellValue(value.toDouble())
                 is Boolean -> cell.setCellValue(if (value) 1.0 else 0.0)
-                is Cents -> cell.setCellValue(value.stringWithoutEuro.replace(',','.').toDouble())
+                is Cents -> cell.setCellValue(value.toDouble())
                 is ExcelFormula -> cell.cellFormula = value.formula
             }
         }

@@ -12,21 +12,21 @@ class ItemRepository(
     "items.csv",
     Item.Companion::serialize,
     Item.Companion::deserialize,
-    listOf("ID", "Name", "Price", "BTW Percentage"),
+    listOf("ID", "Name", "Price", "BTW Percentage", "Tint"),
 ) {
     init {
         open()
     }
 
     // (Adds an item)
-    fun addItem(name: String, price: Cents, btwPercentage: Int, color: Int) {
+    fun addItem(name: String, price: Cents, btwPercentage: Int, hue: Float) {
         // Create new item
         val newItem = Item(
             generateId(),
             name,
             price,
             btwPercentage,
-            color
+            hue,
         )
 
         // Prepend
@@ -39,7 +39,7 @@ class ItemRepository(
         newName: String,
         newPrice: Cents,
         newBtwPercentage: Int,
-        newColor: Int
+        newHue: Float
     ) {
         // Create new item
         val newItem = Item(
@@ -47,7 +47,7 @@ class ItemRepository(
             newName,
             newPrice,
             newBtwPercentage,
-            newColor,
+            newHue,
         )
 
         // Replace
