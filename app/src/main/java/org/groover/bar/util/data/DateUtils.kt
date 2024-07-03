@@ -51,9 +51,9 @@ class DateUtils {
         }
 
         // Date methods
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+        val dateFormat = SimpleDateFormat("dd MM yyyy")
 
-        val Y2K: Date = dateFormat.parse("01/01/2000")!!
+        val Y2K: Date = dateFormat.parse("01 01 2000")!!
 
         fun serializeDate(date: Date): String = dateFormat.format(date)
 

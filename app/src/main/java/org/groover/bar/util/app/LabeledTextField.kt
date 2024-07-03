@@ -1,6 +1,8 @@
 package org.groover.bar.util.app
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -19,15 +21,18 @@ fun LabeledTextField(
     onValueChange: (String) -> Unit,
     isPassword: Boolean = false,
 ) {
-    Text(
-        text = "$text:",
-        fontSize = 20.sp,
-    )
-    Spacer(modifier = Modifier.height(5.dp))
-    TextField(
-        modifier = modifier,
-        value = value,
-        onValueChange = onValueChange,
-        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
-    )
+    Column(modifier = modifier) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "$text:",
+            fontSize = 20.sp,
+        )
+        Spacer(modifier = Modifier.height(5.dp))
+        TextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = value,
+            onValueChange = onValueChange,
+            visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+        )
+    }
 }

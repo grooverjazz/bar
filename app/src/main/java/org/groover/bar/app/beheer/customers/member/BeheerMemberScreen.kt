@@ -1,17 +1,20 @@
 package org.groover.bar.app.beheer.customers.member
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -21,14 +24,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.groover.bar.app.beheer.items.PopupDialog
 import org.groover.bar.data.member.Member
 import org.groover.bar.data.member.MemberRepository
+import org.groover.bar.util.app.BigButton
 import org.groover.bar.util.app.LabeledTextField
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
@@ -107,7 +111,10 @@ private fun BeheerMemberContent(
     var newVoornaam: String by remember { mutableStateOf(currentMember.voornaam) }
     var newTussenvoegsel: String by remember { mutableStateOf(currentMember.tussenvoegsel) }
     var newAchternaam: String by remember { mutableStateOf(currentMember.achternaam) }
-    val newVerjaardagState = rememberDatePickerState(initialSelectedDateMillis = DateUtils.dateToMillis(currentMember.verjaardag))
+    var newVerjaardag: String by remember { mutableStateOf(DateUtils.serializeDate(currentMember.verjaardag)) }
+
+    var datePickerShow: Boolean by remember { mutableStateOf(false) }
+    val datePickerState: DatePickerState = rememberDatePickerState(initialSelectedDateMillis = DateUtils.dateToMillis(currentMember.verjaardag))
 
     var delete: Boolean by remember { mutableStateOf(false) }
 
@@ -175,39 +182,83 @@ private fun BeheerMemberContent(
         Spacer(modifier = Modifier.size(20.dp))
 
         // Verjaardag field
-        Text(
-            text = "Verjaardag:",
-            fontSize = 20.sp,
-        )
-        DatePicker(
-            state = newVerjaardagState,
-            modifier = Modifier
-                .padding(horizontal = 150.dp)
-                .offset(y = (-50).dp),
-            title = { }
-        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            LabeledTextField(
+                modifier = Modifier.weight(0.8f),
+                text = "Verjaardag",
+                value = newVerjaardag,
+                onValueChange = { newVerjaardag = it },
+            )
 
-//        Icon(Icons.Rounded.Warning, null, tint=Color.Red)
-//
-//        Text(
-//            text = "Pas op: deze gegevens worden overgeschreven bij import vanuit de ledenadmin!",
-//            textAlign = TextAlign.Center,
-//        )
-//
-//        Spacer(modifier = Modifier.size(30.dp))
+            Button(
+                modifier = Modifier
+                    .weight(0.2f)
+                    .height(56.dp)
+                    .align(Alignment.Bottom),
+                onClick = {
+                    datePickerShow = true
+
+                    val millis = DateUtils.dateToMillis(DateUtils.deserializeDate(newVerjaardag.trim()))
+                    datePickerState.displayedMonthMillis = millis
+                    datePickerState.selectedDateMillis = millis
+                }
+            ) {
+                Icon(Icons.Rounded.DateRange, null)
+            }
+        }
+        Spacer(modifier = Modifier.size(20.dp))
+
+        // Date picker dialog
+        if (datePickerShow) {
+            VerjaardagDialog(
+                pickerState = datePickerState,
+                dismiss = {
+                    datePickerShow = false
+                },
+                confirm = {
+                    datePickerShow = false
+                    newVerjaardag = DateUtils.serializeDate(DateUtils.millisToDate(datePickerState.selectedDateMillis!!))
+                }
+            )
+        }
 
         // Save button
-        Button(
-            modifier = Modifier.height(60.dp),
+        BigButton(
+            text = "Opslaan",
             onClick = {
                 // Finish editing
-                val newVerjaardag = DateUtils.millisToDate(newVerjaardagState.selectedDateMillis!!)
-                finishEdit(newRoepnaam, newVoornaam, newTussenvoegsel, newAchternaam, newVerjaardag)
-            }
-        ) {
-            Text("Opslaan")
-        }
+                val newVerjaardagDate = DateUtils.deserializeDate(newVerjaardag.trim())
+                finishEdit(newRoepnaam, newVoornaam, newTussenvoegsel, newAchternaam, newVerjaardagDate)
+            },
+            rounded = true,
+        )
     }
+}
 
-
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun VerjaardagDialog(
+    pickerState: DatePickerState,
+    dismiss: () -> Unit,
+    confirm: () -> Unit,
+) {
+    DatePickerDialog(
+        onDismissRequest = dismiss,
+        confirmButton = {
+            Button(onClick = confirm) {
+                Text(text = "OK")
+            }
+        },
+        dismissButton = {
+            Button(onClick = dismiss) {
+                Text(text = "Cancel")
+            }
+        }
+    ) {
+        DatePicker(
+            state = pickerState,
+        )
+    }
 }

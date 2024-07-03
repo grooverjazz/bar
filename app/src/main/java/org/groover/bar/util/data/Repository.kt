@@ -93,8 +93,8 @@ abstract class Repository<Element: BarData>(
     }
 
     // (Moves an element up or down)
-    fun move(itemId: Int, moveUp: Boolean) {
-        val index = findIndex(itemId)
+    fun move(id: Int, moveUp: Boolean) {
+        val index = findIndex(id)
         if (index == -1)
             throw Exception("ID-Error tijdens verplaatsen van item")
 

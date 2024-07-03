@@ -100,7 +100,10 @@ fun CustomerList(
     )
 
     // Show current list
-    val formattedSearchText = searchText.lowercase(Locale.ROOT)
+    //  (with capitalized first letter)
+    val formattedSearchText = searchText
+        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+        .trim()
 
     when (state) {
         CustomerListState.MEMBERS -> MemberList(
