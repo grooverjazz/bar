@@ -46,7 +46,7 @@ fun BeheerItemsItemScreen(
     // Finishes editing the item
     val finishEdit = { newName: String, newPrice: Cents, newBtwPercentage: Int, newHue: Float ->
         // Change the item
-        itemRepository.changeItem(itemId, newName, newPrice, newBtwPercentage, newHue)
+        itemRepository.changeItem(itemId, newName, item.visible, newPrice, newBtwPercentage, newHue)
 
         // Navigate back
         navigate("beheer/items")

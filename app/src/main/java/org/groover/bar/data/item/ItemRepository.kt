@@ -12,7 +12,7 @@ class ItemRepository(
     "items.csv",
     Item.Companion::serialize,
     Item.Companion::deserialize,
-    listOf("ID", "Name", "Price", "BTW Percentage", "Tint"),
+    listOf("ID", "Name", "Visible", "Price", "BTW Percentage", "Hue"),
 ) {
     init {
         open()
@@ -24,6 +24,7 @@ class ItemRepository(
         val newItem = Item(
             generateId(),
             name,
+            true,
             price,
             btwPercentage,
             hue,
@@ -37,6 +38,7 @@ class ItemRepository(
     fun changeItem(
         itemId: Int,
         newName: String,
+        newVisible: Boolean,
         newPrice: Cents,
         newBtwPercentage: Int,
         newHue: Float
@@ -45,6 +47,7 @@ class ItemRepository(
         val newItem = Item(
             itemId,
             newName,
+            newVisible,
             newPrice,
             newBtwPercentage,
             newHue,
@@ -52,6 +55,12 @@ class ItemRepository(
 
         // Replace
         replace(itemId, newItem)
+    }
+
+    // (Toggles visibility for the given item)
+    fun toggleVisible(id: Int) {
+        val item = find(id) ?: throw Exception("Error bij wisselen zichtbaarheid")
+        replace(id, item.copy(visible = !item.visible))
     }
 
     // (Gets the total cost of the specified amounts)

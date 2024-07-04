@@ -9,6 +9,7 @@ import org.groover.bar.util.data.Cents.Companion.toCents
 data class Item(
     override val id: Int,
     val name: String,
+    val visible: Boolean,
     val price: Cents, // incl. BTW!
     val btwPercentage: Int,
     val hue: Float,
@@ -29,6 +30,7 @@ data class Item(
             return CSV.serialize(
                 item.id.toString(),
                 item.name,
+                item.visible.toString(),
                 item.price.toString(),
                 item.btwPercentage.toString(),
                 item.hue.toString(),
@@ -39,16 +41,18 @@ data class Item(
         fun deserialize(str: String): Item {
             // Get properties
             val props = CSV.deserialize(str)
-            val (idStr, name, priceStr, btwPercentageStr, hueStr) = props
+            val (idStr, name, visibleStr, priceStr, btwPercentageStr) = props
+            val hueStr = props[5]
 
             // Deserialize properties
             val id = idStr.toInt()
+            val visible = visibleStr.toBoolean()
             val price = priceStr.toCents()
             val btwPercentage = btwPercentageStr.toInt()
             val hue = hueStr.replace(',','.').toFloat()
 
             // Return item
-            return Item(id, name, price, btwPercentage, hue)
+            return Item(id, name, visible, price, btwPercentage, hue)
         }
     }
 }

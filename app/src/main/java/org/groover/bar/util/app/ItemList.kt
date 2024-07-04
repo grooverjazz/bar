@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
@@ -33,18 +34,19 @@ fun ItemList(
 ) {
     BigList(height = 870.dp) {
         items.forEachIndexed { index, item ->
-            ItemListEntry(item, item.color, amounts[index], setAmount = { amounts[index] = it })
+            if (item.visible)
+                ItemListEntry(item, amounts[index], setAmount = { amounts[index] = it })
         }
     }
 }
 
 @Composable
-fun ItemListEntry(item: Item, color: Color, amount: Int, setAmount: (Int) -> Unit) {
+fun ItemListEntry(item: Item, amount: Int, setAmount: (Int) -> Unit) {
     Row(
         modifier = Modifier
             .height(80.dp)
             .fillMaxWidth()
-            .background(color)
+            .background(item.color)
             .padding(5.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
