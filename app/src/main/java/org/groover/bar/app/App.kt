@@ -2,7 +2,6 @@ package org.groover.bar.app
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
@@ -21,15 +20,12 @@ import org.groover.bar.app.beheer.items.BeheerItemsScreen
 import org.groover.bar.app.beheer.items.item.BeheerItemsItemScreen
 import org.groover.bar.app.beheer.password.BeheerPasswordScreen
 import org.groover.bar.app.beheer.session.BeheerSessionScreen
-import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.item.ItemRepository
-import org.groover.bar.data.member.MemberRepository
+import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.order.Order
 import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.export.ExportHandler
 import org.groover.bar.export.OptionsHandler
-import org.groover.bar.export.OverzichtExportHandler
-import org.groover.bar.util.data.Cents.Companion.sum
 import org.groover.bar.util.data.FileOpener
 
 @Composable
@@ -41,8 +37,7 @@ fun App() {
 
     val fileOpener = FileOpener(context, optionsHandler.sessionName)
 
-    val memberRepository = MemberRepository(fileOpener)
-    val groupRepository = GroupRepository(fileOpener)
+    val customerRepository = CustomerRepository(fileOpener)
     val itemRepository = ItemRepository(fileOpener)
     val orderRepository = OrderRepository(fileOpener)
 
@@ -54,13 +49,11 @@ fun App() {
 
         // Don't open if copying over data from current session
         if (!copyGlobalData) {
-            memberRepository.open()
-            groupRepository.open()
+            customerRepository.open()
             itemRepository.open()
         }
         else {
-            memberRepository.save()
-            groupRepository.save()
+            customerRepository.save()
             itemRepository.save()
         }
 
@@ -72,8 +65,7 @@ fun App() {
         context = context,
         fileOpener = fileOpener,
         optionsHandler = optionsHandler,
-        memberRepository = memberRepository,
-        groupRepository = groupRepository,
+        customerRepository = customerRepository,
         itemRepository = itemRepository,
         orderRepository = orderRepository
     )
@@ -113,8 +105,7 @@ fun App() {
 
             BarTurvenScreen(
                 navigate = navigate,
-                memberRepository = memberRepository,
-                groupRepository = groupRepository,
+                customerRepository = customerRepository,
             )
         }
 
@@ -128,8 +119,7 @@ fun App() {
 
             BarTurvenCustomerScreen(
                 navigate = navigate,
-                memberRepository = memberRepository,
-                groupRepository = groupRepository,
+                customerRepository = customerRepository,
                 itemRepository = itemRepository,
                 orderRepository = orderRepository,
                 customerId = customerId,
@@ -144,8 +134,7 @@ fun App() {
             BarGeschiedenisScreen(
                 navigate = navigate,
                 orderRepository = orderRepository,
-                memberRepository = memberRepository,
-                groupRepository = groupRepository,
+                customerRepository = customerRepository,
                 itemRepository = itemRepository,
             )
         }
@@ -163,8 +152,7 @@ fun App() {
 
             BarTurvenCustomerScreen(
                 navigate = navigate,
-                memberRepository = memberRepository,
-                groupRepository = groupRepository,
+                customerRepository = customerRepository,
                 itemRepository = itemRepository,
                 orderRepository = orderRepository,
                 customerId = customerId,
@@ -224,8 +212,7 @@ fun App() {
 
             BeheerCustomersScreen(
                 navigate = navigate,
-                memberRepository = memberRepository,
-                groupRepository = groupRepository,
+                customerRepository = customerRepository,
             )
         }
 
@@ -239,7 +226,7 @@ fun App() {
 
             BeheerMemberScreen(
                 navigate = navigate,
-                memberRepository = memberRepository,
+                customerRepository = customerRepository,
                 memberId = memberId,
             )
         }
@@ -254,8 +241,7 @@ fun App() {
 
             BeheerGroupScreen(
                 navigate = navigate,
-                memberRepository = memberRepository,
-                groupRepository = groupRepository,
+                customerRepository = customerRepository,
                 groupId = groupId,
             )
         }

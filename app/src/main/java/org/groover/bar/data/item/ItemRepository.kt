@@ -31,7 +31,7 @@ class ItemRepository(
         )
 
         // Prepend
-        prepend(newItem)
+        addToStart(newItem)
     }
 
     // (Changes an item)

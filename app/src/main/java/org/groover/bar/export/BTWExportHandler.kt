@@ -1,9 +1,7 @@
 package org.groover.bar.export
 
 import org.apache.poi.xssf.usermodel.XSSFSheet
-import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.item.ItemRepository
-import org.groover.bar.data.member.MemberRepository
 import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.util.data.Cents
 
@@ -11,6 +9,8 @@ class BTWExportHandler(
     private val itemRepository: ItemRepository,
     private val orderRepository: OrderRepository,
 )  {
+    // TODO: use formulas to do this
+
     private fun getBtwAmounts(): Map<Int, Cents> {
         val orders = orderRepository.data
         val items = itemRepository.data

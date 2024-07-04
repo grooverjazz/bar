@@ -1,16 +1,12 @@
 package org.groover.bar.export
 
 import org.apache.poi.xssf.usermodel.XSSFSheet
-import org.groover.bar.data.group.GroupRepository
+import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.item.ItemRepository
-import org.groover.bar.data.member.MemberRepository
-import org.groover.bar.data.order.OrderRepository
 
 class IncassoExportHandler(
-    private val memberRepository: MemberRepository,
-    private val groupRepository: GroupRepository,
+    private val customerRepository: CustomerRepository,
     private val itemRepository: ItemRepository,
-    private val orderRepository: OrderRepository,
     private val sessionName: String
 )  {
     fun export(sheet: XSSFSheet) {
@@ -31,12 +27,12 @@ class IncassoExportHandler(
 
         var refRowIndex = 6
 
-        val members = memberRepository.data
+        val members = customerRepository.members
         val itemsCount = itemRepository.data.size
-        val groupsCount = groupRepository.data.size
+        val groupsCount = customerRepository.groups.size
         for (member in members) {
             // Define reference to total in overzicht sheet
-            val totalRefFormula = ExcelHandler.ExcelFormula("Overzicht!" + ExcelHandler.cellStr(refRowIndex, itemsCount + groupsCount + 5))
+            val totalRefFormula = ExcelHandler.ExcelFormula("Overzicht!" + ExcelHandler.cellStr(refRowIndex, itemsCount + groupsCount + 5)) // TODO: fix bounds with new row width
             refRowIndex += 1
 
             // Skip extra members
@@ -47,9 +43,7 @@ class IncassoExportHandler(
                 memberRow,
                 listOf(
                     member.id,
-                    member.voornaam,
-                    member.tussenvoegsel,
-                    member.achternaam,
+                    member.name,
                     totalRefFormula,
                 )
             )

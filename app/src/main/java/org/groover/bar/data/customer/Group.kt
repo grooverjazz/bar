@@ -1,16 +1,27 @@
-package org.groover.bar.data.group
+package org.groover.bar.data.customer
 
-import org.groover.bar.util.data.BarData
 import org.groover.bar.util.data.CSV
+import org.groover.bar.util.data.DateUtils
 
 data class Group (
     override val id: Int,
-    val name: String,
+    override val name: String,
     val memberIds: List<Int>
-): BarData() {
+): Customer() {
     // (Converts the Group to a String)
     override fun toString(): String = "$name (${memberIds.size} leden)"
 
+    // (OVERRIDE: Gets a warning message of the customer)
+    override fun getWarningMessage(findMember: (id: Int) -> Member?): String {
+        // Check if any of its members is extra
+        if (memberIds.any { findMember(it)!!.isExtra })
+            return "Deze groep bevat tijdelijke leden!"
+        // Check if any of its members is a minor
+        if (memberIds.any { !DateUtils.isOlderThan18(findMember(it)!!.birthday) })
+            return "Deze groep bevat minderjarigen!"
+        // No warning
+        return ""
+    }
 
     companion object {
         // (Serializes the group)

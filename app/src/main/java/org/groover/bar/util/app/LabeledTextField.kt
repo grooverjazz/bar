@@ -22,12 +22,14 @@ fun LabeledTextField(
     isPassword: Boolean = false,
 ) {
     Column(modifier = modifier) {
-        Text(
+        // Label
+        Text("$text:",
             modifier = Modifier.fillMaxWidth(),
-            text = "$text:",
             fontSize = 20.sp,
         )
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(Modifier.height(5.dp))
+
+        // Text field
         TextField(
             modifier = Modifier.fillMaxWidth(),
             value = value,

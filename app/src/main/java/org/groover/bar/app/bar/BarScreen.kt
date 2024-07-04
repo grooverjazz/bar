@@ -1,7 +1,6 @@
 package org.groover.bar.app.bar
 
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,28 +21,22 @@ fun BarScreen(
 private fun BarContent(
     navigate: (String) -> Unit = {},
 ) {
-    VerticalGrid(
-        modifier = Modifier.padding(10.dp)
-    ) {
+    VerticalGrid {
         // Title
-        Spacer(modifier = Modifier.size(100.dp))
+        Spacer(Modifier.size(100.dp))
         TitleText("Bar")
-
         Spacer(Modifier.size(80.dp))
 
         // Turven button
-        NavigateButton(
+        NavigateButton("Turven",
             navigate = navigate,
-            text = "Turven",
             route = "bar/turven"
         )
-
         Spacer(Modifier.size(30.dp))
 
-        // Overzicht bestellingen button
-        NavigateButton(
+        // Geschiedenis button
+        NavigateButton("Geschiedenis",
             navigate = navigate,
-            text = "Geschiedenis",
             route = "bar/geschiedenis"
         )
     }

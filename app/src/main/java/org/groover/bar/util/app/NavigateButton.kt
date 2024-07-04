@@ -7,8 +7,8 @@ import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun NavigateButton(
-    navigate: (String) -> Unit,
     text: String,
+    navigate: (String) -> Unit,
     route: String,
 ) {
     val context = LocalContext.current

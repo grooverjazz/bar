@@ -1,7 +1,6 @@
 package org.groover.bar.app.beheer.session
 
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -16,8 +15,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.groover.bar.util.app.BigButton
-import org.groover.bar.util.app.LazyBigList
 import org.groover.bar.util.app.ClickableCheckbox
+import org.groover.bar.util.app.LazyBigList
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 import java.text.SimpleDateFormat
@@ -30,10 +29,12 @@ fun BeheerSessionScreen(
     allSessions: List<String>,
     finish: (String, Boolean) -> Unit,
 ) {
+    // Define date strings
     val exampleStrStart = SimpleDateFormat("yyyy-MM-dd").format(Date())
     val exampleStrEnd = SimpleDateFormat("d MMMM yyyy").format(Date())
     val exampleStr = "$exampleStrStart Pandavond $exampleStrEnd"
 
+    // Content
     BeheerSessionContent(
         navigate = navigate,
         oldSessionName = oldSessionName,
@@ -55,13 +56,11 @@ private fun BeheerSessionContent(
     var newSessionName: String by remember { mutableStateOf(oldSessionName) }
     var copyGlobalData: Boolean by remember { mutableStateOf(true) }
 
-    VerticalGrid(
-        modifier = Modifier
-            .padding(10.dp)
-    ) {
-        Spacer(modifier = Modifier.size(20.dp))
+    VerticalGrid {
+        // Title
+        Spacer(Modifier.size(20.dp))
         TitleText("Sessies")
-        Spacer(modifier = Modifier.size(20.dp))
+        Spacer(Modifier.size(20.dp))
 
         // New session name field
         TextField(
@@ -71,7 +70,7 @@ private fun BeheerSessionContent(
         )
 
         // Example name button
-        BigButton(text = "Wat dacht je van \"$exampleStr\"?",
+        BigButton("Wat dacht je van \"$exampleStr\"?",
             onClick = {
                 newSessionName = exampleStr
             },
@@ -79,10 +78,12 @@ private fun BeheerSessionContent(
             rounded = true,
             fontSize = 24.sp,
         )
-        Spacer(modifier = Modifier.size(40.dp))
+        Spacer(Modifier.size(40.dp))
 
         // List of all sessions
-        Text("Alle sessies:", textAlign = TextAlign.Center)
+        Text("Alle sessies:",
+            textAlign = TextAlign.Center
+        )
 
         LazyBigList(height = 600.dp) {
             for (session in allSessions) {
@@ -98,19 +99,18 @@ private fun BeheerSessionContent(
                 }
             }
         }
-        Spacer(modifier = Modifier.size(30.dp))
+        Spacer(Modifier.size(30.dp))
 
         // Copy global data checkbox
-        ClickableCheckbox(
-            label = "Kopieer leden, groepen en items van huidige sessie",
+        ClickableCheckbox("Kopieer leden, groepen en items van huidige sessie",
             state = copyGlobalData,
             onStateChange = { copyGlobalData = it }
         )
-        Spacer(modifier = Modifier.size(10.dp))
+        Spacer(Modifier.size(10.dp))
 
         // Save button
         val saveText = if (allSessions.contains(newSessionName.trim())) "Sessie openen" else "Sessie aanmaken"
-        BigButton(text = saveText,
+        BigButton(saveText,
             onClick = {
                 // Change the session
                 finish(newSessionName.trim(), copyGlobalData)

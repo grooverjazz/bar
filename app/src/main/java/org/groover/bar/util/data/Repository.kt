@@ -22,13 +22,16 @@ abstract class Repository<Element: BarData>(
     open fun open() {
         // Read from file
         mutableData.clear()
-        mutableData += openFile(fileName)
+        mutableData += readFile(fileName, deserialize)
     }
 
-    // (Opens and deserializes a file)
-    protected fun openFile(f: String): List<Element> {
+    // (Reads a file into a list)
+    protected fun <T> readFile(
+        fileName: String,
+        deserialize: (String) -> T
+    ): List<T> {
         // Read data
-        val dataStr = fileOpener.read(f, dropFirst = true)
+        val dataStr = fileOpener.read(fileName, dropFirst = true)
 
         // Deserialize data
         return dataStr
@@ -38,16 +41,20 @@ abstract class Repository<Element: BarData>(
     }
 
     // (Saves the data of the repository)
-    open fun save() = saveFile(data, fileName)
+    open fun save() = saveFile(fileName, data, serialize)
 
-    // (Saves a list of elements to file)
-    protected fun saveFile(list: List<Element>, f: String) {
+    // (Writes a list into a file)
+    protected fun <T> saveFile(
+        fileName: String,
+        data: List<T>,
+        serialize: (T) -> String,
+    ) {
         // Serialize data
         val titleRowStr = CSV.serialize(titleRow)
-        val dataStr = listOf(titleRowStr) + list.map(serialize)
+        val dataStr = listOf(titleRowStr) + data.map(serialize)
 
-        // Save data
-        fileOpener.write(f, dataStr)
+        // Write data
+        fileOpener.write(fileName, dataStr)
     }
 
     // (Finds the corresponding element)
@@ -84,9 +91,18 @@ abstract class Repository<Element: BarData>(
     }
 
     // (Prepends an element)
-    fun prepend(element: Element) {
+    fun addToStart(element: Element) {
         // Prepend
         mutableData.add(0, element)
+
+        // Save
+        save()
+    }
+
+    // (Appends an element)
+    fun addToEnd(element: Element) {
+        // Append
+        mutableData.add(element)
 
         // Save
         save()

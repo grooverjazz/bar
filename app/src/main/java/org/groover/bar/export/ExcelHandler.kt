@@ -22,7 +22,7 @@ class ExcelHandler {
                 is String -> cell.setCellValue(value)
                 is Int -> cell.setCellValue(value.toDouble())
                 is Boolean -> cell.setCellValue(if (value) 1.0 else 0.0)
-                is Cents -> cell.setCellValue(value.toDouble())
+                is Cents -> cell.setCellValue(value.toDouble()) // TODO: format as currency
                 is ExcelFormula -> cell.cellFormula = value.formula
             }
         }

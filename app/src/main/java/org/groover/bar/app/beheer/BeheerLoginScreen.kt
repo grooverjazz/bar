@@ -2,11 +2,7 @@ package org.groover.bar.app.beheer
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -17,16 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.android.awaitFrame
 import org.groover.bar.util.app.BigButton
 import org.groover.bar.util.app.LabeledTextField
-import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
-import kotlin.math.log
 
 @Composable
 fun BeheerLoginScreen(
@@ -68,10 +60,7 @@ private fun BeheerLoginContent(
     // Remember current password
     var currentPassword: String by remember { mutableStateOf("") }
 
-    VerticalGrid(
-        modifier = Modifier
-            .padding(10.dp)
-    ) {
+    VerticalGrid {
         // Title
         Spacer(Modifier.size(100.dp))
         TitleText("Beheer")
@@ -86,10 +75,10 @@ private fun BeheerLoginContent(
             onValueChange = { currentPassword = it.trim() },
             isPassword = true,
         )
-        Spacer(modifier = Modifier.size(40.dp))
+        Spacer(Modifier.size(40.dp))
 
         // Login button
-        BigButton(text = "Inloggen",
+        BigButton("Inloggen",
             onClick = { logIn(currentPassword) },
             rounded = true,
         )

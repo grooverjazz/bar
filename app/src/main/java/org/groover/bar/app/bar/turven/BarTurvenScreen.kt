@@ -1,15 +1,14 @@
 package org.groover.bar.app.bar.turven
 
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.groover.bar.data.group.Group
-import org.groover.bar.data.group.GroupRepository
-import org.groover.bar.data.member.Member
-import org.groover.bar.data.member.MemberRepository
+import org.groover.bar.data.customer.Customer
+import org.groover.bar.data.customer.CustomerRepository
+import org.groover.bar.data.customer.Group
+import org.groover.bar.data.customer.Member
 import org.groover.bar.util.app.CustomerList
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
@@ -17,56 +16,41 @@ import org.groover.bar.util.app.VerticalGrid
 @Composable
 fun BarTurvenScreen(
     navigate: (String) -> Unit,
-    memberRepository: MemberRepository,
-    groupRepository: GroupRepository,
+    customerRepository: CustomerRepository,
 ) {
-    val memberOnClick = { member: Member ->
-        navigate("bar/turven/customer/${member.id}")
-    }
-
-    val groupOnClick = { group: Group ->
-        navigate("bar/turven/customer/${group.id}") // TODO: ander scherm
+    val customerOnClick = { customer: Customer ->
+        navigate("bar/turven/customer/${customer.id}")
     }
 
     BarTurvenContent(
-        navigate = navigate,
-        members = memberRepository.data,
-        groups = groupRepository.data,
-        memberOnClick = memberOnClick,
-        groupOnClick = groupOnClick,
+        members = customerRepository.members,
+        groups = customerRepository.groups,
+        customerOnClick = customerOnClick,
     )
 }
 
 
 @Composable
 private fun BarTurvenContent(
-    navigate: (String) -> Unit,
     members: List<Member>,
     groups: List<Group>,
-    memberOnClick: (Member) -> Unit,
-    groupOnClick: (Group) -> Unit,
+    customerOnClick: (customer: Customer) -> Unit,
 ) {
     // UI
-    VerticalGrid(
-        modifier = Modifier.padding(10.dp)
-    ) {
-        Spacer(modifier = Modifier.size(20.dp))
+    VerticalGrid {
+        Spacer(Modifier.size(20.dp))
         TitleText("Turven")
-        Spacer(modifier = Modifier.size(20.dp))
+        Spacer(Modifier.size(20.dp))
 
         // Customer list
         CustomerList(
             members = members,
             groups = groups,
-            memberOnClick = memberOnClick,
-            memberOnMove = null,
-            memberOnDelete = null,
-            groupOnClick = groupOnClick,
-            groupOnMove = null,
-            groupOnDelete = null,
-            showAddNewButton = false,
-            addTempMember = { /*impossible*/ },
-            addGroup = { /*impossible*/ },
+            customerOnClick = customerOnClick,
+            customerOnMove = null,
+            customerOnRemove = null,
+            addExtraMember = null,
+            addGroup = null,
         )
     }
 }

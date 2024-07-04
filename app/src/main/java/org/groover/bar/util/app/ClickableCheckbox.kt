@@ -43,7 +43,7 @@ fun ClickableCheckbox(
             checked = state,
             onCheckedChange = null
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(Modifier.width(8.dp))
         Text(text = label)
     }
 }

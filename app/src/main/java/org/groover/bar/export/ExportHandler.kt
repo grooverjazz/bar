@@ -2,23 +2,17 @@ package org.groover.bar.export
 
 import android.content.Context
 import android.widget.Toast
-import org.apache.poi.ss.util.CellReference
-import org.apache.poi.xssf.usermodel.XSSFCell
-import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import org.groover.bar.data.group.GroupRepository
+import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.item.ItemRepository
-import org.groover.bar.data.member.MemberRepository
 import org.groover.bar.data.order.OrderRepository
-import org.groover.bar.util.data.Cents
 import org.groover.bar.util.data.FileOpener
 
 class ExportHandler(
     private val context: Context,
     private val fileOpener: FileOpener,
     private val optionsHandler: OptionsHandler,
-    private val memberRepository: MemberRepository,
-    private val groupRepository: GroupRepository,
+    private val customerRepository: CustomerRepository,
     private val itemRepository: ItemRepository,
     private val orderRepository: OrderRepository,
 ) {
@@ -28,8 +22,7 @@ class ExportHandler(
 
         // Export overzicht
         OverzichtExportHandler(
-            memberRepository = memberRepository,
-            groupRepository = groupRepository,
+            customerRepository = customerRepository,
             itemRepository = itemRepository,
             orderRepository = orderRepository,
         ).export(workbook.createSheet("Overzicht"))
@@ -42,10 +35,8 @@ class ExportHandler(
 
         // Export incasso
         IncassoExportHandler(
-            memberRepository = memberRepository,
-            groupRepository = groupRepository,
+            customerRepository = customerRepository,
             itemRepository = itemRepository,
-            orderRepository = orderRepository,
             sessionName = optionsHandler.sessionName,
         ).export(workbook.createSheet("Incasso"))
 

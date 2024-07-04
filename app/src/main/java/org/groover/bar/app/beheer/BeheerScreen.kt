@@ -1,7 +1,6 @@
 package org.groover.bar.app.beheer
 
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,53 +26,41 @@ private fun BeheerContent(
     navigate: (String) -> Unit,
     export: () -> Unit,
 ) {
-    VerticalGrid(
-        modifier = Modifier
-            .padding(10.dp)
-    ) {
+    VerticalGrid {
         // Title
-        Spacer(modifier = Modifier.size(80.dp))
+        Spacer(Modifier.size(80.dp))
         TitleText("Beheer")
-
         Spacer(Modifier.size(80.dp))
 
         // Leden en Groepen button
-        NavigateButton(
+        NavigateButton("Leden en Groepen",
             navigate = navigate,
-            text = "Leden en Groepen",
             route = "beheer/customers",
         )
-
         Spacer(Modifier.size(30.dp))
 
         // Items button
-        NavigateButton(
+        NavigateButton("Items",
             navigate = navigate,
-            text = "Items",
             route = "beheer/items",
         )
-
         Spacer(Modifier.size(30.dp))
 
         // Items button
-        NavigateButton(
+        NavigateButton("Sessie",
             navigate = navigate,
-            text = "Sessie",
             route = "beheer/session",
         )
-
         Spacer(Modifier.size(30.dp))
 
         // Password button
-        NavigateButton(
+        NavigateButton("Wachtwoord veranderen",
             navigate = navigate,
-            text = "Wachtwoord veranderen",
             route = "beheer/password",
         )
-
         Spacer(Modifier.size(50.dp))
 
-        BigButton(text = "Hele zooi afrekenen",
+        BigButton("Hele zooi afrekenen",
             onClick = export,
             rounded = true,
         )

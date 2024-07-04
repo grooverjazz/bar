@@ -1,17 +1,13 @@
 package org.groover.bar.app.beheer.customers.member
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DateRange
-import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
@@ -26,14 +22,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import org.groover.bar.data.member.Member
-import org.groover.bar.data.member.MemberRepository
+import org.groover.bar.data.customer.CustomerRepository
+import org.groover.bar.data.customer.Member
 import org.groover.bar.util.app.BigButton
 import org.groover.bar.util.app.LabeledTextField
-import org.groover.bar.util.app.PopupDialog
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 import org.groover.bar.util.data.DateUtils
@@ -42,11 +35,12 @@ import java.util.Date
 @Composable
 fun BeheerMemberScreen(
     navigate: (String) -> Unit,
-    memberRepository: MemberRepository,
+    customerRepository: CustomerRepository,
     memberId: Int,
 ) {
-    val currentMember = memberRepository.find(memberId)
+    val currentMember = customerRepository.findMember(memberId)
 
+    // Error
     if (currentMember == null) {
         BeheerMemberError(
             navigate = navigate,
@@ -55,33 +49,20 @@ fun BeheerMemberScreen(
         return
     }
 
-    val finishEdit = { newRoepnaam: String, newVoornaam: String, newTussenvoegsel: String, newAchternaam: String, newVerjaardag: Date ->
+    // (Finishes editing a member)
+    val finishEdit = { newName: String, newBirthday: Date ->
         // Change the member
-        memberRepository.changeMember(memberId, newRoepnaam, newVoornaam, newTussenvoegsel, newAchternaam, newVerjaardag, currentMember.isExtra)
+        customerRepository.changeMember(memberId, newName, newBirthday, currentMember.isExtra)
 
         // Navigate back
         navigate("beheer/customers")
     }
 
-    val context = LocalContext.current
-    val remove = {
-        // Remove the member
-        memberRepository.remove(memberId)
-
-        // Navigate back
-        navigate("beheer/customers")
-
-        // Show toast
-        Toast
-            .makeText(context, "Lid verwijderd!", Toast.LENGTH_SHORT)
-            .show()
-    }
-
+    // Content
     BeheerMemberContent(
         navigate = navigate,
         currentMember = currentMember,
         finishEdit = finishEdit,
-        remove = remove,
     )
 }
 
@@ -91,9 +72,8 @@ private fun BeheerMemberError(
     navigate: (String) -> Unit,
     memberId: Int,
 ) {
-    VerticalGrid(
-        modifier = Modifier.padding(10.dp)
-    ) {
+    VerticalGrid {
+        // Title
         TitleText("Lid met ID $memberId niet gevonden!")
     }
 }
@@ -103,133 +83,89 @@ private fun BeheerMemberError(
 private fun BeheerMemberContent(
     navigate: (String) -> Unit,
     currentMember: Member,
-    finishEdit: (String, String, String, String, Date) -> Unit,
-    remove: () -> Unit,
+    finishEdit: (String, Date) -> Unit,
 ) {
     // Remember parameters
-    var newRoepnaam: String by remember { mutableStateOf(currentMember.roepnaam) }
-    var newVoornaam: String by remember { mutableStateOf(currentMember.voornaam) }
-    var newTussenvoegsel: String by remember { mutableStateOf(currentMember.tussenvoegsel) }
-    var newAchternaam: String by remember { mutableStateOf(currentMember.achternaam) }
-    var newVerjaardag: String by remember { mutableStateOf(DateUtils.serializeDate(currentMember.verjaardag)) }
+    var newName: String by remember { mutableStateOf(currentMember.name) }
+    var newBirthdayStr: String by remember { mutableStateOf(DateUtils.serializeDate(currentMember.birthday)) }
 
-    var datePickerShow: Boolean by remember { mutableStateOf(false) }
-    val datePickerState: DatePickerState = rememberDatePickerState(initialSelectedDateMillis = DateUtils.dateToMillis(currentMember.verjaardag))
+    // Birthday calendar popup
+    var birthdayPopupShow: Boolean by remember { mutableStateOf(false) }
+    val birthdayPopupState: DatePickerState = rememberDatePickerState(initialSelectedDateMillis = DateUtils.dateToMillis(currentMember.birthday))
 
-    var delete: Boolean by remember { mutableStateOf(false) }
-
-
-
-    VerticalGrid(
-        modifier = Modifier.padding(10.dp)
-    ) {
+    VerticalGrid {
+        // Title
         Spacer(Modifier.size(20.dp))
-        Row {
-            TitleText("Lid bewerken",
-                modifier = Modifier.weight(.88f))
-
-            Button(modifier = Modifier
-                .weight(.12f)
-                .height(100.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                onClick = { delete = true }
-            ) {
-                Icon(Icons.Rounded.Delete, null, Modifier.size(40.dp))
-            }
-        }
+        TitleText("Lid bewerken")
         Spacer(Modifier.size(20.dp))
 
-        // Roepnaam field
+        // Name field
         LabeledTextField(
             text = "Roepnaam",
-            value = newRoepnaam,
-            onValueChange = { newRoepnaam = it },
+            value = newName,
+            onValueChange = { newName = it },
         )
-        Spacer(modifier = Modifier.size(20.dp))
+        Spacer(Modifier.size(20.dp))
 
-        // Voornaam field
-        LabeledTextField(
-            text = "Voornaam",
-            value = newVoornaam,
-            onValueChange = { newVoornaam = it },
-        )
-        Spacer(modifier = Modifier.size(20.dp))
-
-        // Tussenvoegsel field
-        LabeledTextField(
-            text = "Tussenvoegsel",
-            value = newTussenvoegsel,
-            onValueChange = { newTussenvoegsel = it },
-        )
-        Spacer(modifier = Modifier.size(20.dp))
-
-        // Achternaam field
-        LabeledTextField(
-            text = "Achternaam",
-            value = newAchternaam,
-            onValueChange = { newAchternaam = it },
-        )
-        Spacer(modifier = Modifier.size(20.dp))
-
-        // Verjaardag field
+        // Birthday field
         Row(
             horizontalArrangement = Arrangement.spacedBy(20.dp)
         ) {
+            // Text field
             LabeledTextField(
                 modifier = Modifier.weight(0.8f),
                 text = "Verjaardag",
-                value = newVerjaardag,
-                onValueChange = { newVerjaardag = it },
+                value = newBirthdayStr,
+                onValueChange = { newBirthdayStr = it },
             )
 
+            // Birthday calendar popup button
             Button(
                 modifier = Modifier
                     .weight(0.2f)
                     .height(56.dp)
                     .align(Alignment.Bottom),
                 onClick = {
-                    datePickerShow = true
+                    birthdayPopupShow = true
 
-                    val millis = DateUtils.dateToMillis(DateUtils.deserializeDate(newVerjaardag.trim()))
-                    datePickerState.displayedMonthMillis = millis
-                    datePickerState.selectedDateMillis = millis
+                    val millis = DateUtils.dateToMillis(DateUtils.deserializeDate(newBirthdayStr.trim()))
+                    birthdayPopupState.displayedMonthMillis = millis
+                    birthdayPopupState.selectedDateMillis = millis
                 }
-            ) {
-                Icon(Icons.Rounded.DateRange, null)
-            }
+            ) { Icon(Icons.Rounded.DateRange, null) }
         }
-        Spacer(modifier = Modifier.size(20.dp))
+        Spacer(Modifier.size(20.dp))
 
-        // Date picker dialog
-        if (datePickerShow) {
-            VerjaardagDialog(
-                pickerState = datePickerState,
+        // Birthday calendar popup
+        if (birthdayPopupShow) {
+            BirthdayPopup(
+                pickerState = birthdayPopupState,
                 dismiss = {
-                    datePickerShow = false
+                    birthdayPopupShow = false
                 },
                 confirm = {
-                    datePickerShow = false
-                    newVerjaardag = DateUtils.serializeDate(DateUtils.millisToDate(datePickerState.selectedDateMillis!!))
+                    birthdayPopupShow = false
+                    newBirthdayStr = DateUtils.serializeDate(DateUtils.millisToDate(birthdayPopupState.selectedDateMillis!!))
                 }
             )
         }
 
         // Save button
-        BigButton(
-            text = "Opslaan",
+        BigButton("Opslaan",
             onClick = {
                 // Finish editing
-                val newVerjaardagDate = DateUtils.deserializeDate(newVerjaardag.trim())
-                finishEdit(newRoepnaam, newVoornaam, newTussenvoegsel, newAchternaam, newVerjaardagDate)
+                val newVerjaardagDate = DateUtils.deserializeDate(newBirthdayStr.trim())
+                finishEdit(newName, newVerjaardagDate)
             },
             rounded = true,
         )
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VerjaardagDialog(
+fun BirthdayPopup(
     pickerState: DatePickerState,
     dismiss: () -> Unit,
     confirm: () -> Unit,
@@ -237,18 +173,10 @@ fun VerjaardagDialog(
     DatePickerDialog(
         onDismissRequest = dismiss,
         confirmButton = {
-            Button(onClick = confirm) {
-                Text(text = "OK")
-            }
+            Button(onClick = confirm) { Text("OK") }
         },
         dismissButton = {
-            Button(onClick = dismiss) {
-                Text(text = "Cancel")
-            }
+            Button(onClick = dismiss) { Text("Cancel") }
         }
-    ) {
-        DatePicker(
-            state = pickerState,
-        )
-    }
+    ) { DatePicker(pickerState) }
 }

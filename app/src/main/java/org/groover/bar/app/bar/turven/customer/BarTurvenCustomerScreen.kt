@@ -5,7 +5,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -23,25 +22,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.groover.bar.data.group.Group
-import org.groover.bar.data.group.GroupRepository
+import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
-import org.groover.bar.data.member.Member
-import org.groover.bar.data.member.MemberRepository
 import org.groover.bar.data.order.Order
 import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.util.app.ItemList
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 import org.groover.bar.util.data.Cents
-import org.groover.bar.util.data.DateUtils
 
 @Composable
 fun BarTurvenCustomerScreen(
     navigate: (String) -> Unit,
-    memberRepository: MemberRepository,
-    groupRepository: GroupRepository,
+    customerRepository: CustomerRepository,
     itemRepository: ItemRepository,
     orderRepository: OrderRepository,
     customerId: Int,
@@ -50,47 +44,22 @@ fun BarTurvenCustomerScreen(
     val context = LocalContext.current
 
     // Look up current customer's name
-    val currentCustomer = (memberRepository.find(customerId)
-        ?: groupRepository.find(customerId))
+    val currentCustomer = customerRepository.find(customerId)
         ?: throw Exception("Kan gebruiker niet vinden!")
 
-    val customerName = when (currentCustomer) {
-        is Member -> currentCustomer.fullName
-        is Group -> currentCustomer.name
-        else -> throw Exception()
+    // Get customer total
+    val items = itemRepository.data
+    val customerTotal = orderRepository.getTotalByCustomer(customerId, customerRepository.groups, items)
+
+    // Get warning message
+    val warningMessage = currentCustomer.getWarningMessage(customerRepository::findMember)
+
+    // (Gets the cost of an order)
+    val getOrderCost = { amounts: List<Int> ->
+        itemRepository.costProduct(amounts)
     }
 
-    val items = itemRepository.data
-    val groups = groupRepository.data
-
-    val customerTotal = orderRepository.getTotalByCustomer(customerId, groups, items)
-
-    val warningMessage = when (currentCustomer) {
-        is Member -> {
-            if (currentCustomer.id == 0)
-                ""
-            else if (currentCustomer.isExtra)
-                "Dit lid is tijdelijk!"
-            else if (!DateUtils.isOlderThan18(currentCustomer.verjaardag))
-                "Dit lid is minderjarig!"
-            else
-                ""
-        }
-        is Group -> {
-            if (currentCustomer.memberIds.any {
-                memberRepository.find(it)!!.isExtra
-            })
-                "Deze groep bevat toegevoegde leden!"
-            else if (currentCustomer.memberIds.any {
-                !DateUtils.isOlderThan18(memberRepository.find(it)!!.verjaardag)
-            })
-                "Deze groep bevat minderjarigen!"
-            else
-                ""
-        }
-        else -> ""
-    }.trim()
-
+    // (Places an order)
     val placeOrder = { currentOrder: List<Int> ->
         orderRepository.placeOrder(currentOrder, customerId, items)
 
@@ -98,8 +67,7 @@ fun BarTurvenCustomerScreen(
             navigate("bar/turven")
 
             // Show toast
-            Toast
-                .makeText(context, "Bestelling geplaatst!", Toast.LENGTH_SHORT)
+            Toast.makeText(context, "Bestelling geplaatst!", Toast.LENGTH_SHORT)
                 .show()
         } else {
             orderRepository.remove(previousOrder.id)
@@ -107,43 +75,40 @@ fun BarTurvenCustomerScreen(
             navigate("bar/geschiedenis")
 
             // Show toast
-            Toast
-                .makeText(context, "Bestelling aangepast!", Toast.LENGTH_SHORT)
+            Toast.makeText(context, "Bestelling aangepast!", Toast.LENGTH_SHORT)
                 .show()
         }
     }
 
-    val deleteOrder = {
+    // (Removes an order)
+    val removeOrder = {
         orderRepository.remove(previousOrder!!.id)
 
         navigate("bar/geschiedenis")
 
         // Show toast
-        Toast
-            .makeText(context, "Bestelling verwijderd!", Toast.LENGTH_SHORT)
+        Toast.makeText(context, "Bestelling verwijderd!", Toast.LENGTH_SHORT)
             .show()
     }
 
+    // (Finishes an order)
     val finishOrder = { currentOrder: List<Int> ->
-        // Check if the order needs to be deleted
-        val delete = currentOrder.sum() == 0 && previousOrder != null
+        // Check if the order needs to be removed
+        val remove = currentOrder.sum() == 0 && previousOrder != null
 
-        if (delete)
-            deleteOrder()
+        if (remove)
+            removeOrder()
         else
             placeOrder(currentOrder)
     }
 
-    val getOrderCost: (List<Int>) -> Cents = { amounts ->
-        itemRepository.costProduct(amounts)
-    }
-
+    // Content
     BarTurvenCustomerContent(
         navigate = navigate,
         items = items,
         previousOrder = previousOrder,
         isHospitality = currentCustomer.id == 0,
-        customerName = customerName,
+        customerName = currentCustomer.name,
         customerTotal = customerTotal,
         warningMessage = warningMessage,
         getOrderCost = getOrderCost,
@@ -170,12 +135,10 @@ private fun BarTurvenCustomerContent(
             .toMutableStateList()
     }
 
-    VerticalGrid(
-        modifier = Modifier.padding(10.dp)
-    ) {
-        // Member name
-        Spacer(modifier = Modifier.size(20.dp))
-        val gradientColors = listOf(
+    VerticalGrid {
+        // Customer name
+        Spacer(Modifier.size(20.dp))
+        val hospitalityGradient = listOf(
             Color.Magenta,
             Color.Red,
             Color(0xFFFFD800),
@@ -183,48 +146,42 @@ private fun BarTurvenCustomerContent(
         TitleText(customerName,
             modifier = Modifier.basicMarquee(velocity = 80.dp),
             style = if (isHospitality) TextStyle(
-                brush = Brush.linearGradient(
-                    colors = gradientColors
-                ),
-                shadow = Shadow(
-                    blurRadius = 8f
-                )
-        ) else TextStyle())
+                brush = Brush.linearGradient(hospitalityGradient),
+                shadow = Shadow(blurRadius = 8f)
+            ) else TextStyle()
+        )
 
         // Member total
-        Text(
-            text = "Voorlopige rekening: ${customerTotal.toStringWithEuro()}",
+        Text("Voorlopige rekening: ${customerTotal.toStringWithEuro()}",
             fontFamily = FontFamily.Serif,
             fontWeight = FontWeight.Medium,
             fontSize = 30.sp,
             textAlign = TextAlign.Center,
         )
+        Spacer(Modifier.size(10.dp))
 
+        // Warning message
         if (warningMessage != "") {
-            Spacer(modifier = Modifier.size(10.dp))
-
-            Text(
-                text = warningMessage,
+            Text(warningMessage,
                 color = Color.Red,
                 fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
                 fontSize = 30.sp,
                 textAlign = TextAlign.Center,
             )
+            Spacer(Modifier.size(10.dp))
         }
-
-        Spacer(modifier = Modifier.size(10.dp))
 
         // Items
         ItemList(items, currentOrder)
-
-        Spacer(modifier = Modifier.size(10.dp))
+        Spacer(Modifier.size(10.dp))
 
         // Submit button
         val orderCost = getOrderCost(currentOrder)
         val hasItems = orderCost.amount != 0
         val newOrder = previousOrder == null
 
+        // Finish order button
         Button(
             modifier = Modifier.height(60.dp),
             onClick = { finishOrder(currentOrder) },

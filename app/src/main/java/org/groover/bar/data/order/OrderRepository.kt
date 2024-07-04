@@ -1,6 +1,6 @@
 package org.groover.bar.data.order
 
-import org.groover.bar.data.group.Group
+import org.groover.bar.data.customer.Group
 import org.groover.bar.data.item.Item
 import org.groover.bar.util.data.Cents
 import org.groover.bar.util.data.Cents.Companion.sum
@@ -36,7 +36,7 @@ class OrderRepository(
         )
 
         // Prepend
-        prepend(newOrder)
+        addToStart(newOrder)
     }
 
     // (Gets the total order price for a customer)

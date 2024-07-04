@@ -1,21 +1,22 @@
 package org.groover.bar.util.app
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.unit.dp
 
 /**
  * A simple grid which lays elements out vertically in evenly sized [columns].
  */
 @Composable
 fun VerticalGrid(
-    modifier: Modifier = Modifier,
     columns: Int = 1,
     content: @Composable () -> Unit
 ) {
     Layout(
         content = content,
-        modifier = modifier
+        modifier = Modifier.padding(10.dp)
     ) { measurables, constraints ->
         val itemWidth = constraints.maxWidth / columns
         // Keep given height constraints, but set an exact width

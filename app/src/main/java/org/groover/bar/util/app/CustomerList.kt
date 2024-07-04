@@ -1,12 +1,7 @@
 package org.groover.bar.util.app
 
-import android.text.Editable
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,14 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.android.awaitFrame
-import org.groover.bar.data.group.Group
-import org.groover.bar.data.member.Member
+import org.groover.bar.data.customer.Customer
+import org.groover.bar.data.customer.Group
+import org.groover.bar.data.customer.Member
 import org.groover.bar.util.data.SearchHandler
 import java.util.Locale
 
@@ -38,56 +33,25 @@ enum class CustomerListState {
 fun CustomerList(
     members: List<Member>,
     groups: List<Group>,
-    listState: CustomerListState? = null,
-    memberOnClick: (Member) -> Unit,
-    memberOnMove: ((id: Int, moveUp: Boolean) -> Unit)?,
-    memberOnDelete: ((id: Int) -> Unit)?,
-    groupOnClick: (Group) -> Unit,
-    groupOnMove: ((id: Int, moveUp: Boolean) -> Unit)?,
-    groupOnDelete: ((id: Int) -> Unit)?,
-    showAddNewButton: Boolean = false,
-    addTempMember: (String) -> Unit,
-    addGroup: (String) -> Unit,
     height: Dp = 800.dp,
+    listState: CustomerListState? = null,
+    customerOnClick: (customer: Customer) -> Unit,
+    customerOnMove: ((id: Int, moveUp: Boolean) -> Unit)?,
+    customerOnRemove: ((id: Int) -> Unit)?,
+    addExtraMember: ((String) -> Unit)?,
+    addGroup: ((String) -> Unit)?,
 ) {
     var state by remember { mutableStateOf(listState ?: CustomerListState.MEMBERS) }
     var searchText by remember { mutableStateOf("") }
 
     // Leden / Groepen button
     if (listState == null) {
-        Row {
-            val modifier = Modifier
-                .weight(1f)
-                .height(80.dp)
-            val modifierShadow = modifier.innerShadow(
-                shape = RectangleShape,
-                blur = 12.dp,
-                offsetX = 3.dp,
-                offsetY = 3.dp,
-            )
-
-            Button(
-                modifier = if (state == CustomerListState.MEMBERS) modifierShadow else modifier,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (state == CustomerListState.MEMBERS)
-                        MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.secondary
-                ),
-                shape = RectangleShape,
-                onClick = { state = CustomerListState.MEMBERS }
-            ) { Text(text = "Leden", fontSize = 25.sp) }
-
-            Button(
-                modifier = if (state == CustomerListState.GROUPS) modifierShadow else modifier,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (state == CustomerListState.GROUPS)
-                        MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.secondary
-                ),
-                shape = RectangleShape,
-                onClick = { state = CustomerListState.GROUPS }
-            ) { Text(text = "Groepen", fontSize = 25.sp) }
-        }
+        MultiChoiceButtons(
+            state = state,
+            setState = { state = it },
+            options = listOf("Leden", "Groepen"),
+            values = listOf(CustomerListState.MEMBERS, CustomerListState.GROUPS)
+        )
     }
 
     // Keyboard focus for search box
@@ -109,113 +73,77 @@ fun CustomerList(
         textStyle = TextStyle.Default.copy(fontSize = 28.sp)
     )
 
-    // Show current list
-    //  (with capitalized first letter)
+    // Format search text
     val formattedSearchText = searchText
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
         .trim()
 
-    when (state) {
-        CustomerListState.MEMBERS -> MemberList(
-            members = members,
-            searchText = formattedSearchText,
-            onClick = memberOnClick,
-            onMove = memberOnMove,
-            onDelete = memberOnDelete,
-            showAddNewButton = showAddNewButton,
-            addTempMember = addTempMember,
-            height = height,
-        )
-
-        CustomerListState.GROUPS -> GroupsList(
-            groups = groups,
-            searchText = formattedSearchText,
-            onClick = groupOnClick,
-            onMove = groupOnMove,
-            onDelete = groupOnDelete,
-            showAddNewButton = showAddNewButton,
-            addGroup = addGroup,
-            height = height,
-        )
-    }
-}
-
-@Composable
-private fun MemberList(
-    members: List<Member>,
-    searchText: String,
-    onClick: (Member) -> Unit,
-    onMove: ((id: Int, moveUp: Boolean) -> Unit)?,
-    onDelete: ((id: Int) -> Unit)?,
-    showAddNewButton: Boolean,
-    addTempMember: (String) -> Unit,
-    height: Dp,
-) {
-    val filteredMembers = SearchHandler.search(searchText, members) { it.toString() }
-
-    // UI
+    // Define colors
     val primaryColor = MaterialTheme.colorScheme.primary
     val secondaryColor = MaterialTheme.colorScheme.secondary
-    EditableBigList(
+
+    // Show customer list
+    CustomerList(
+        customers = when (state) {
+            CustomerListState.MEMBERS -> members
+            else -> groups
+        },
         height = height,
-        elements = filteredMembers,
-        getName = { it.toString() },
-        getVisible = { true },
-        getColor = { if (it.isExtra) secondaryColor else primaryColor },
-        fontColor = Color.White,
-        onClick = onClick,
-        onMove = onMove,
-        onToggleVisible = null,
-        onDelete = onDelete,
-        preContent = {
-            if (showAddNewButton && searchText != "") {
-                BigButton(
-                    text = "Nieuw tijdelijk lid '$searchText' toevoegen",
-                    color = MaterialTheme.colorScheme.secondary,
-                    onClick = { addTempMember(searchText) },
-                )
+        searchText = formattedSearchText,
+        onClick = customerOnClick,
+        onMove = customerOnMove,
+        onRemove = customerOnRemove,
+        addCustomer = when (state) {
+            CustomerListState.MEMBERS -> addExtraMember
+            else -> addGroup
+        },
+        addCustomerText = when (state) {
+            CustomerListState.MEMBERS -> "Nieuw tijdelijk lid '$searchText' toevoegen"
+            else -> "Nieuwe lege groep '$searchText' toevoegen"
+        },
+        getColor = {
+            when (state) {
+                CustomerListState.MEMBERS -> if ((it as Member).isExtra) secondaryColor else primaryColor
+                else -> secondaryColor
             }
-        }
+        },
     )
 }
 
 @Composable
-private fun GroupsList(
-    groups: List<Group>,
-    searchText: String,
-    onClick: (Group) -> Unit,
-    onMove: ((id: Int, moveUp: Boolean) -> Unit)?,
-    onDelete: ((id: Int) -> Unit)?,
-    showAddNewButton: Boolean,
-    addGroup: (String) -> Unit,
+private fun CustomerList(
+    customers: List<Customer>,
     height: Dp,
+    searchText: String,
+    onClick: (customer: Customer) -> Unit,
+    onMove: ((id: Int, moveUp: Boolean) -> Unit)?,
+    onRemove: ((id: Int) -> Unit)?,
+    addCustomer: ((name: String) -> Unit)?,
+    addCustomerText: String?,
+    getColor: (Customer) -> Color,
 ) {
-    val filteredGroups = SearchHandler.search(searchText, groups) { it.toString() }
+    // Search through customers
+    val filteredCustomers = SearchHandler.search(searchText, customers) { it.toString() }
 
     // UI
-    val color = MaterialTheme.colorScheme.secondary
     EditableBigList(
         height = height,
-        elements = filteredGroups,
+        elements = filteredCustomers,
         getName = { it.toString() },
         getVisible = { true },
-        getColor = { color },
+        getColor = getColor,
         fontColor = Color.White,
         onClick = onClick,
         onMove = onMove,
         onToggleVisible = null,
-        onDelete = onDelete,
+        onRemove = onRemove,
         preContent = {
-            if (showAddNewButton && searchText != "") {
-                BigButton(
-                    text = "Nieuwe lege groep '$searchText' toevoegen",
-                    color = color,
-                    onClick = { addGroup(searchText) },
+            if (searchText != "" && addCustomer != null) {
+                BigButton(addCustomerText!!,
+                    color = MaterialTheme.colorScheme.secondary,
+                    onClick = { addCustomer(searchText) },
                 )
             }
         }
     )
 }
-
-
-

@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -14,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.groover.bar.data.item.Item
@@ -35,6 +33,7 @@ fun BeheerItemsItemScreen(
     // Get item
     val item = itemRepository.find(itemId)
 
+    // Error
     if (item == null) {
         BeheerItemsItemError(
             navigate = navigate,
@@ -43,7 +42,7 @@ fun BeheerItemsItemScreen(
         return
     }
 
-    // Finishes editing the item
+    // (Finishes editing the item)
     val finishEdit = { newName: String, newPrice: Cents, newBtwPercentage: Int, newHue: Float ->
         // Change the item
         itemRepository.changeItem(itemId, newName, item.visible, newPrice, newBtwPercentage, newHue)
@@ -52,6 +51,7 @@ fun BeheerItemsItemScreen(
         navigate("beheer/items")
     }
 
+    // Content
     BeheerItemsItemContent(
         navigate = navigate,
         item = item,
@@ -64,10 +64,8 @@ private fun BeheerItemsItemError(
     navigate: (String) -> Unit,
     itemId: Int
 ) {
-    VerticalGrid(
-        modifier = Modifier
-            .padding(10.dp)
-    ) {
+    VerticalGrid {
+        // Title
         TitleText("Kan item met ID $itemId niet vinden!")
     }
 }
@@ -85,11 +83,9 @@ private fun BeheerItemsItemContent(
     var newBtwPercentageStr: String by remember { mutableStateOf(item.btwPercentage.toString()) }
     var newColorFloat: Float by remember { mutableStateOf(item.hue) }
 
-    VerticalGrid(
-        modifier = Modifier
-            .padding(10.dp)
-    ) {
-        Spacer(modifier = Modifier.size(20.dp))
+    VerticalGrid {
+        // Title
+        Spacer(Modifier.size(20.dp))
         TitleText("Item bewerken")
         Spacer(Modifier.size(20.dp))
 
@@ -99,7 +95,7 @@ private fun BeheerItemsItemContent(
             value = newName,
             onValueChange = { newName = it },
         )
-        Spacer(modifier = Modifier.size(20.dp))
+        Spacer(Modifier.size(20.dp))
 
         // New price field
         LabeledTextField(
@@ -107,7 +103,7 @@ private fun BeheerItemsItemContent(
             value = newPriceStr,
             onValueChange = { newPriceStr = it.replace('.',',') },
         )
-        Spacer(modifier = Modifier.size(20.dp))
+        Spacer(Modifier.size(20.dp))
 
         // New BTW percentage field
         LabeledTextField(
@@ -115,30 +111,29 @@ private fun BeheerItemsItemContent(
             value = newBtwPercentageStr,
             onValueChange = { newBtwPercentageStr = it },
         )
-        Spacer(modifier = Modifier.size(20.dp))
+        Spacer(Modifier.size(20.dp))
 
         // New color field
         Text(
             text = "Tint:",
             fontSize = 20.sp,
         )
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(Modifier.height(5.dp))
         Slider(
             value = newColorFloat,
             onValueChange = { newColorFloat = it }
         )
-        Spacer(modifier = Modifier.size(20.dp))
+        Spacer(Modifier.size(20.dp))
 
-        val color = Item.getColor(newColorFloat)
-        Box(
-            modifier = Modifier
-                .height(30.dp)
-                .background(color = color)
+        // Color box
+        Box(Modifier
+            .height(30.dp)
+            .background(color = Item.getColor(newColorFloat))
         )
-        Spacer(modifier = Modifier.size(30.dp))
+        Spacer(Modifier.size(30.dp))
 
         // Save button
-        BigButton(text = "Opslaan",
+        BigButton("Opslaan",
             onClick = {
                 // Convert new price and BTW percentage, finish
                 finishEdit(

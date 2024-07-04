@@ -43,7 +43,7 @@ fun <T: BarData> EditableBigList(
     onClick: (T) -> Unit,
     onMove: ((id: Int, moveUp: Boolean) -> Unit)?,
     onToggleVisible: ((id: Int) -> Unit)?,
-    onDelete: ((id: Int) -> Unit)?,
+    onRemove: ((id: Int) -> Unit)?,
     preContent: (@Composable (() -> Unit))? = null,
 ) {
     val controlsShowMap: SnapshotStateMap<Int, Boolean> = remember { mutableStateMapOf() }
@@ -65,7 +65,7 @@ fun <T: BarData> EditableBigList(
                 toggleControlsShow = { controlsShowMap[id] = !getControlsShow(id) },
                 onMove = if (onMove == null) null else { moveUp: Boolean -> onMove(id, moveUp) },
                 onToggleVisible = if (onToggleVisible == null) null else ({ onToggleVisible(id) }),
-                onDelete = if (onDelete == null) null else ({ onDelete(id) })
+                onRemove = if (onRemove == null) null else ({ onRemove(id) })
             )
         }
     }
@@ -82,15 +82,14 @@ private fun EditListItem(
     toggleControlsShow: () -> Unit,
     onMove: ((moveUp: Boolean) -> Unit)?,
     onToggleVisible: (() -> Unit)?,
-    onDelete: (() -> Unit)?
+    onRemove: (() -> Unit)?
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .blur(if (visible) 0.dp else 1.dp)
     ) {
-        LongPressBigButton(
-            text = name + if (visible) "" else " (verborgen)",
+        LongPressBigButton(name + if (visible) "" else " (verborgen)",
             color = color.copy(if (visible) 1.0f else 0.1f),
             fontColor = fontColor.copy(if (visible) 1.0f else 0.4f),
             onClick = {
@@ -104,7 +103,7 @@ private fun EditListItem(
         )
 
         if (controlsShow) {
-            Spacer(modifier = Modifier.size(10.dp))
+            Spacer(Modifier.size(10.dp))
 
             Row(
                 modifier = Modifier
@@ -112,8 +111,8 @@ private fun EditListItem(
                     .padding(horizontal = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                if (onDelete != null)
-                    ItemControl(1f, Color.Red, onDelete, Icons.Rounded.Delete)
+                if (onRemove != null)
+                    ItemControl(1f, Color.Red, onRemove, Icons.Rounded.Delete)
 
                 if (onToggleVisible != null)
                     ItemControl(1f, Color.Blue, onToggleVisible, Icons.Rounded.Face)
@@ -124,7 +123,7 @@ private fun EditListItem(
                 }
             }
 
-            Spacer(modifier = Modifier.size(10.dp))
+            Spacer(Modifier.size(10.dp))
         }
     }
 }

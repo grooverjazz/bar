@@ -1,25 +1,22 @@
 package org.groover.bar.export
 
 import org.apache.poi.xssf.usermodel.XSSFSheet
-import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.item.ItemRepository
-import org.groover.bar.data.member.MemberRepository
+import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.order.OrderRepository
 
 class OverzichtExportHandler(
-    private val memberRepository: MemberRepository,
-    private val groupRepository: GroupRepository,
+    private val customerRepository: CustomerRepository,
     private val itemRepository: ItemRepository,
     private val orderRepository: OrderRepository,
 ) {
-    fun getOrders(): Map<Int, List<Int>> {
+    private fun getOrders(): Map<Int, List<Int>> {
         val orders = orderRepository.data
         val items = itemRepository.data
-        val members = memberRepository.data
-        val groups = groupRepository.data
+        val customers = customerRepository.data
 
         // Initialize all amounts
-        val allAmounts: MutableMap<Int, MutableList<Int>> = (members + groups).associate { data ->
+        val allAmounts: MutableMap<Int, MutableList<Int>> = customers.associate { data ->
             data.id to MutableList(items.size) { 0 }
         }.toMutableMap()
 
@@ -47,8 +44,8 @@ class OverzichtExportHandler(
     }
 
     fun export(sheet: XSSFSheet) {
-        val members = memberRepository.data
-        val groups = groupRepository.data
+        val members = customerRepository.members
+        val groups = customerRepository.groups
         val items = itemRepository.data
         val orderExport = getOrders()
 
@@ -138,9 +135,7 @@ class OverzichtExportHandler(
             sheet.createRow(currentRowIndex),
             listOf(
                 "id",
-                "voornaam",
-                "tussenvoegsel",
-                "achternaam",
+                "naam",
                 "aanwezig",
             ) + items.map { it.name }
             + groups.map { it.name }
@@ -153,7 +148,7 @@ class OverzichtExportHandler(
             val memberOrders: List<Int> = orderExport[member.id]!!
 
             // Get range of items
-            val rowWidth = 5 + memberOrders.size
+            val rowWidth = 3 + memberOrders.size
             val ordersRangeStr = "${ExcelHandler.cellStr(currentRowIndex, 5)}:${ExcelHandler.cellStr(currentRowIndex, rowWidth - 1)}"
             val groupRangeStr = "${ExcelHandler.cellStr(currentRowIndex, rowWidth)}:${ExcelHandler.cellStr(currentRowIndex, rowWidth + groups.size - 1)}"
 
@@ -162,7 +157,7 @@ class OverzichtExportHandler(
             val total = ExcelHandler.ExcelFormula("sumproduct($pricesRangeStr, $ordersRangeStr) + sum($groupRangeStr)")
 
             val memberGroupOrders = groups.mapIndexed { index, group ->
-                if (group.memberIds.contains(member.id)) {
+                if (group.memberIds.contains(member.id)) { // TODO: fix bounds with new row width
                     val str = ExcelHandler.cellStr(6 + members.size + 2 + 1 + index, 4 + items.size + 1)
                     ExcelHandler.ExcelFormula("$str / ${group.memberIds.size}")
                 }
@@ -176,9 +171,7 @@ class OverzichtExportHandler(
                 sheet.createRow(currentRowIndex),
                 listOf(
                     member.id,
-                    if (member.isExtra) member.roepVoornaam else member.voornaam,
-                    member.tussenvoegsel,
-                    member.achternaam,
+                    member.name,
                     aanwezig
                 )
                 + memberOrders

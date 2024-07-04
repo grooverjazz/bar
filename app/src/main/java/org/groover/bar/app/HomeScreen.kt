@@ -2,7 +2,6 @@ package org.groover.bar.app
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,9 +31,7 @@ private fun HomeContent(
    navigate: (String) -> Unit,
    sessionName: String,
 ) {
-    VerticalGrid(
-        modifier = Modifier.padding(10.dp)
-    ) {
+    VerticalGrid {
         Spacer(Modifier.size(100.dp))
 
         // Title
