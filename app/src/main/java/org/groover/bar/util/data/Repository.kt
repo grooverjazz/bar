@@ -118,9 +118,11 @@ abstract class Repository<Element: BarData>(
         if ((moveUp && index == 0) || (!moveUp && index == data.lastIndex))
             return
 
-        // Remove and re-add the item
-        val element = mutableData.removeAt(index)
-        mutableData.add(index + (if (moveUp) -1 else 1), element)
+        // Get new index, swap the 2 values
+        val newIndex = index + (if (moveUp) -1 else 1)
+        val tempElement = mutableData[newIndex]
+        mutableData[newIndex] = mutableData[index]
+        mutableData[index] = tempElement
 
         // Save
         save()

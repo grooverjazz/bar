@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
@@ -34,6 +35,7 @@ import org.groover.bar.util.data.BarData
 
 @Composable
 fun <T: BarData> EditableBigList(
+    lazy: Boolean = false,
     height: Dp,
     elements: List<T>,
     getName: (T) -> String,
@@ -49,26 +51,44 @@ fun <T: BarData> EditableBigList(
     val controlsShowMap: SnapshotStateMap<Int, Boolean> = remember { mutableStateMapOf() }
     val getControlsShow: (id: Int) -> Boolean = { controlsShowMap.getOrDefault(it, false) }
 
-    BigList(height = height) {
-        preContent?.invoke()
+    val item: @Composable (T) -> Unit = { element: T ->
+        val id = element.id
 
-        elements.forEach { element ->
-            val id = element.id
+        EditListItem(
+            name = getName(element),
+            visible = getVisible(element),
+            color = getColor(element),
+            fontColor = fontColor,
+            onClick = { onClick(element) },
+            controlsShow = getControlsShow(id),
+            toggleControlsShow = { controlsShowMap[id] = !getControlsShow(id) },
+            onMove = if (onMove == null) null else { moveUp: Boolean -> onMove(id, moveUp) },
+            onToggleVisible = if (onToggleVisible == null) null else ({ onToggleVisible(id) }),
+            onRemove = if (onRemove == null) null else ({ onRemove(id) })
+        )
+    }
 
-            EditListItem(
-                name = getName(element),
-                visible = getVisible(element),
-                color = getColor(element),
-                fontColor = fontColor,
-                onClick = { onClick(element) },
-                controlsShow = getControlsShow(id),
-                toggleControlsShow = { controlsShowMap[id] = !getControlsShow(id) },
-                onMove = if (onMove == null) null else { moveUp: Boolean -> onMove(id, moveUp) },
-                onToggleVisible = if (onToggleVisible == null) null else ({ onToggleVisible(id) }),
-                onRemove = if (onRemove == null) null else ({ onRemove(id) })
-            )
+    if (lazy) {
+        // Lazy list
+        LazyBigList(height = height) {
+            // Pre content
+            item { preContent?.invoke() }
+
+            // Items
+            items(elements) { element -> item(element) }
         }
     }
+    else {
+        // Non-lazy list
+        BigList(height = height) {
+            // Pre content
+            preContent?.invoke()
+
+            // Items
+            elements.forEach { element -> item(element) }
+        }
+    }
+
 }
 
 @Composable

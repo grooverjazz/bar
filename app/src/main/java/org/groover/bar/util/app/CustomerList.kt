@@ -128,6 +128,7 @@ private fun CustomerList(
     // UI
     EditableBigList(
         height = height,
+        lazy = true,
         elements = filteredCustomers,
         getName = { it.toString() },
         getVisible = { true },

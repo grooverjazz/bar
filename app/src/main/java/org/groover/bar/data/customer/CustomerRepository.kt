@@ -18,6 +18,8 @@ class CustomerRepository(
     val members: List<Member> get() = data.filterIsInstance<Member>()
     val groups: List<Group> get() = data.filterIsInstance<Group>()
 
+    // TODO: move() override
+
     init {
         open()
     }
@@ -29,7 +31,7 @@ class CustomerRepository(
 
         // Add extra members
         mutableData += readFile("extraMembers.csv", Member.Companion::deserialize)
-            .map { (it as Member).copy(isExtra = true) }
+            .map { it.copy(isExtra = true) }
 
         // Add regular members
         mutableData += readFile("members.csv", Member.Companion::deserialize)
