@@ -41,14 +41,17 @@ fun <T: BarData> EditableBigList(
     getColor: (T) -> Color,
     fontColor: Color,
     onClick: (T) -> Unit,
-    onMove: (id: Int, moveUp: Boolean) -> Unit,
-    onToggleVisible: (id: Int) -> Unit,
-    onDelete: (T) -> Unit,
+    onMove: ((id: Int, moveUp: Boolean) -> Unit)?,
+    onToggleVisible: ((id: Int) -> Unit)?,
+    onDelete: ((id: Int) -> Unit)?,
+    preContent: (@Composable (() -> Unit))? = null,
 ) {
     val controlsShowMap: SnapshotStateMap<Int, Boolean> = remember { mutableStateMapOf() }
-    val getControlsShow: (id: Int) -> Boolean = { controlsShowMap.getOrPut(it) { false } }
+    val getControlsShow: (id: Int) -> Boolean = { controlsShowMap.getOrDefault(it, false) }
 
     BigList(height = height) {
+        preContent?.invoke()
+
         elements.forEach { element ->
             val id = element.id
 
@@ -60,9 +63,9 @@ fun <T: BarData> EditableBigList(
                 onClick = { onClick(element) },
                 controlsShow = getControlsShow(id),
                 toggleControlsShow = { controlsShowMap[id] = !getControlsShow(id) },
-                onMove = { moveUp: Boolean -> onMove(id, moveUp) },
-                onToggleVisible = { onToggleVisible(id) },
-                onDelete = { onDelete(element) }
+                onMove = if (onMove == null) null else { moveUp: Boolean -> onMove(id, moveUp) },
+                onToggleVisible = if (onToggleVisible == null) null else ({ onToggleVisible(id) }),
+                onDelete = if (onDelete == null) null else ({ onDelete(id) })
             )
         }
     }
@@ -77,9 +80,9 @@ private fun EditListItem(
     onClick: () -> Unit,
     controlsShow: Boolean,
     toggleControlsShow: () -> Unit,
-    onMove: (Boolean) -> Unit,
-    onToggleVisible: () -> Unit,
-    onDelete: () -> Unit
+    onMove: ((moveUp: Boolean) -> Unit)?,
+    onToggleVisible: (() -> Unit)?,
+    onDelete: (() -> Unit)?
 ) {
     Column(
         modifier = Modifier
@@ -104,13 +107,21 @@ private fun EditListItem(
             Spacer(modifier = Modifier.size(10.dp))
 
             Row(
-                modifier = Modifier.height(60.dp).padding(horizontal = 10.dp),
+                modifier = Modifier
+                    .height(60.dp)
+                    .padding(horizontal = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                ItemControl(1f, Color.Red, onDelete, Icons.Rounded.Delete)
-                ItemControl(1f, Color.Blue, onToggleVisible, Icons.Rounded.Face)
-                ItemControl(2f, MaterialTheme.colorScheme.tertiary, { onMove(true) }, Icons.Rounded.KeyboardArrowUp)
-                ItemControl(2f, MaterialTheme.colorScheme.tertiary, { onMove(false) }, Icons.Rounded.KeyboardArrowDown)
+                if (onDelete != null)
+                    ItemControl(1f, Color.Red, onDelete, Icons.Rounded.Delete)
+
+                if (onToggleVisible != null)
+                    ItemControl(1f, Color.Blue, onToggleVisible, Icons.Rounded.Face)
+
+                if (onMove != null) {
+                    ItemControl(2f, MaterialTheme.colorScheme.tertiary, { onMove(true) }, Icons.Rounded.KeyboardArrowUp)
+                    ItemControl(2f, MaterialTheme.colorScheme.tertiary, { onMove(false) }, Icons.Rounded.KeyboardArrowDown)
+                }
             }
 
             Spacer(modifier = Modifier.size(10.dp))

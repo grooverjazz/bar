@@ -29,11 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import org.groover.bar.app.beheer.items.PopupDialog
 import org.groover.bar.data.member.Member
 import org.groover.bar.data.member.MemberRepository
 import org.groover.bar.util.app.BigButton
 import org.groover.bar.util.app.LabeledTextField
+import org.groover.bar.util.app.PopupDialog
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 import org.groover.bar.util.data.DateUtils
@@ -118,17 +118,7 @@ private fun BeheerMemberContent(
 
     var delete: Boolean by remember { mutableStateOf(false) }
 
-    if (delete) {
-        PopupDialog(
-            confirmText = "Verwijderen",
-            dismissText = "Annuleren",
-            onConfirm = remove,
-            onDismiss = { delete = false },
-            dialogTitle = "Item verwijderen",
-            dialogText = "Weet je zeker dat je dit lid (${currentMember}) wilt verwijderen?",
-            icon = Icons.Rounded.Delete,
-        )
-    }
+
 
     VerticalGrid(
         modifier = Modifier.padding(10.dp)

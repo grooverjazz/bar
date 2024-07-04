@@ -27,7 +27,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.groover.bar.app.beheer.items.PopupDialog
 import org.groover.bar.data.group.Group
 import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.member.Member
@@ -37,6 +36,7 @@ import org.groover.bar.util.app.LazyBigList
 import org.groover.bar.util.app.CustomerList
 import org.groover.bar.util.app.CustomerListState
 import org.groover.bar.util.app.LabeledTextField
+import org.groover.bar.util.app.PopupDialog
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 
@@ -186,7 +186,11 @@ fun BeheerGroupContent(
             groups = emptyList(),
             listState = CustomerListState.MEMBERS,
             memberOnClick = addMember,
+            memberOnMove = null,
+            memberOnDelete = null,
             groupOnClick = { },
+            groupOnMove = null,
+            groupOnDelete = null,
             showAddNewButton = false,
             addTempMember = { },
             addGroup = { },

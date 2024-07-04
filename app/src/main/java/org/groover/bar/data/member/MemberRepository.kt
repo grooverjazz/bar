@@ -50,7 +50,7 @@ class MemberRepository(
     fun addExtraMember(tempName: String) {
         // Create extra member
         val extraMember = Member(
-            id = generateExtraId(),
+            id = generateId(),
             roepnaam = tempName,
             voornaam = "",
             tussenvoegsel = "",
@@ -87,6 +87,4 @@ class MemberRepository(
         // Replace
         replace(memberId, newMember)
     }
-
-    fun generateExtraId(): Int = min(super.generateId(), 1000000)
 }

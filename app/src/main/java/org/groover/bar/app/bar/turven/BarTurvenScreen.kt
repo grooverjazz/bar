@@ -11,7 +11,6 @@ import org.groover.bar.data.group.GroupRepository
 import org.groover.bar.data.member.Member
 import org.groover.bar.data.member.MemberRepository
 import org.groover.bar.util.app.CustomerList
-import org.groover.bar.util.app.NavigateButton
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 
@@ -60,7 +59,11 @@ private fun BarTurvenContent(
             members = members,
             groups = groups,
             memberOnClick = memberOnClick,
+            memberOnMove = null,
+            memberOnDelete = null,
             groupOnClick = groupOnClick,
+            groupOnMove = null,
+            groupOnDelete = null,
             showAddNewButton = false,
             addTempMember = { /*impossible*/ },
             addGroup = { /*impossible*/ },

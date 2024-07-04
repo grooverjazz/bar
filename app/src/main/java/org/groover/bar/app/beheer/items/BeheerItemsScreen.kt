@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.util.app.EditableBigList
+import org.groover.bar.util.app.PopupDialog
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 import org.groover.bar.util.data.Cents
@@ -33,16 +34,31 @@ fun BeheerItemsScreen(
     navigate: (String) -> Unit,
     itemRepository: ItemRepository,
 ) {
+    var itemRemoveState: Item? by remember { mutableStateOf(null) }
+
+    if (itemRemoveState != null) {
+        PopupDialog(
+            confirmText = "Verwijderen",
+            dismissText = "Annuleren",
+            onConfirm = {
+                itemRepository.remove(itemRemoveState!!.id)
+                itemRemoveState = null
+            },
+            onDismiss = { itemRemoveState = null },
+            dialogTitle = "Item verwijderen",
+            dialogText = "Weet je zeker dat je dit item (${itemRemoveState!!.name}) wilt verwijderen?",
+            icon = Icons.Rounded.Delete,
+        )
+    }
 
     BeheerItemsContent(
         navigate = navigate,
         items = itemRepository.data,
         addItem = itemRepository::addItem,
         itemMove = itemRepository::move,
-        itemRemove = itemRepository::remove,
+        itemRemove = { itemRemoveState = itemRepository.find(it) },
         onToggleVisible = itemRepository::toggleVisible
     )
-
 }
 
 @Composable
@@ -58,23 +74,6 @@ private fun BeheerItemsContent(
         modifier = Modifier
             .padding(10.dp)
     ) {
-        var itemRemoveState: Item? by remember { mutableStateOf(null) }
-
-        if (itemRemoveState != null) {
-            PopupDialog(
-                confirmText = "Verwijderen",
-                dismissText = "Annuleren",
-                onConfirm = {
-                    itemRemove(itemRemoveState!!.id)
-                    itemRemoveState = null
-                },
-                onDismiss = { itemRemoveState = null },
-                dialogTitle = "Item verwijderen",
-                dialogText = "Weet je zeker dat je dit item (${itemRemoveState!!.name}) wilt verwijderen?",
-                icon = Icons.Rounded.Delete,
-            )
-        }
-
         // Title
         Spacer(modifier = Modifier.size(20.dp))
         TitleText("Items")
@@ -105,35 +104,7 @@ private fun BeheerItemsContent(
             onClick = { navigate("beheer/items/item/${it.id}") },
             onMove = itemMove,
             onToggleVisible = onToggleVisible,
-            onDelete = { itemRemoveState = it }
+            onDelete = itemRemove
         )
     }
-}
-
-@Composable
-fun PopupDialog(
-    confirmText: String,
-    dismissText: String,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-    dialogTitle: String,
-    dialogText: String,
-    icon: ImageVector,
-) {
-    AlertDialog(
-        icon = { Icon(icon, null) },
-        title = { Text(text = dialogTitle) },
-        text = { Text(dialogText) },
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text(confirmText)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(dismissText)
-            }
-        }
-    )
 }
