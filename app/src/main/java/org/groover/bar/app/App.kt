@@ -22,6 +22,8 @@ import org.groover.bar.app.beheer.password.BeheerPasswordScreen
 import org.groover.bar.app.beheer.session.BeheerSessionScreen
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.customer.CustomerRepository
+import org.groover.bar.data.customer.GroupRepository
+import org.groover.bar.data.customer.MemberRepository
 import org.groover.bar.data.order.Order
 import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.export.ExportHandler
@@ -32,14 +34,21 @@ import org.groover.bar.util.data.FileOpener
 fun App() {
     val context = LocalContext.current
 
+    // Initialize options
     val optionsHandler = OptionsHandler(context)
-    optionsHandler.open()
 
+    // Initialize file opener
     val fileOpener = FileOpener(context, optionsHandler.sessionName)
 
-    val customerRepository = CustomerRepository(fileOpener)
+    // Initialize repositories
     val itemRepository = ItemRepository(fileOpener)
     val orderRepository = OrderRepository(fileOpener)
+
+    // Create customer pseudo-repository
+    val customerRepository = CustomerRepository(
+        members = MemberRepository(fileOpener),
+        groups = GroupRepository(fileOpener)
+    )
 
     // (Reloads the repositories)
     val reload: (String, Boolean) -> Unit = { newSessionName, copyGlobalData ->

@@ -27,9 +27,9 @@ class IncassoExportHandler(
 
         var refRowIndex = 6
 
-        val members = customerRepository.members
+        val members = customerRepository.members.data
         val itemsCount = itemRepository.data.size
-        val groupsCount = customerRepository.groups.size
+        val groupsCount = customerRepository.groups.data.size
         for (member in members) {
             // Define reference to total in overzicht sheet
             val totalRefFormula = ExcelHandler.ExcelFormula("Overzicht!" + ExcelHandler.cellStr(refRowIndex, itemsCount + groupsCount + 5)) // TODO: fix bounds with new row width

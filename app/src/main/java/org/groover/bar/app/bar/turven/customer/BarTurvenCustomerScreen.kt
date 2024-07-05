@@ -49,10 +49,10 @@ fun BarTurvenCustomerScreen(
 
     // Get customer total
     val items = itemRepository.data
-    val customerTotal = orderRepository.getTotalByCustomer(customerId, customerRepository.groups, items)
+    val customerTotal = orderRepository.getTotalByCustomer(customerId, customerRepository.groups.data, items)
 
     // Get warning message
-    val warningMessage = currentCustomer.getWarningMessage(customerRepository::findMember)
+    val warningMessage = currentCustomer.getWarningMessage(customerRepository.members::find)
 
     // (Gets the cost of an order)
     val getOrderCost = { amounts: List<Int> ->

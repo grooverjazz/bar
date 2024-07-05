@@ -7,69 +7,42 @@ import java.util.Date
 import kotlin.math.max
 
 class CustomerRepository(
-    fileOpener: FileOpener,
-) : Repository<Customer>(
-    fileOpener,
-    "",
-    { throw Exception("Unused serialize") },
-    { throw Exception("Unused deserialize") },
-    listOf("id", "name", "birthday")
+    val members: MemberRepository,
+    val groups: GroupRepository,
 ) {
-    val members: List<Member> get() = data.filterIsInstance<Member>()
-    val groups: List<Group> get() = data.filterIsInstance<Group>()
+    val data: List<Customer> get() = members.data + groups.data
 
-    // TODO: move() override
-
-    init {
-        open()
+    // (Loads/reloads the data of the repository)
+    fun open() {
+        members.open()
+        groups.open()
     }
 
-    // (OVERRIDE: Loads/reloads the data of the repository)
-    override fun open() {
-        // Read from file, add extra members
-        mutableData.clear()
-
-        // Add extra members
-        mutableData += readFile("extraMembers.csv", Member.Companion::deserialize)
-            .map { it.copy(isExtra = true) }
-
-        // Add regular members
-        mutableData += readFile("members.csv", Member.Companion::deserialize)
-
-        // Add groups
-        mutableData += readFile("groups.csv", Group.Companion::deserialize)
-
-        // Add Hospitality if not present
-        if (find(0) == null)
-            addToStart(Member(0, "Hospitality", DateUtils.Y2K, true))
+    // (Saves the data of the repository)
+    fun save() {
+        members.save()
+        groups.save()
     }
 
-    // (OVERRIDE: Saves the data of the repository)
-    override fun save() {
-        // Partition extra and regular members
-        val (extraMembers, regularMembers) = members.partition { it.isExtra }
 
-        // Save separately
-        saveFile("groups.csv", groups, Group.Companion::serialize)
-        saveFile("members.csv", regularMembers, Member.Companion::serialize)
-        saveFile("extraMembers.csv", extraMembers, Member.Companion::serialize)
-    }
+    // (Generates a member ID)
+    private fun generateMemberId() = members.generateId()
 
-    // (Finds the corresponding member)
-    fun findMember(id: Int): Member? = find(id) as? Member
+    // (Finds the corresponding customer)
+    fun find(id: Int): Customer? = data.firstOrNull { element -> element.id == id }
 
     // (Adds an extra member)
     fun addExtraMember(tempName: String) {
         // Create extra member
         val extraMember = Member(
-            id = generateId(),
+            id = generateMemberId(),
             name = tempName,
             birthday = DateUtils.Y2K,
             isExtra = true,
         )
 
         // Prepend
-        addToStart(extraMember)
+        members.addToStart(extraMember)
     }
 
     // (Changes a member)
@@ -83,23 +56,26 @@ class CustomerRepository(
         val newMember = Member(memberId, newName, newBirthday, isExtra)
 
         // Replace
-        replace(memberId, newMember)
+        members.replace(memberId, newMember)
     }
 
-    // (Finds the corresponding member)
-    fun findGroup(id: Int): Group? = find(id) as? Group
+    // (Generates a group ID)
+    private fun generateGroupId(): Int = max(
+        data.maxByOrNull { it.id }?.id?.plus(1) ?: 0,
+        1000000
+    )
 
     // (Adds a new group)
     fun addGroup(newGroupName: String) {
         val newGroup = Group(
             // Create new group
-            id = max(generateId(), 1000000),
+            id = generateGroupId(),
             name = newGroupName,
             memberIds = emptyList()
         )
 
         // Prepend
-        addToEnd(newGroup)
+        groups.addToStart(newGroup)
     }
 
     // (Changes a group)
@@ -116,6 +92,24 @@ class CustomerRepository(
         )
 
         // Replace
-        replace(groupId, newGroup)
+        groups.replace(groupId, newGroup)
+    }
+
+    // (Removes a customer)
+    fun remove(id: Int) {
+        when (find(id)) {
+            is Member -> members.remove(id)
+            is Group -> groups.remove(id)
+            else -> throw Exception("Error bij verwijderen gebruiker")
+        }
+    }
+
+    // (Moves a customer up or down)
+    fun move(id: Int, moveUp: Boolean) {
+        when (find(id)) {
+            is Member -> members.move(id, moveUp)
+            is Group -> groups.move(id, moveUp)
+            else -> throw Exception("Error bij verplaatsen gebruiker")
+        }
     }
 }

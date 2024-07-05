@@ -44,8 +44,8 @@ class OverzichtExportHandler(
     }
 
     fun export(sheet: XSSFSheet) {
-        val members = customerRepository.members
-        val groups = customerRepository.groups
+        val members = customerRepository.members.data
+        val groups = customerRepository.groups.data
         val items = itemRepository.data
         val orderExport = getOrders()
 

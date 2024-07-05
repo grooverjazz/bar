@@ -35,7 +35,7 @@ fun BeheerGroupScreen(
     customerRepository: CustomerRepository,
     groupId: Int,
 ) {
-    val currentGroup = customerRepository.findGroup(groupId)
+    val currentGroup = customerRepository.groups.find(groupId)
 
     if (currentGroup == null) {
         BeheerGroupError(
@@ -47,7 +47,7 @@ fun BeheerGroupScreen(
 
     // Remember list of new members
     val initialMembers = currentGroup.memberIds.map {
-        customerRepository.findMember(it) ?: throw Exception("Kan lid met ID $it niet vinden!")
+        customerRepository.members.find(it) ?: throw Exception("Kan lid met ID $it niet vinden!")
     }
     var newMembers = remember { mutableStateListOf(*initialMembers.toTypedArray()) }
 
@@ -72,7 +72,7 @@ fun BeheerGroupScreen(
 
     BeheerGroupContent(
         navigate = navigate,
-        members = customerRepository.members,
+        members = customerRepository.members.data,
         currentGroup = currentGroup,
         finishEdit = finishEdit,
         newMembers = newMembers,

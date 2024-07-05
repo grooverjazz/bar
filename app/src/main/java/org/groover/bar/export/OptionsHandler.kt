@@ -11,7 +11,11 @@ class OptionsHandler(
     var sessionName = ""
     var beheerPassword = ""
 
-    fun open() {
+    init {
+        open()
+    }
+
+    private fun open() {
         // Load data
         val dataStr = fileOpener.read("session.csv")
 

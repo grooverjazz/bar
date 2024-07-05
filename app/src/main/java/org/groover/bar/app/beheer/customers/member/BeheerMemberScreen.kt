@@ -38,7 +38,7 @@ fun BeheerMemberScreen(
     customerRepository: CustomerRepository,
     memberId: Int,
 ) {
-    val currentMember = customerRepository.findMember(memberId)
+    val currentMember = customerRepository.members.find(memberId)
 
     // Error
     if (currentMember == null) {

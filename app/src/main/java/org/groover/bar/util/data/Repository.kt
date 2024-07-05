@@ -6,8 +6,8 @@ import androidx.compose.runtime.toMutableStateList
 abstract class Repository<Element: BarData>(
     private val fileOpener: FileOpener,
     protected val fileName: String,
-    private val serialize: (Element) -> String,
-    private val deserialize: (String) -> Element,
+    protected val serialize: (Element) -> String,
+    protected val deserialize: (String) -> Element,
     private val titleRow: List<String>
 ) {
     // Mutable, internal, list of elements
@@ -94,15 +94,6 @@ abstract class Repository<Element: BarData>(
     fun addToStart(element: Element) {
         // Prepend
         mutableData.add(0, element)
-
-        // Save
-        save()
-    }
-
-    // (Appends an element)
-    fun addToEnd(element: Element) {
-        // Append
-        mutableData.add(element)
 
         // Save
         save()

@@ -66,8 +66,8 @@ fun BeheerCustomersScreen(
     // Content
     BeheerCustomersContent(
         navigate = navigate,
-        members = customerRepository.members,
-        groups = customerRepository.groups,
+        members = customerRepository.members.data,
+        groups = customerRepository.groups.data,
         customerOnClick = customerOnClick,
         customerOnMove = customerRepository::move,
         customerOnRemove = customerOnRemove,
