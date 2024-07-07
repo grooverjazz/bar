@@ -16,24 +16,29 @@ import org.groover.bar.util.app.VerticalGrid
 
 @Composable
 fun BeheerPasswordScreen(
-    navigate: (String) -> Unit,
-    finish: (String) -> Unit,
+    navigate: (route: String) -> Unit,
+    finish: (newPassword: String) -> Unit,
 ) {
+    // (Finishes setting the password)
+    val onFinish = { newPassword: String ->
+        finish(newPassword)
+        navigate("beheer")
+    }
+
     // Content
     BeheerPasswordContent(
-        navigate = navigate,
-        finish = finish,
+        onFinish = onFinish,
     )
 }
 
 @Composable
 private fun BeheerPasswordContent(
-    navigate: (String) -> Unit,
-    finish: (String) -> Unit,
+    onFinish: (newPassword: String) -> Unit,
 ) {
     // Remember new password
     var newPassword: String by remember { mutableStateOf("") }
 
+    // UI
     VerticalGrid {
         // Title
         Spacer(Modifier.size(100.dp))
@@ -49,12 +54,9 @@ private fun BeheerPasswordContent(
         Spacer(Modifier.size(50.dp))
 
         // Change password button
-        BigButton(text = "Wachtwoord veranderen",
-            onClick = {
-                // Set the password
-                finish(newPassword)
-                navigate("beheer")
-            },
+        BigButton(
+            "Wachtwoord veranderen",
+            onClick = { onFinish(newPassword) },
             rounded = true,
         )
     }

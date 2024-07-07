@@ -15,13 +15,15 @@ import org.groover.bar.util.app.VerticalGrid
 
 @Composable
 fun BarTurvenScreen(
-    navigate: (String) -> Unit,
+    navigate: (route: String) -> Unit,
     customerRepository: CustomerRepository,
 ) {
+    // (Navigates to the turven screen)
     val customerOnClick = { customer: Customer ->
         navigate("bar/turven/customer/${customer.id}")
     }
 
+    // Content
     BarTurvenContent(
         members = customerRepository.members.data,
         groups = customerRepository.groups.data,
@@ -38,6 +40,7 @@ private fun BarTurvenContent(
 ) {
     // UI
     VerticalGrid {
+        // Title
         Spacer(Modifier.size(20.dp))
         TitleText("Turven")
         Spacer(Modifier.size(20.dp))

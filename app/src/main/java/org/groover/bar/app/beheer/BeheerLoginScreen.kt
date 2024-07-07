@@ -22,11 +22,12 @@ import org.groover.bar.util.app.VerticalGrid
 
 @Composable
 fun BeheerLoginScreen(
-    navigate: (String) -> Unit,
+    navigate: (route: String) -> Unit,
     correctPassword: String
 ) {
     val context = LocalContext.current
 
+    // (Handles login)
     val logIn: (String) -> Unit = { currentPassword ->
         if (currentPassword == correctPassword) {
             navigate("beheer")
@@ -37,8 +38,8 @@ fun BeheerLoginScreen(
         }
     }
 
+    // Content
     BeheerLoginContent(
-        navigate = navigate,
         logIn = logIn,
     )
 }
@@ -46,7 +47,6 @@ fun BeheerLoginScreen(
 
 @Composable
 private fun BeheerLoginContent(
-    navigate: (String) -> Unit,
     logIn: (String) -> Unit,
 ) {
     // Keyboard focus for search box
@@ -60,16 +60,15 @@ private fun BeheerLoginContent(
     // Remember current password
     var currentPassword: String by remember { mutableStateOf("") }
 
+    // UI
     VerticalGrid {
         // Title
         Spacer(Modifier.size(100.dp))
         TitleText("Beheer")
-
         Spacer(Modifier.size(80.dp))
 
         // Password field
-        LabeledTextField(
-            modifier = Modifier.focusRequester(keyboardFocus),
+        LabeledTextField(Modifier.focusRequester(keyboardFocus),
             text = "Wachtwoord",
             value = currentPassword,
             onValueChange = { currentPassword = it.trim() },

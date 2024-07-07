@@ -1,5 +1,8 @@
 package org.groover.bar.data.order
 
+import androidx.compose.ui.util.fastFilter
+import androidx.compose.ui.util.fastMap
+import androidx.compose.ui.util.fastZip
 import org.groover.bar.data.customer.Group
 import org.groover.bar.data.item.Item
 import org.groover.bar.util.data.Cents
@@ -15,7 +18,7 @@ class OrderRepository(
     "orders.csv",
     Order.Companion::serialize,
     Order.Companion::deserialize,
-    listOf("ID", "Customer ID", "Timestamp", "Amounts...")
+    listOf("ID", "Customer ID", "Timestamp", "Amounts..."),
 ) {
     init {
         open()
@@ -43,18 +46,18 @@ class OrderRepository(
     fun getTotalByCustomer(customerId: Int, groups: List<Group>, items: List<Item>): Cents {
         // Get the total for the customer
         val total = data
-            .filter { it.customerId == customerId}
-            .map { it.getTotalPrice(items) }
+            .fastFilter { it.customerId == customerId}
+            .fastMap { it.getTotalPrice(items) }
             .sum()
 
         // Get the total for all groups that they are in
         //  (NOTE: Members only)
         val groupTotal = groups
-            .filter { it.memberIds.contains(customerId) }
-            .map { group ->
+            .fastFilter { it.memberIds.contains(customerId) }
+            .fastMap { group ->
                 data
-                    .filter { it.customerId == group.id }
-                    .map { it.getTotalPrice(items) }
+                    .fastFilter { it.customerId == group.id }
+                    .fastMap { it.getTotalPrice(items) }
                     .sum() / group.memberIds.size
             }
             .sum()

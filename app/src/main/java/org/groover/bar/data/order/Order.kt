@@ -1,5 +1,6 @@
 package org.groover.bar.data.order
 
+import androidx.compose.ui.util.fastMap
 import org.groover.bar.data.item.Item
 import org.groover.bar.util.data.BarData
 import org.groover.bar.util.data.CSV
@@ -15,14 +16,15 @@ data class Order(
 ): BarData() {
     // Gets the amount ordered of the specified item
     //  (If the item does not exist, initialize it to 0)
-    fun getAmount(itemId: Int): Int = amounts.getOrElse(itemId) {
+    fun getAmount(itemId: Int): Int = amounts.getOrElse(itemId) { // TODO: setting amounts[itemId] needed?
         amounts[itemId] = 0
         return 0
     }
 
     // (Gets the total price of the order)
-    fun getTotalPrice(items: List<Item>): Cents =
-        items.map { item -> item.price * getAmount(item.id) }.sum()
+    fun getTotalPrice(items: List<Item>): Cents = items
+        .fastMap { item -> item.price * getAmount(item.id) }
+        .sum()
 
 
     companion object {

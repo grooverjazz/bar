@@ -32,6 +32,7 @@ import org.groover.bar.util.data.FileOpener
 
 @Composable
 fun App() {
+    // Get context
     val context = LocalContext.current
 
     // Initialize options
@@ -47,7 +48,7 @@ fun App() {
     // Create customer pseudo-repository
     val customerRepository = CustomerRepository(
         members = MemberRepository(fileOpener),
-        groups = GroupRepository(fileOpener)
+        groups = GroupRepository(fileOpener),
     )
 
     // (Reloads the repositories)
@@ -70,25 +71,27 @@ fun App() {
         orderRepository.open()
     }
 
+    // Initialize export handler
     val exportHandler = ExportHandler(
         context = context,
         fileOpener = fileOpener,
         optionsHandler = optionsHandler,
         customerRepository = customerRepository,
         itemRepository = itemRepository,
-        orderRepository = orderRepository
+        orderRepository = orderRepository,
     )
 
+    // Initialize navigation
     val navController = rememberNavController()
-    val navigate: (String) -> Unit = { navController.navigate(it) }
+    val navigate: (String) -> Unit = { route -> navController.navigate(route) }
+    @Suppress("LocalVariableName")
+    val BackBehavior: @Composable (String) -> Unit = { route -> BackHandler { navigate(route) } }
 
-    val BackBehavior: @Composable (String) -> Unit = { BackHandler { navigate(it) } }
-
+    // UI
     NavHost(
         navController = navController,
         startDestination = "Home",
     ) {
-
         // Home
         composable("home") {
             BackHandler { (context as Activity).finish() }
@@ -123,7 +126,8 @@ fun App() {
             BackBehavior("bar/turven")
 
             // Extract the member ID from the route
-            val customerIdStr = backStackEntry.arguments?.getString("customerId") ?: throw Exception("Kan klant niet vinden in route!")
+            val customerIdStr = backStackEntry.arguments?.getString("customerId")
+                ?: throw Exception("Kan klant niet vinden in route!")
             val customerId = customerIdStr.toInt()
 
             BarTurvenCustomerScreen(
@@ -149,12 +153,14 @@ fun App() {
         }
 
         // Bar: geschiedenis: aanpassing
-        composable("bar/geschiedenis/edit/{previousOrder}") { backStackEntry ->
+        composable("bar/geschiedenis/edit/{orderId}") { backStackEntry ->
             BackBehavior("bar/geschiedenis")
 
             // Extract the previous order from the route
-            val previousOrderStr = backStackEntry.arguments?.getString("previousOrder") ?: throw Exception("Kan vorige order niet vinden in route!")
-            val previousOrder = Order.deserialize(previousOrderStr)
+            val orderIdStr = backStackEntry.arguments?.getString("orderId")
+                ?: throw Exception("Kan vorige order niet vinden in route!")
+            val orderId = orderIdStr.toInt()
+            val previousOrder = orderRepository.find(orderId)!!
 
             // Get the customer ID from the order
             val customerId = previousOrder.customerId
@@ -169,14 +175,13 @@ fun App() {
             )
         }
 
-
         // Beheer
         composable("beheer") {
             BackBehavior("home")
 
             BeheerScreen(
                 navigate = navigate,
-                export = { exportHandler.export("Export ${optionsHandler.sessionName}") }
+                export = { exportHandler.export("Export ${optionsHandler.sessionName}") },
             )
         }
 
@@ -205,7 +210,8 @@ fun App() {
             BackBehavior("beheer/items")
 
             // Extract the item ID from the route
-            val itemIdStr = backStackEntry.arguments?.getString("itemId") ?: throw Exception("Kan item niet vinden in route!")
+            val itemIdStr = backStackEntry.arguments?.getString("itemId")
+                ?: throw Exception("Kan item niet vinden in route!")
             val itemId = itemIdStr.toInt()
 
             BeheerItemsItemScreen(
@@ -230,7 +236,8 @@ fun App() {
             BackBehavior("beheer/customers")
 
             // Extract the member ID from the route
-            val memberIdStr = backStackEntry.arguments?.getString("memberId") ?: throw Exception("Kan lid niet vinden in route!")
+            val memberIdStr = backStackEntry.arguments?.getString("memberId")
+                ?: throw Exception("Kan lid niet vinden in route!")
             val memberId = memberIdStr.toInt()
 
             BeheerMemberScreen(
@@ -245,7 +252,8 @@ fun App() {
             BackBehavior("beheer/customers")
 
             // Extract the member ID from the route
-            val groupIdStr = backStackEntry.arguments?.getString("groupId") ?: throw Exception("Kan groep niet vinden in route!")
+            val groupIdStr = backStackEntry.arguments?.getString("groupId")
+                ?: throw Exception("Kan groep niet vinden in route!")
             val groupId = groupIdStr.toInt()
 
             BeheerGroupScreen(
@@ -264,8 +272,6 @@ fun App() {
                 oldSessionName = optionsHandler.sessionName,
                 allSessions = optionsHandler.getAllSessions(),
                 finish = { newSessionName, copyGlobalData ->
-                    navigate("home")
-
                     reload(newSessionName, copyGlobalData)
                 },
             )
@@ -280,7 +286,7 @@ fun App() {
                 finish = { newPassword ->
                     optionsHandler.beheerPassword = newPassword
                     optionsHandler.save()
-                }
+                },
             )
         }
     }

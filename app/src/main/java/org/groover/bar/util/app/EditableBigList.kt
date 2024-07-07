@@ -64,7 +64,7 @@ fun <T: BarData> EditableBigList(
             toggleControlsShow = { controlsShowMap[id] = !getControlsShow(id) },
             onMove = if (onMove == null) null else { moveUp: Boolean -> onMove(id, moveUp) },
             onToggleVisible = if (onToggleVisible == null) null else ({ onToggleVisible(id) }),
-            onRemove = if (onRemove == null) null else ({ onRemove(id) })
+            onRemove = if (onRemove == null) null else ({ onRemove(id) }),
         )
     }
 
@@ -102,10 +102,9 @@ private fun EditListItem(
     toggleControlsShow: () -> Unit,
     onMove: ((moveUp: Boolean) -> Unit)?,
     onToggleVisible: (() -> Unit)?,
-    onRemove: (() -> Unit)?
+    onRemove: (() -> Unit)?,
 ) {
-    Column(
-        modifier = Modifier
+    Column(Modifier
             .fillMaxWidth()
             .blur(if (visible) 0.dp else 1.dp)
     ) {
@@ -125,8 +124,7 @@ private fun EditListItem(
         if (controlsShow) {
             Spacer(Modifier.size(10.dp))
 
-            Row(
-                modifier = Modifier
+            Row(Modifier
                     .height(60.dp)
                     .padding(horizontal = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -155,12 +153,12 @@ private fun RowScope.ItemControl(
     onClick: () -> Unit,
     icon: ImageVector
 ) {
-    Button(modifier = Modifier
-        .weight(weight)
-        .fillMaxHeight(),
+    Button(onClick,
+        modifier = Modifier
+            .weight(weight)
+            .fillMaxHeight(),
         colors = ButtonDefaults.buttonColors(color),
         shape = RoundedCornerShape(5.dp),
-        onClick = onClick
     ) {
         Icon(icon, null, modifier = Modifier.size(40.dp))
     }

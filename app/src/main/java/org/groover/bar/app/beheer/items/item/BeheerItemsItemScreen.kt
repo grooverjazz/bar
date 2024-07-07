@@ -26,19 +26,16 @@ import org.groover.bar.util.data.Cents.Companion.toCents
 
 @Composable
 fun BeheerItemsItemScreen(
-    navigate: (String) -> Unit,
+    navigate: (route: String) -> Unit,
     itemRepository: ItemRepository,
-    itemId: Int
+    itemId: Int,
 ) {
     // Get item
     val item = itemRepository.find(itemId)
 
     // Error
     if (item == null) {
-        BeheerItemsItemError(
-            navigate = navigate,
-            itemId = itemId
-        )
+        BeheerItemsItemError(itemId = itemId)
         return
     }
 
@@ -53,7 +50,6 @@ fun BeheerItemsItemScreen(
 
     // Content
     BeheerItemsItemContent(
-        navigate = navigate,
         item = item,
         finishEdit = finishEdit,
     )
@@ -61,9 +57,9 @@ fun BeheerItemsItemScreen(
 
 @Composable
 private fun BeheerItemsItemError(
-    navigate: (String) -> Unit,
-    itemId: Int
+    itemId: Int,
 ) {
+    // UI
     VerticalGrid {
         // Title
         TitleText("Kan item met ID $itemId niet vinden!")
@@ -73,9 +69,8 @@ private fun BeheerItemsItemError(
 
 @Composable
 private fun BeheerItemsItemContent(
-    navigate: (String) -> Unit,
     item: Item,
-    finishEdit: (String, Cents, Int, Float) -> Unit
+    finishEdit: (String, Cents, Int, Float) -> Unit,
 ) {
     // Remember name, price and BTW percentage
     var newName: String by remember { mutableStateOf(item.name) }
@@ -83,6 +78,7 @@ private fun BeheerItemsItemContent(
     var newBtwPercentageStr: String by remember { mutableStateOf(item.btwPercentage.toString()) }
     var newColorFloat: Float by remember { mutableStateOf(item.hue) }
 
+    // UI
     VerticalGrid {
         // Title
         Spacer(Modifier.size(20.dp))
@@ -114,21 +110,20 @@ private fun BeheerItemsItemContent(
         Spacer(Modifier.size(20.dp))
 
         // New color field
-        Text(
-            text = "Tint:",
+        Text("Tint:",
             fontSize = 20.sp,
         )
         Spacer(Modifier.height(5.dp))
         Slider(
             value = newColorFloat,
-            onValueChange = { newColorFloat = it }
+            onValueChange = { newColorFloat = it },
         )
         Spacer(Modifier.size(20.dp))
 
         // Color box
         Box(Modifier
             .height(30.dp)
-            .background(color = Item.getColor(newColorFloat))
+            .background(color = Item.getColor(newColorFloat)),
         )
         Spacer(Modifier.size(30.dp))
 

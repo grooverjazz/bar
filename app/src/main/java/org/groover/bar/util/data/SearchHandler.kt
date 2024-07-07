@@ -8,7 +8,7 @@ class SearchHandler {
         fun <T> search(
             searchStr: String,
             data: List<T>,
-            transform: (T) -> String
+            transform: (T) -> String,
         ): List<T> {
             if (searchStr == "")
                 return data

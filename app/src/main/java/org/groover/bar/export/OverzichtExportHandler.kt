@@ -1,5 +1,7 @@
 package org.groover.bar.export
 
+import androidx.compose.ui.util.fastMap
+import androidx.compose.ui.util.fastMapIndexed
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.customer.CustomerRepository
@@ -54,17 +56,17 @@ class OverzichtExportHandler(
         // Leden table
         val aantalLedenValues = listOf(
             "aantal leden",
-            members.size
+            members.size,
         )
         val aantalVerzonnenLedenValues = listOf(
             "aantal verzonnen leden",
-            members.count { it.isExtra }
+            members.count { it.isExtra },
         )
         val aantalAanwezigeLedenValues = listOf(
             "aantal aanwezige leden",
             groupMemberRowSum(4, members.size, groups.size).let { (memberSumStr, groupSumStr) ->
                 ExcelHandler.ExcelFormula("countif($memberSumStr, \"ja\") + countif($groupSumStr, \"nee\")")
-            }
+            },
         )
 
         // Afzet row
@@ -77,7 +79,7 @@ class OverzichtExportHandler(
                 groupMemberRowSum(5 + index, members.size, groups.size).let { (memberSumStr, groupSumStr) ->
                     ExcelHandler.ExcelFormula("sum($memberSumStr, $groupSumStr)")
                 }
-            }
+            },
         )
         currentRowIndex += 1
 
@@ -88,13 +90,13 @@ class OverzichtExportHandler(
             + aantalLedenValues
             + listOf(
                 "",
-                "OMZET"
+                "OMZET",
             )
             + List(items.size) { index ->
                 val afzetCell = ExcelHandler.cellStr(0, 5 + index)
                 val prijsCell = ExcelHandler.cellStr(4, 5 + index)
                 ExcelHandler.ExcelFormula("$afzetCell * $prijsCell")
-            }
+            },
         )
         currentRowIndex += 1
 
@@ -102,7 +104,7 @@ class OverzichtExportHandler(
         ExcelHandler.writeRow(
             sheet.createRow(currentRowIndex),
             listOf("")
-            + aantalVerzonnenLedenValues
+            + aantalVerzonnenLedenValues,
         )
         currentRowIndex += 1
 
@@ -115,7 +117,7 @@ class OverzichtExportHandler(
                 "",
                 "BTW",
             )
-            + items.map { it.btwPercentage }
+            + items.fastMap { it.btwPercentage },
         )
         currentRowIndex += 1
 
@@ -125,8 +127,8 @@ class OverzichtExportHandler(
         ExcelHandler.writeRow(
             sheet.createRow(currentRowIndex),
             listOf("PRIJZEN")
-            + items.map { it.price },
-            startIndex = 4
+            + items.fastMap { it.price },
+            startIndex = 4,
         )
         currentRowIndex += 1
 
@@ -137,8 +139,8 @@ class OverzichtExportHandler(
                 "id",
                 "naam",
                 "aanwezig",
-            ) + items.map { it.name }
-            + groups.map { it.name }
+            ) + items.fastMap { it.name }
+            + groups.fastMap { it.name }
             + listOf("OMZET"),
         )
         currentRowIndex += 1
@@ -156,7 +158,7 @@ class OverzichtExportHandler(
             val aanwezig = ExcelHandler.ExcelFormula("if(sum($ordersRangeStr),\"ja\",\"nee\")")
             val total = ExcelHandler.ExcelFormula("sumproduct($pricesRangeStr, $ordersRangeStr) + sum($groupRangeStr)")
 
-            val memberGroupOrders = groups.mapIndexed { index, group ->
+            val memberGroupOrders = groups.fastMapIndexed { index, group ->
                 if (group.memberIds.contains(member.id)) { // TODO: fix bounds with new row width
                     val str = ExcelHandler.cellStr(6 + members.size + 2 + 1 + index, 4 + items.size + 1)
                     ExcelHandler.ExcelFormula("$str / ${group.memberIds.size}")
@@ -176,7 +178,7 @@ class OverzichtExportHandler(
                 )
                 + memberOrders
                 + memberGroupOrders
-                + listOf(total)
+                + listOf(total),
             )
 
             currentRowIndex += 1
@@ -190,9 +192,9 @@ class OverzichtExportHandler(
                 "id",
                 "naam",
                 "aanwezig"
-            ) + items.map { it.name }
+            ) + items.fastMap { it.name }
             + listOf("OMZET"),
-            startIndex = 2
+            startIndex = 2,
         )
         currentRowIndex += 1
 
@@ -218,7 +220,7 @@ class OverzichtExportHandler(
                 )
                 + groupOrders
                 + listOf(total),
-                startIndex = 2
+                startIndex = 2,
             )
 
             currentRowIndex += 1

@@ -20,7 +20,7 @@ class IncassoExportHandler(
                 "voornaam",
                 "tussenvoegsel",
                 "achternaam",
-                sessionName
+                sessionName,
             )
         )
         currentRowIndex += 1

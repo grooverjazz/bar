@@ -20,6 +20,7 @@ data class Item(
     // (Converts the Group to a String)
     override fun toString(): String = "$name (${price.toStringWithEuro()} incl. $btwPercentage% BTW)"
 
+
     companion object {
         // (Turns the hue into a color)
         fun getColor(hue: Float) = Color.hsv(hue * 360f, 0.4f, 1f)

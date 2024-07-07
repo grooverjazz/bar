@@ -22,7 +22,7 @@ import org.groover.bar.util.app.VerticalGrid
 
 @Composable
 fun BeheerCustomersScreen(
-    navigate: (String) -> Unit,
+    navigate: (route: String) -> Unit,
     customerRepository: CustomerRepository,
 ) {
     // (Selects a customer for editing)
@@ -65,28 +65,27 @@ fun BeheerCustomersScreen(
 
     // Content
     BeheerCustomersContent(
-        navigate = navigate,
         members = customerRepository.members.data,
         groups = customerRepository.groups.data,
         customerOnClick = customerOnClick,
         customerOnMove = customerRepository::move,
         customerOnRemove = customerOnRemove,
         addTempMember = customerRepository::addExtraMember,
-        addGroup = customerRepository::addGroup
+        addGroup = customerRepository::addGroup,
     )
 }
 
 @Composable
 private fun BeheerCustomersContent(
-    navigate: (String) -> Unit,
     members: List<Member>,
     groups: List<Group>,
     customerOnClick: (Customer) -> Unit,
     customerOnMove: (id: Int, moveUp: Boolean) -> Unit,
     customerOnRemove: (id: Int) -> Unit,
-    addTempMember: (String) -> Unit,
-    addGroup: (String) -> Unit
+    addTempMember: (newExtraName: String) -> Unit,
+    addGroup: (newGroupName: String) -> Unit,
 ) {
+    //UI
     VerticalGrid {
         // Title
         Spacer(Modifier.size(20.dp))

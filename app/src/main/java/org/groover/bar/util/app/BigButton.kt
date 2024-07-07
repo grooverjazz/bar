@@ -34,17 +34,17 @@ fun BigButton(
     fontSize: TextUnit = 30.sp,
     onClick: () -> Unit = { },
     rounded: Boolean = false,
+    enabled: Boolean = true,
 ) {
-    Button(
+    Button(onClick,
         modifier = Modifier
             .fillMaxWidth()
             .height(95.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = color),
+        colors = ButtonDefaults.buttonColors(color),
         shape = if (rounded) ButtonDefaults.shape else RectangleShape,
-        onClick = onClick,
+        enabled = enabled,
     ) {
-        Text(
-            text = text,
+        Text(text,
             fontSize = fontSize,
             color = fontColor,
         )
@@ -61,9 +61,9 @@ fun LongPressBigButton(
     onClick: () -> Unit = { },
     onLongClick: () -> Unit = { },
     rounded: Boolean = false,
+    enabled: Boolean = true,
 ) {
-    ElevatedCard(
-        modifier = Modifier
+    ElevatedCard(Modifier
             .height(95.dp)
             .clip(if (rounded) ButtonDefaults.shape else RectangleShape)
             .combinedClickable(
@@ -71,15 +71,15 @@ fun LongPressBigButton(
                 indication = rememberRipple(),
                 onClick = onClick,
                 onLongClick = onLongClick,
+                enabled = enabled,
             ),
         shape = RectangleShape,
-        colors = CardDefaults.cardColors(
-            containerColor = color,
-        ),
+        colors = CardDefaults.cardColors(color),
     ) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(
-                text = text,
+        Box(Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text,
                 fontSize = fontSize,
                 color = fontColor,
                 fontWeight = FontWeight.Medium,

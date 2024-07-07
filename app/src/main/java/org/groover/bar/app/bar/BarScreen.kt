@@ -11,16 +11,18 @@ import org.groover.bar.util.app.VerticalGrid
 
 @Composable
 fun BarScreen(
-    navigate: (String) -> Unit,
+    navigate: (route: String) -> Unit,
 ) {
+    // Content
     BarContent(navigate)
 }
 
 
 @Composable
 private fun BarContent(
-    navigate: (String) -> Unit = {},
+    navigate: (route: String) -> Unit = {},
 ) {
+    // UI
     VerticalGrid {
         // Title
         Spacer(Modifier.size(100.dp))
@@ -30,14 +32,14 @@ private fun BarContent(
         // Turven button
         NavigateButton("Turven",
             navigate = navigate,
-            route = "bar/turven"
+            route = "bar/turven",
         )
         Spacer(Modifier.size(30.dp))
 
         // Geschiedenis button
         NavigateButton("Geschiedenis",
             navigate = navigate,
-            route = "bar/geschiedenis"
+            route = "bar/geschiedenis",
         )
     }
 }

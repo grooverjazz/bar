@@ -1,8 +1,8 @@
 package org.groover.bar.data.customer
 
+import androidx.compose.ui.util.fastFirstOrNull
+import androidx.compose.ui.util.fastMaxOfOrNull
 import org.groover.bar.util.data.DateUtils
-import org.groover.bar.util.data.FileOpener
-import org.groover.bar.util.data.Repository
 import java.util.Date
 import kotlin.math.max
 
@@ -24,19 +24,18 @@ class CustomerRepository(
         groups.save()
     }
 
-
     // (Generates a member ID)
     private fun generateMemberId() = members.generateId()
 
     // (Finds the corresponding customer)
-    fun find(id: Int): Customer? = data.firstOrNull { element -> element.id == id }
+    fun find(id: Int): Customer? = data.fastFirstOrNull { element -> element.id == id }
 
     // (Adds an extra member)
-    fun addExtraMember(tempName: String) {
+    fun addExtraMember(newExtraName: String) {
         // Create extra member
         val extraMember = Member(
             id = generateMemberId(),
-            name = tempName,
+            name = newExtraName,
             birthday = DateUtils.Y2K,
             isExtra = true,
         )
@@ -50,7 +49,7 @@ class CustomerRepository(
         memberId: Int,
         newName: String,
         newBirthday: Date,
-        isExtra: Boolean
+        isExtra: Boolean,
     ) {
         // Create new member
         val newMember = Member(memberId, newName, newBirthday, isExtra)
@@ -61,7 +60,7 @@ class CustomerRepository(
 
     // (Generates a group ID)
     private fun generateGroupId(): Int = max(
-        data.maxByOrNull { it.id }?.id?.plus(1) ?: 0,
+        data.fastMaxOfOrNull { it.id }?.plus(1) ?: 0,
         1000000
     )
 
@@ -71,7 +70,7 @@ class CustomerRepository(
             // Create new group
             id = generateGroupId(),
             name = newGroupName,
-            memberIds = emptyList()
+            memberIds = emptyList(),
         )
 
         // Prepend
@@ -82,7 +81,7 @@ class CustomerRepository(
     fun changeGroup(
         groupId: Int,
         newName: String,
-        newMemberIds: List<Int>
+        newMemberIds: List<Int>,
     ) {
         // Create new group
         val newGroup = Group(

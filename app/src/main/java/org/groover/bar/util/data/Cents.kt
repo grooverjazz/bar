@@ -15,7 +15,11 @@ class Cents(
     operator fun times(other: Int) = Cents(other * amount)
 
     companion object {
-        fun Iterable<Cents>.sum(): Cents = fold(Cents(0), Cents::plus)
+        fun Iterable<Cents>.sum(): Cents {
+            var res = 0
+            for (cent in this) res += cent.amount
+            return Cents(res)
+        }
 
         fun String.toCents(): Cents {
             // Format string

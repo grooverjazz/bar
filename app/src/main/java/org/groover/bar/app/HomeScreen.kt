@@ -16,62 +16,55 @@ import org.groover.bar.util.app.VerticalGrid
 
 @Composable
 fun HomeScreen(
-    navigate: (String) -> Unit,
+    navigate: (route: String) -> Unit,
     sessionName: String,
 ) {
     HomeContent(
         navigate = navigate,
-        sessionName = sessionName
+        sessionName = sessionName,
     )
 }
 
 
 @Composable
 private fun HomeContent(
-   navigate: (String) -> Unit,
+   navigate: (route: String) -> Unit,
    sessionName: String,
 ) {
     VerticalGrid {
-        Spacer(Modifier.size(100.dp))
-
         // Title
+        Spacer(Modifier.size(100.dp))
         Image(
             painter = painterResource(id = R.drawable.bartablet),
-            contentDescription = ""
+            contentDescription = "",
         )
-
         Spacer(Modifier.size(120.dp))
 
         // Bar button
-        NavigateButton(
+        NavigateButton("Bar",
             navigate = navigate,
-            text = "Bar",
             route = "bar",
         )
-
         Spacer(Modifier.size(30.dp))
 
         // Bar Beheer button
-        NavigateButton(
+        NavigateButton("Beheer",
             navigate = navigate,
-            text = "Beheer",
             route = "beheer/login",
         )
-
         Spacer(Modifier.size(50.dp))
 
-        Text(
-            "Huidige sessie: $sessionName",
-            textAlign = TextAlign.Center
+        // Session text
+        Text("Huidige sessie: $sessionName",
+            textAlign = TextAlign.Center,
         )
-
         Spacer(Modifier.size(220.dp))
 
+        // Version number
         val context = LocalContext.current
         val versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName
-        Text(
-            "Versie $versionName",
-            textAlign = TextAlign.Center
+        Text("Versie $versionName",
+            textAlign = TextAlign.Center,
         )
     }
 }

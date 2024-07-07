@@ -24,13 +24,15 @@ import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
 import org.groover.bar.util.data.Cents
 
+
+
 @Composable
 fun BeheerItemsScreen(
-    navigate: (String) -> Unit,
+    navigate: (route: String) -> Unit,
     itemRepository: ItemRepository,
 ) {
+    // Remove popup
     var itemRemoveState: Item? by remember { mutableStateOf(null) }
-
     if (itemRemoveState != null) {
         PopupDialog(
             confirmText = "Verwijderen",
@@ -46,25 +48,27 @@ fun BeheerItemsScreen(
         )
     }
 
+    // Content
     BeheerItemsContent(
         navigate = navigate,
         items = itemRepository.data,
         addItem = itemRepository::addItem,
         itemMove = itemRepository::move,
         itemRemove = { itemRemoveState = itemRepository.find(it) },
-        onToggleVisible = itemRepository::toggleVisible
+        onToggleVisible = itemRepository::toggleVisible,
     )
 }
 
 @Composable
 private fun BeheerItemsContent(
-    navigate: (String) -> Unit,
+    navigate: (route: String) -> Unit,
     items: List<Item>,
     addItem: (String, Cents, Int, Float) -> Unit,
     itemMove: (Int, Boolean) -> Unit,
     onToggleVisible: (Int) -> Unit,
     itemRemove: (Int) -> Unit,
 ) {
+    // UI
     VerticalGrid {
         // Title
         Spacer(Modifier.size(20.dp))
@@ -72,17 +76,13 @@ private fun BeheerItemsContent(
         Spacer(Modifier.size(20.dp))
 
         // Add item button
-        Button(
+        Button({ addItem("Item", Cents(0), 0, 0f) },
             modifier = Modifier.height(70.dp),
-            onClick = {
-                addItem("Item", Cents(0), 0, 0f)
-            },
         ) {
             Text("Voeg item toe",
                 fontSize = 30.sp,
             )
         }
-
         Spacer(Modifier.size(20.dp))
 
         // Items edit list
@@ -96,7 +96,7 @@ private fun BeheerItemsContent(
             onClick = { navigate("beheer/items/item/${it.id}") },
             onMove = itemMove,
             onToggleVisible = onToggleVisible,
-            onRemove = itemRemove
+            onRemove = itemRemove,
         )
     }
 }

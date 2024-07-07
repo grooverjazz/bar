@@ -20,7 +20,7 @@ fun <T> MultiChoiceButtons(
     options: List<String>,
     values: List<T>,
     pressedColor: Color = MaterialTheme.colorScheme.primary,
-    depressedColor: Color = MaterialTheme.colorScheme.secondary
+    depressedColor: Color = MaterialTheme.colorScheme.secondary,
 ) {
     Row {
         options.zip(values).forEach { (option, value) ->
@@ -34,7 +34,7 @@ fun <T> MultiChoiceButtons(
                 offsetY = 3.dp,
             )
 
-            Button(
+            Button({ setState(value) },
                 modifier = if (state == value) modifierShadow else modifier,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (state == value)
@@ -42,7 +42,6 @@ fun <T> MultiChoiceButtons(
                     else depressedColor
                 ),
                 shape = RectangleShape,
-                onClick = { setState(value) }
             ) { Text(text = option, fontSize = 25.sp) }
         }
     }

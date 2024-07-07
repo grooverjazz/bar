@@ -31,6 +31,6 @@ fun PopupDialog(
             TextButton(onClick = onDismiss) {
                 Text(dismissText)
             }
-        }
+        },
     )
 }

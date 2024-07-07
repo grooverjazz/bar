@@ -1,5 +1,6 @@
 package org.groover.bar.data.customer
 
+import androidx.compose.ui.util.fastMap
 import org.groover.bar.data.item.Item
 import org.groover.bar.util.data.Cents
 import org.groover.bar.util.data.Cents.Companion.sum
@@ -27,7 +28,7 @@ class MemberRepository(
 
         // Add extra members
         mutableData += readFile("extraMembers.csv", deserialize)
-            .map { it.copy(isExtra = true) }
+            .fastMap { it.copy(isExtra = true) }
 
         // Add regular members
         mutableData += readFile("members.csv", deserialize)

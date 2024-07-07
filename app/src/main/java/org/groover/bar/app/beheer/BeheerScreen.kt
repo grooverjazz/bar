@@ -12,9 +12,10 @@ import org.groover.bar.util.app.VerticalGrid
 
 @Composable
 fun BeheerScreen(
-    navigate: (String) -> Unit,
+    navigate: (route: String) -> Unit,
     export: () -> Unit,
 ) {
+    // Content
     BeheerContent(
         navigate = navigate,
         export = export,
@@ -23,9 +24,10 @@ fun BeheerScreen(
 
 @Composable
 private fun BeheerContent(
-    navigate: (String) -> Unit,
+    navigate: (route: String) -> Unit,
     export: () -> Unit,
 ) {
+    // UI
     VerticalGrid {
         // Title
         Spacer(Modifier.size(80.dp))
@@ -46,7 +48,7 @@ private fun BeheerContent(
         )
         Spacer(Modifier.size(30.dp))
 
-        // Items button
+        // Session button
         NavigateButton("Sessie",
             navigate = navigate,
             route = "beheer/session",

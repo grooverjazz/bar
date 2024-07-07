@@ -24,26 +24,23 @@ fun ClickableCheckbox(
     state: Boolean,
     onStateChange: (Boolean) -> Unit
 ) {
-
     // Checkbox with text on right side
-    Row(modifier = Modifier
+    Row(Modifier
         .fillMaxWidth()
         .height(40.dp)
         .clickable(
             role = Role.Checkbox,
-            onClick = {
-                onStateChange(!state)
-            }
+            onClick = { onStateChange(!state) }
         )
         .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         Checkbox(
             checked = state,
-            onCheckedChange = null
+            onCheckedChange = null,
         )
         Spacer(Modifier.width(8.dp))
-        Text(text = label)
+        Text(label)
     }
 }

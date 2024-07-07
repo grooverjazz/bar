@@ -21,7 +21,7 @@ fun LabeledTextField(
     onValueChange: (String) -> Unit,
     isPassword: Boolean = false,
 ) {
-    Column(modifier = modifier) {
+    Column(modifier) {
         // Label
         Text("$text:",
             modifier = Modifier.fillMaxWidth(),

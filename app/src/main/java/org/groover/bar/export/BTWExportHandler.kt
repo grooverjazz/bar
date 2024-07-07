@@ -42,7 +42,7 @@ class BTWExportHandler(
             headerRow,
             listOf(
                 "BTW-percentage",
-                "Omzet met dit percentage"
+                "Omzet met dit percentage",
             )
         )
         currentRowIndex += 1
@@ -54,7 +54,7 @@ class BTWExportHandler(
                 amountRow,
                 listOf(
                     percentage,
-                    amount
+                    amount,
                 )
             )
 

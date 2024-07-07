@@ -23,7 +23,7 @@ fun LazyBigList(
     content: LazyListScope.() -> Unit,
 ) {
     LazyColumn(
-        modifier = Modifier
+        Modifier
             .padding(10.dp)
             .height(height)
             .innerShadow(
@@ -34,7 +34,7 @@ fun LazyBigList(
             )
             .clip(RoundedCornerShape(16.dp)),
         verticalArrangement = Arrangement.spacedBy(10.dp),
-        content = content
+        content = content,
     )
 }
 
@@ -43,10 +43,9 @@ fun BigList(
     height: Dp = 800.dp,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Box(modifier = Modifier
+    Box(Modifier
         .padding(10.dp)
         .height(height)
-
         .innerShadow(
             shape = RoundedCornerShape(16.dp),
             blur = 12.dp,
@@ -55,8 +54,7 @@ fun BigList(
         )
         .clip(RoundedCornerShape(16.dp)),
     ) {
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState()),
+        Column(Modifier.verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             content = content,
         )

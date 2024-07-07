@@ -2,6 +2,7 @@ package org.groover.bar.util.app
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -28,8 +29,8 @@ import java.util.Locale
 fun OrderList(
     orders: List<Order>,
     items: List<Item>,
-    getCustomerName: (Int) -> String,
-    onClick: (Order) -> Unit,
+    getCustomerName: (customerId: Int) -> String,
+    onClick: (order: Order) -> Unit,
 ) {
     var searchText by remember { mutableStateOf("") }
 
@@ -53,30 +54,27 @@ fun OrderList(
         modifier = Modifier
             .focusRequester(keyboardFocus)
             .height(80.dp),
-        textStyle = TextStyle.Default.copy(fontSize = 28.sp)
+        textStyle = TextStyle.Default.copy(fontSize = 28.sp),
     )
 
     // UI
     LazyBigList {
-        filteredOrders.forEach { order ->
-            item {
-                // Get printable name of customer
-                val customerName = getCustomerName(order.customerId)
+        items(filteredOrders) { order ->
+            // Get printable name of customer
+            val customerName = getCustomerName(order.customerId)
 
-                // Get total price
-                val totalPrice = order.getTotalPrice(items)
+            // Get total price
+            val totalPrice = order.getTotalPrice(items)
 
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(80.dp),
-                    shape = RectangleShape,
-                    onClick = { onClick(order) }
-                ) {
-                    Text("$customerName (${totalPrice.toStringWithEuro()})",
-                        fontSize = 25.sp
-                    )
-                }
+            Button({ onClick(order) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp),
+                shape = RectangleShape,
+            ) {
+                Text("$customerName (${totalPrice.toStringWithEuro()})",
+                    fontSize = 25.sp
+                )
             }
         }
     }

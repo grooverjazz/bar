@@ -16,7 +16,7 @@ import org.groover.bar.util.app.VerticalGrid
 
 @Composable
 fun BarGeschiedenisScreen(
-    navigate: (String) -> Unit,
+    navigate: (route: String) -> Unit,
     customerRepository: CustomerRepository,
     orderRepository: OrderRepository,
     itemRepository: ItemRepository,
@@ -35,23 +35,22 @@ fun BarGeschiedenisScreen(
 
     // Content
     BarGeschiedenisContent(
-        navigate = navigate,
         orders = orderRepository.data,
         items = itemRepository.data,
         getCustomerName = getCustomerName,
-        orderOnClick = orderOnClick
+        orderOnClick = orderOnClick,
     )
 }
 
 
 @Composable
 private fun BarGeschiedenisContent(
-    navigate: (String) -> Unit,
     orders: List<Order>,
     items: List<Item>,
-    getCustomerName: (Int) -> String,
-    orderOnClick: (Order) -> Unit,
+    getCustomerName: (customerId: Int) -> String,
+    orderOnClick: (order: Order) -> Unit,
 ) {
+    // UI
     VerticalGrid {
         // Title
         Spacer(Modifier.size(20.dp))

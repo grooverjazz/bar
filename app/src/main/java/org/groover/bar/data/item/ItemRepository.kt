@@ -1,5 +1,6 @@
 package org.groover.bar.data.item
 
+import androidx.compose.ui.util.fastMap
 import org.groover.bar.util.data.Cents
 import org.groover.bar.util.data.Cents.Companion.sum
 import org.groover.bar.util.data.FileOpener
@@ -41,7 +42,7 @@ class ItemRepository(
         newVisible: Boolean,
         newPrice: Cents,
         newBtwPercentage: Int,
-        newHue: Float
+        newHue: Float,
     ) {
         // Create new item
         val newItem = Item(
@@ -66,7 +67,7 @@ class ItemRepository(
     // (Gets the total cost of the specified amounts)
     fun costProduct(amounts: List<Int>): Cents {
         return (data zip amounts)
-            .map { (item, amount) -> item.price * amount }
+            .fastMap { (item, amount) -> item.price * amount }
             .sum()
     }
 }

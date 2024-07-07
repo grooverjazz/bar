@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastFilter
+import androidx.compose.ui.util.fastMap
 import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.customer.Group
 import org.groover.bar.data.customer.Member
@@ -31,25 +33,24 @@ import org.groover.bar.util.app.VerticalGrid
 
 @Composable
 fun BeheerGroupScreen(
-    navigate: (String) -> Unit,
+    navigate: (route: String) -> Unit,
     customerRepository: CustomerRepository,
     groupId: Int,
 ) {
+    // Get current group
     val currentGroup = customerRepository.groups.find(groupId)
 
+    // Error
     if (currentGroup == null) {
-        BeheerGroupError(
-            navigate = navigate,
-            groupId = groupId
-        )
+        BeheerGroupError(groupId = groupId)
         return
     }
 
     // Remember list of new members
-    val initialMembers = currentGroup.memberIds.map {
+    val initialMembers = currentGroup.memberIds.fastMap {
         customerRepository.members.find(it) ?: throw Exception("Kan lid met ID $it niet vinden!")
     }
-    var newMembers = remember { mutableStateListOf(*initialMembers.toTypedArray()) }
+    val newMembers = remember { mutableStateListOf(*initialMembers.toTypedArray()) }
 
     // (Adds a member to the group)
     val includeMember = { member: Member ->
@@ -62,6 +63,7 @@ fun BeheerGroupScreen(
         newMembers.remove(member)
     }
 
+    // (Finish editing the group)
     val finishEdit = { newName: String, newMemberIds: List<Int> ->
         // Change the group
         customerRepository.changeGroup(groupId, newName, newMemberIds)
@@ -70,8 +72,8 @@ fun BeheerGroupScreen(
         navigate("beheer/customers")
     }
 
+    // Content
     BeheerGroupContent(
-        navigate = navigate,
         members = customerRepository.members.data,
         currentGroup = currentGroup,
         finishEdit = finishEdit,
@@ -83,9 +85,9 @@ fun BeheerGroupScreen(
 
 @Composable
 fun BeheerGroupError(
-    navigate: (String) -> Unit,
     groupId: Int,
 ) {
+    // UI
     VerticalGrid {
         // Title
         TitleText("Groep met ID $groupId niet gevonden!")
@@ -94,10 +96,9 @@ fun BeheerGroupError(
 
 @Composable
 fun BeheerGroupContent(
-    navigate: (String) -> Unit,
     members: List<Member>,
     currentGroup: Group,
-    finishEdit: (String, List<Int>) -> Unit,
+    finishEdit: (newName: String, newMemberIds: List<Int>) -> Unit,
     newMembers: List<Member>,
     includeMember: (member: Member) -> Unit,
     excludeMember: (member: Member) -> Unit,
@@ -105,6 +106,7 @@ fun BeheerGroupContent(
     // Remember name
     var newName: String by remember { mutableStateOf(currentGroup.name) }
 
+    // UI
     VerticalGrid {
         // Title
         Spacer(Modifier.size(20.dp))
@@ -120,14 +122,13 @@ fun BeheerGroupContent(
         Spacer(Modifier.size(40.dp))
 
         // Members to add
-        Text(
-            text = "Leden om toe te voegen:",
+        Text("Leden om toe te voegen:",
             fontSize = 30.sp,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(10.dp))
         CustomerList(
-            members = members.filter { !newMembers.contains(it) },
+            members = members.fastFilter { !newMembers.contains(it) },
             groups = emptyList(),
             height = 250.dp,
             listState = CustomerListState.MEMBERS,
@@ -140,8 +141,7 @@ fun BeheerGroupContent(
         Spacer(Modifier.size(40.dp))
 
         // Members to remove
-        Text(
-            text = "Leden in groep (tik om te verwijderen):",
+        Text("Leden in groep (tik om te verwijderen):",
             fontSize = 30.sp,
             textAlign = TextAlign.Center,
         )
@@ -150,19 +150,18 @@ fun BeheerGroupContent(
             items(newMembers) { member ->
                 BigButton(member.toString(),
                     color = if (member.isExtra) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
-                    onClick = { excludeMember(member) }
+                    onClick = { excludeMember(member) },
                 )
             }
         }
         Spacer(Modifier.size(40.dp))
 
         // Save button
-        Button(
+        Button({ finishEdit(newName, newMembers.fastMap { it.id }) },
             modifier = Modifier.height(60.dp),
-            onClick = { finishEdit(newName, newMembers.map { it.id }) },
         ) {
             Text("Opslaan",
-                fontSize = 30.sp
+                fontSize = 30.sp,
             )
         }
     }

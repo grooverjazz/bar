@@ -2,17 +2,21 @@ package org.groover.bar.util.data
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.util.fastFilter
+import androidx.compose.ui.util.fastFirstOrNull
+import androidx.compose.ui.util.fastMap
+import androidx.compose.ui.util.fastMaxOfOrNull
 
 abstract class Repository<Element: BarData>(
     private val fileOpener: FileOpener,
     protected val fileName: String,
     protected val serialize: (Element) -> String,
     protected val deserialize: (String) -> Element,
-    private val titleRow: List<String>
+    private val titleRow: List<String>,
 ) {
     // Mutable, internal, list of elements
     //  (only use when you know what you're doing!)
-    protected val mutableData: SnapshotStateList<Element> = emptyList<Element>().toMutableStateList()
+    protected val mutableData: SnapshotStateList<Element> = arrayListOf<Element>().toMutableStateList()
 
     // Immutable, external, list of elements
     //  (points to 'mutableData', guarantees that the list isn't written to)
@@ -28,16 +32,16 @@ abstract class Repository<Element: BarData>(
     // (Reads a file into a list)
     protected fun <T> readFile(
         fileName: String,
-        deserialize: (String) -> T
+        deserialize: (String) -> T,
     ): List<T> {
         // Read data
         val dataStr = fileOpener.read(fileName, dropFirst = true)
 
         // Deserialize data
         return dataStr
-            .map(String::trim)
-            .filterNot { it.isBlank() }
-            .map(deserialize)
+            .fastMap(String::trim)
+            .fastFilter { it.isNotBlank() }
+            .fastMap(deserialize)
     }
 
     // (Saves the data of the repository)
@@ -51,14 +55,14 @@ abstract class Repository<Element: BarData>(
     ) {
         // Serialize data
         val titleRowStr = CSV.serialize(titleRow)
-        val dataStr = listOf(titleRowStr) + data.map(serialize)
+        val dataStr = listOf(titleRowStr) + data.fastMap(serialize)
 
         // Write data
         fileOpener.write(fileName, dataStr)
     }
 
     // (Finds the corresponding element)
-    fun find(id: Int): Element? = data.firstOrNull { element -> element.id == id }
+    fun find(id: Int): Element? = data.fastFirstOrNull { element -> element.id == id }
 
     // (Finds the index with specified ID)
     fun findIndex(id: Int): Int = data.indexOfFirst { element -> element.id == id }
@@ -66,7 +70,7 @@ abstract class Repository<Element: BarData>(
     // (Removes the corresponding element)
     fun remove(id: Int) {
         // Remove the element
-        mutableData.removeIf { element -> element.id == id }
+        mutableData.removeAt(findIndex(id))
 
         // Save
         save()
@@ -105,13 +109,9 @@ abstract class Repository<Element: BarData>(
         if (index == -1)
             throw Exception("ID-Error tijdens verplaatsen van item")
 
-        // Check if movement is necessary
-        if ((moveUp && index == 0) || (!moveUp && index == data.lastIndex))
-            return
-
-        // Get new index, swap the 2 values
+        // Swap elements if necessary
         val newIndex = index + (if (moveUp) -1 else 1)
-        val tempElement = mutableData[newIndex]
+        val tempElement = mutableData.getOrElse(newIndex) { return }
         mutableData[newIndex] = mutableData[index]
         mutableData[index] = tempElement
 
@@ -120,5 +120,5 @@ abstract class Repository<Element: BarData>(
     }
 
     // (Finds the first available ID)
-    fun generateId(): Int = data.maxByOrNull { it.id }?.id?.plus(1) ?: 0
+    fun generateId(): Int = data.fastMaxOfOrNull { it.id }?.plus(1) ?: 0
 }

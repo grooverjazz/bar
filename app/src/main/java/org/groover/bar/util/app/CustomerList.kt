@@ -38,8 +38,8 @@ fun CustomerList(
     customerOnClick: (customer: Customer) -> Unit,
     customerOnMove: ((id: Int, moveUp: Boolean) -> Unit)?,
     customerOnRemove: ((id: Int) -> Unit)?,
-    addExtraMember: ((String) -> Unit)?,
-    addGroup: ((String) -> Unit)?,
+    addExtraMember: ((name: String) -> Unit)?,
+    addGroup: ((name: String) -> Unit)?,
 ) {
     var state by remember { mutableStateOf(listState ?: CustomerListState.MEMBERS) }
     var searchText by remember { mutableStateOf("") }
@@ -50,7 +50,7 @@ fun CustomerList(
             state = state,
             setState = { state = it },
             options = listOf("Leden", "Groepen"),
-            values = listOf(CustomerListState.MEMBERS, CustomerListState.GROUPS)
+            values = listOf(CustomerListState.MEMBERS, CustomerListState.GROUPS),
         )
     }
 
@@ -62,15 +62,12 @@ fun CustomerList(
     }
 
     // Search box
-    TextField(
-        value = searchText,
-        onValueChange = { newSearchText: String ->
-            searchText = newSearchText
-        },
+    TextField(searchText,
         modifier = Modifier
             .focusRequester(keyboardFocus)
             .height(80.dp),
-        textStyle = TextStyle.Default.copy(fontSize = 28.sp)
+        onValueChange = { searchText = it },
+        textStyle = TextStyle.Default.copy(fontSize = 28.sp),
     )
 
     // Format search text
@@ -83,30 +80,36 @@ fun CustomerList(
     val secondaryColor = MaterialTheme.colorScheme.secondary
 
     // Show customer list
+    val customers: List<Customer>
+    val addCustomer: ((String) -> Unit)?
+    val addCustomerText: String
+    val getColor: (Customer) -> Color
+
+    when (state) {
+        CustomerListState.MEMBERS -> {
+            customers = members
+            addCustomer = addExtraMember
+            addCustomerText = "Nieuw tijdelijk lid '$searchText' toevoegen"
+            getColor = { if ((it as Member).isExtra) secondaryColor else primaryColor }
+        }
+        CustomerListState.GROUPS -> {
+            customers = groups
+            addCustomer = addGroup
+            addCustomerText = "Nieuwe lege groep '$searchText' toevoegen"
+            getColor = { secondaryColor }
+        }
+    }
+
     CustomerList(
-        customers = when (state) {
-            CustomerListState.MEMBERS -> members
-            else -> groups
-        },
+        customers = customers,
         height = height,
         searchText = formattedSearchText,
         onClick = customerOnClick,
         onMove = customerOnMove,
         onRemove = customerOnRemove,
-        addCustomer = when (state) {
-            CustomerListState.MEMBERS -> addExtraMember
-            else -> addGroup
-        },
-        addCustomerText = when (state) {
-            CustomerListState.MEMBERS -> "Nieuw tijdelijk lid '$searchText' toevoegen"
-            else -> "Nieuwe lege groep '$searchText' toevoegen"
-        },
-        getColor = {
-            when (state) {
-                CustomerListState.MEMBERS -> if ((it as Member).isExtra) secondaryColor else primaryColor
-                else -> secondaryColor
-            }
-        },
+        addCustomer = addCustomer,
+        addCustomerText = addCustomerText,
+        getColor = getColor,
     )
 }
 
@@ -138,13 +141,12 @@ private fun CustomerList(
         onMove = onMove,
         onToggleVisible = null,
         onRemove = onRemove,
-        preContent = {
-            if (searchText != "" && addCustomer != null) {
-                BigButton(addCustomerText!!,
-                    color = MaterialTheme.colorScheme.secondary,
-                    onClick = { addCustomer(searchText) },
-                )
-            }
+    ) {
+        if (searchText != "" && addCustomer != null) {
+            BigButton(addCustomerText!!,
+                color = MaterialTheme.colorScheme.secondary,
+                onClick = { addCustomer(searchText) },
+            )
         }
-    )
+    }
 }

@@ -22,11 +22,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastMap
 import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.order.Order
 import org.groover.bar.data.order.OrderRepository
+import org.groover.bar.util.app.BigButton
 import org.groover.bar.util.app.ItemList
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
@@ -34,7 +36,7 @@ import org.groover.bar.util.data.Cents
 
 @Composable
 fun BarTurvenCustomerScreen(
-    navigate: (String) -> Unit,
+    navigate: (route: String) -> Unit,
     customerRepository: CustomerRepository,
     itemRepository: ItemRepository,
     orderRepository: OrderRepository,
@@ -55,8 +57,8 @@ fun BarTurvenCustomerScreen(
     val warningMessage = currentCustomer.getWarningMessage(customerRepository.members::find)
 
     // (Gets the cost of an order)
-    val getOrderCost = { amounts: List<Int> ->
-        itemRepository.costProduct(amounts)
+    val getOrderCost = { currentOrder: List<Int> ->
+        itemRepository.costProduct(currentOrder)
     }
 
     // (Places an order)
@@ -104,7 +106,6 @@ fun BarTurvenCustomerScreen(
 
     // Content
     BarTurvenCustomerContent(
-        navigate = navigate,
         items = items,
         previousOrder = previousOrder,
         isHospitality = currentCustomer.id == 0,
@@ -119,22 +120,22 @@ fun BarTurvenCustomerScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun BarTurvenCustomerContent(
-    navigate: (String) -> Unit,
     items: List<Item>,
     previousOrder: Order?,
     isHospitality: Boolean,
     customerName: String,
     customerTotal: Cents,
     warningMessage: String,
-    getOrderCost: (List<Int>) -> Cents,
-    finishOrder: (List<Int>) -> Unit,
+    getOrderCost: (currentOrder: List<Int>) -> Cents,
+    finishOrder: (currentOrder: List<Int>) -> Unit,
 ) {
     // Initialize initial amounts (or zeroes if not specified)
     val currentOrder = remember {
-        items.map { item -> previousOrder?.getAmount(item.id) ?: 0 }
+        items.fastMap { item -> previousOrder?.getAmount(item.id) ?: 0 }
             .toMutableStateList()
     }
 
+    // UI
     VerticalGrid {
         // Customer name
         Spacer(Modifier.size(20.dp))
@@ -148,7 +149,7 @@ private fun BarTurvenCustomerContent(
             style = if (isHospitality) TextStyle(
                 brush = Brush.linearGradient(hospitalityGradient),
                 shadow = Shadow(blurRadius = 8f)
-            ) else TextStyle()
+            ) else TextStyle(),
         )
 
         // Member total
@@ -178,24 +179,18 @@ private fun BarTurvenCustomerContent(
 
         // Submit button
         val orderCost = getOrderCost(currentOrder)
-        val hasItems = orderCost.amount != 0
+        val hasItems = currentOrder.sum() != 0
         val newOrder = previousOrder == null
 
         // Finish order button
-        Button(
-            modifier = Modifier.height(60.dp),
-            onClick = { finishOrder(currentOrder) },
-            enabled = hasItems || !newOrder,
-        ) {
-            val text = when {
+        BigButton(
+            when {
                 hasItems -> "Bestelling afronden (${orderCost.toStringWithEuro()})"
                 !hasItems && !newOrder -> "Bestelling verwijderen"
                 else -> "..."
-            }
-
-            Text(text,
-                fontSize = 30.sp
-            )
-        }
+            },
+            onClick = { finishOrder(currentOrder) },
+            enabled = hasItems || !newOrder,
+        )
     }
 }

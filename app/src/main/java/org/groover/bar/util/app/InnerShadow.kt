@@ -33,7 +33,7 @@ fun Modifier.innerShadow(
     blur: Dp = 4.dp,
     offsetY: Dp = 1.dp,
     offsetX: Dp = 1.dp,
-    spread: Dp = 0.dp
+    spread: Dp = 0.dp,
 ) = drawWithContent {
 
     drawContent()

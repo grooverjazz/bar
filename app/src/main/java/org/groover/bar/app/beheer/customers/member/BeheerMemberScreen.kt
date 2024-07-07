@@ -34,18 +34,16 @@ import java.util.Date
 
 @Composable
 fun BeheerMemberScreen(
-    navigate: (String) -> Unit,
+    navigate: (route: String) -> Unit,
     customerRepository: CustomerRepository,
     memberId: Int,
 ) {
+    // Get current member
     val currentMember = customerRepository.members.find(memberId)
 
     // Error
     if (currentMember == null) {
-        BeheerMemberError(
-            navigate = navigate,
-            memberId = memberId
-        )
+        BeheerMemberError(memberId = memberId)
         return
     }
 
@@ -60,7 +58,6 @@ fun BeheerMemberScreen(
 
     // Content
     BeheerMemberContent(
-        navigate = navigate,
         currentMember = currentMember,
         finishEdit = finishEdit,
     )
@@ -69,9 +66,9 @@ fun BeheerMemberScreen(
 
 @Composable
 private fun BeheerMemberError(
-    navigate: (String) -> Unit,
     memberId: Int,
 ) {
+    // UI
     VerticalGrid {
         // Title
         TitleText("Lid met ID $memberId niet gevonden!")
@@ -81,9 +78,8 @@ private fun BeheerMemberError(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BeheerMemberContent(
-    navigate: (String) -> Unit,
     currentMember: Member,
-    finishEdit: (String, Date) -> Unit,
+    finishEdit: (newName: String, newBirthday: Date) -> Unit,
 ) {
     // Remember parameters
     var newName: String by remember { mutableStateOf(currentMember.name) }
@@ -93,6 +89,7 @@ private fun BeheerMemberContent(
     var birthdayPopupShow: Boolean by remember { mutableStateOf(false) }
     val birthdayPopupState: DatePickerState = rememberDatePickerState(initialSelectedDateMillis = DateUtils.dateToMillis(currentMember.birthday))
 
+    // UI
     VerticalGrid {
         // Title
         Spacer(Modifier.size(20.dp))
@@ -108,30 +105,26 @@ private fun BeheerMemberContent(
         Spacer(Modifier.size(20.dp))
 
         // Birthday field
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
             // Text field
-            LabeledTextField(
-                modifier = Modifier.weight(0.8f),
+            LabeledTextField(Modifier.weight(0.8f),
                 text = "Verjaardag",
                 value = newBirthdayStr,
                 onValueChange = { newBirthdayStr = it },
             )
 
             // Birthday calendar popup button
-            Button(
-                modifier = Modifier
-                    .weight(0.2f)
-                    .height(56.dp)
-                    .align(Alignment.Bottom),
-                onClick = {
+            Button({
                     birthdayPopupShow = true
 
                     val millis = DateUtils.dateToMillis(DateUtils.deserializeDate(newBirthdayStr.trim()))
                     birthdayPopupState.displayedMonthMillis = millis
                     birthdayPopupState.selectedDateMillis = millis
-                }
+                },
+                modifier = Modifier
+                    .weight(0.2f)
+                    .height(56.dp)
+                    .align(Alignment.Bottom),
             ) { Icon(Icons.Rounded.DateRange, null) }
         }
         Spacer(Modifier.size(20.dp))
@@ -140,13 +133,12 @@ private fun BeheerMemberContent(
         if (birthdayPopupShow) {
             BirthdayPopup(
                 pickerState = birthdayPopupState,
-                dismiss = {
-                    birthdayPopupShow = false
-                },
+                dismiss = { birthdayPopupShow = false },
                 confirm = {
                     birthdayPopupShow = false
-                    newBirthdayStr = DateUtils.serializeDate(DateUtils.millisToDate(birthdayPopupState.selectedDateMillis!!))
-                }
+                    val newBirthday = DateUtils.millisToDate(birthdayPopupState.selectedDateMillis!!)
+                    newBirthdayStr = DateUtils.serializeDate(newBirthday)
+                },
             )
         }
 
@@ -177,6 +169,6 @@ fun BirthdayPopup(
         },
         dismissButton = {
             Button(onClick = dismiss) { Text("Cancel") }
-        }
+        },
     ) { DatePicker(pickerState) }
 }

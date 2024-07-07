@@ -28,6 +28,7 @@ data class Member(
         return ""
     }
 
+
     companion object {
         // (Serializes the user)
         fun serialize(member: Member): String {

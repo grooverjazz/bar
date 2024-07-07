@@ -8,11 +8,9 @@ import java.time.Period
 import java.time.ZoneId
 import java.util.Date
 
+@SuppressLint("SimpleDateFormat")
 class DateUtils {
-    @SuppressLint("SimpleDateFormat")
     companion object {
-
-
         fun millisToDate(millis: Long): Date = Date.from(Instant.ofEpochMilli(millis))
         fun dateToMillis(date: Date): Long = date.time + 10_000_000 // Don't ask
 

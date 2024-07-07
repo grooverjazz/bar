@@ -41,8 +41,7 @@ fun ItemList(
 
 @Composable
 fun ItemListEntry(item: Item, amount: Int, setAmount: (Int) -> Unit) {
-    Row(
-        modifier = Modifier
+    Row(Modifier
             .height(80.dp)
             .fillMaxWidth()
             .background(item.color)
@@ -51,8 +50,7 @@ fun ItemListEntry(item: Item, amount: Int, setAmount: (Int) -> Unit) {
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         // Item text
-        Text(
-            item.name,
+        Text(item.name,
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
             modifier = Modifier
@@ -60,46 +58,40 @@ fun ItemListEntry(item: Item, amount: Int, setAmount: (Int) -> Unit) {
                 .padding(start = 15.dp),
         )
 
-        Text(
-            item.price.toStringWithEuro(),
+        Text(item.price.toStringWithEuro(),
             modifier = Modifier.weight(0.1f),
             textAlign = TextAlign.Center,
         )
 
         // Amount buttons
-        Row(
-            modifier = Modifier.weight(0.4f),
+        Row(Modifier.weight(0.4f),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             // Add and remove buttons
-            Button(
+            Button({ setAmount(amount + 1) },
                 modifier = Modifier.fillMaxHeight(),
                 shape = RectangleShape,
-                onClick = { setAmount(amount + 1) },
             ) { Text("+", fontSize = 30.sp) }
 
-            Text(
-                amount.toString(),
+            Text(amount.toString(),
                 fontSize = 25.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(horizontal = 15.dp)
-                    .width(50.dp)
+                    .width(50.dp),
             )
 
-            Button(
+            Button({ setAmount(max(0, amount - 1)) },
                 modifier = Modifier.fillMaxHeight(),
                 shape = RectangleShape,
-                onClick = { setAmount(max(0, amount - 1)) },
             ) { Text("-", fontSize = 30.sp) }
 
             // Clear button
-            Button(
+            Button({ setAmount(0) },
                 modifier = Modifier
                     .padding(start = 20.dp)
                     .fillMaxHeight(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                onClick = { setAmount(0) },
             ) { Icon(Icons.Rounded.Refresh, null) }
         }
     }
