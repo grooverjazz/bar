@@ -12,12 +12,13 @@ import androidx.compose.ui.util.fastMap
  */
 @Composable
 fun VerticalGrid(
+    modifier: Modifier = Modifier,
     columns: Int = 1,
     content: @Composable () -> Unit,
 ) {
     Layout(
         content = content,
-        modifier = Modifier.padding(10.dp)
+        modifier = modifier.padding(10.dp)
     ) { measurables, constraints ->
         val itemWidth = constraints.maxWidth / columns
         // Keep given height constraints, but set an exact width

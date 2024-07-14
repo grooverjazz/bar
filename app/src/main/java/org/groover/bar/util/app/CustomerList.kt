@@ -89,7 +89,7 @@ fun CustomerList(
         CustomerListState.MEMBERS -> {
             customers = members
             addCustomer = addExtraMember
-            addCustomerText = "Nieuw tijdelijk lid '$searchText' toevoegen"
+            addCustomerText = "Nieuw 'extra' lid '$searchText' toevoegen"
             getColor = { if ((it as Member).isExtra) secondaryColor else primaryColor }
         }
         CustomerListState.GROUPS -> {

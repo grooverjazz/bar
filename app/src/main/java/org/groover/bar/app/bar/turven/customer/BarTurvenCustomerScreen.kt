@@ -191,6 +191,7 @@ private fun BarTurvenCustomerContent(
             },
             onClick = { finishOrder(currentOrder) },
             enabled = hasItems || !newOrder,
+            rounded = true,
         )
     }
 }

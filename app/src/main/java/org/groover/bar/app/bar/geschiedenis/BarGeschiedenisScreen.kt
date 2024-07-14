@@ -29,8 +29,7 @@ fun BarGeschiedenisScreen(
 
     // (Navigates to editing the order)
     val orderOnClick = { order: Order ->
-        val orderStr = Order.serialize(order)
-        navigate("bar/geschiedenis/edit/${orderStr}")
+        navigate("bar/geschiedenis/edit/${order.id}")
     }
 
     // Content
