@@ -2,8 +2,10 @@ package org.groover.bar.app.beheer
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import org.groover.bar.util.app.BigButton
 import org.groover.bar.util.app.NavigateButton
@@ -14,11 +16,13 @@ import org.groover.bar.util.app.VerticalGrid
 fun BeheerScreen(
     navigate: (route: String) -> Unit,
     export: () -> Unit,
+    hasErrors: Boolean,
 ) {
     // Content
     BeheerContent(
         navigate = navigate,
         export = export,
+        hasErrors = hasErrors,
     )
 }
 
@@ -26,6 +30,7 @@ fun BeheerScreen(
 private fun BeheerContent(
     navigate: (route: String) -> Unit,
     export: () -> Unit,
+    hasErrors: Boolean,
 ) {
     // UI
     VerticalGrid {
@@ -33,6 +38,17 @@ private fun BeheerContent(
         Spacer(Modifier.size(80.dp))
         TitleText("Beheer")
         Spacer(Modifier.size(80.dp))
+
+        // Error button
+        if (hasErrors) {
+            NavigateButton(
+                "⚠\uFE0F Errors ⚠\uFE0F",
+                navigate = navigate,
+                route = "beheer/error",
+                color = MaterialTheme.colorScheme.error,
+            )
+            Spacer(Modifier.size(40.dp))
+        }
 
         // Leden en Groepen button
         NavigateButton("Leden en Groepen",

@@ -21,6 +21,9 @@ data class Order(
         return 0
     }
 
+    // (Gets all item IDs stored in amounts)
+    fun getAmountsItems(): List<Int> = amounts.keys.toList()
+
     // (Gets the total price of the order)
     fun getTotalPrice(items: List<Item>): Cents = items
         .fastMap { item -> item.price * getAmount(item.id) }

@@ -3,6 +3,9 @@ package org.groover.bar.app
 import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,6 +19,7 @@ import org.groover.bar.app.beheer.BeheerScreen
 import org.groover.bar.app.beheer.customers.BeheerCustomersScreen
 import org.groover.bar.app.beheer.customers.group.BeheerGroupScreen
 import org.groover.bar.app.beheer.customers.member.BeheerMemberScreen
+import org.groover.bar.app.beheer.error.BeheerErrorScreen
 import org.groover.bar.app.beheer.items.BeheerItemsScreen
 import org.groover.bar.app.beheer.items.item.BeheerItemsItemScreen
 import org.groover.bar.app.beheer.password.BeheerPasswordScreen
@@ -24,10 +28,10 @@ import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.customer.GroupRepository
 import org.groover.bar.data.customer.MemberRepository
-import org.groover.bar.data.order.Order
 import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.export.ExportHandler
 import org.groover.bar.export.OptionsHandler
+import org.groover.bar.error.ErrorHandler
 import org.groover.bar.util.data.FileOpener
 
 @Composable
@@ -71,6 +75,13 @@ fun App() {
         orderRepository.open()
     }
 
+    // Initialize error handler
+    val errorHandler = ErrorHandler(
+        customerRepository = customerRepository,
+        orderRepository = orderRepository,
+        itemRepository = itemRepository,
+    )
+
     // Initialize export handler
     val exportHandler = ExportHandler(
         context = context,
@@ -90,15 +101,18 @@ fun App() {
     // UI
     NavHost(
         navController = navController,
-        startDestination = "Home",
+        startDestination = "home",
     ) {
         // Home
         composable("home") {
             BackHandler { (context as Activity).finish() }
 
+            val hasErrors by remember { mutableStateOf(errorHandler.hasErrors) }
+
             HomeScreen(
                 navigate = navigate,
-                sessionName = optionsHandler.sessionName
+                sessionName = optionsHandler.sessionName,
+                hasErrors,
             )
         }
 
@@ -179,9 +193,12 @@ fun App() {
         composable("beheer") {
             BackBehavior("home")
 
+            val hasErrors by remember { mutableStateOf(errorHandler.hasErrors) }
+
             BeheerScreen(
                 navigate = navigate,
                 export = { exportHandler.export("Export ${optionsHandler.sessionName}") },
+                hasErrors = hasErrors,
             )
         }
 
@@ -287,6 +304,16 @@ fun App() {
                     optionsHandler.beheerPassword = newPassword
                     optionsHandler.save()
                 },
+            )
+        }
+
+        // Beheer: errors
+        composable("beheer/error") {
+            BackBehavior("beheer")
+
+            BeheerErrorScreen(
+                navigate = navigate,
+                errorHandler = errorHandler,
             )
         }
     }

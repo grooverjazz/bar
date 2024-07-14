@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun LazyBigList(
     height: Dp = 800.dp,
+    spacing: Dp = 10.dp,
     content: LazyListScope.() -> Unit,
 ) {
     LazyColumn(
@@ -33,7 +34,7 @@ fun LazyBigList(
                 offsetY = 3.dp,
             )
             .clip(RoundedCornerShape(16.dp)),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(spacing),
         content = content,
     )
 }
@@ -41,6 +42,7 @@ fun LazyBigList(
 @Composable
 fun BigList(
     height: Dp = 800.dp,
+    spacing: Dp = 10.dp,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Box(Modifier
@@ -55,7 +57,7 @@ fun BigList(
         .clip(RoundedCornerShape(16.dp)),
     ) {
         Column(Modifier.verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(spacing),
             content = content,
         )
     }

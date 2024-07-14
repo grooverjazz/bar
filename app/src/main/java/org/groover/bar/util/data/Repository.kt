@@ -65,6 +65,7 @@ abstract class Repository<Element: BarData>(
     fun find(id: Int): Element? = data.fastFirstOrNull { element -> element.id == id }
 
     // (Finds the index with specified ID)
+    //  (crucial implementation detail: finds the first index)
     fun findIndex(id: Int): Int = data.indexOfFirst { element -> element.id == id }
 
     // (Removes the corresponding element)

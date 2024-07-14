@@ -20,10 +20,16 @@ class ItemRepository(
     }
 
     // (Adds an item)
-    fun addItem(name: String, price: Cents, btwPercentage: Int, hue: Float) {
+    fun addItem(
+        name: String,
+        price: Cents,
+        btwPercentage: Int,
+        hue: Float,
+        errorHandlingOverrideId: Int? = null // ONLY USE FOR ERROR HANDLING
+    ): Item {
         // Create new item
         val newItem = Item(
-            generateId(),
+            errorHandlingOverrideId ?: generateId(),
             name,
             true,
             price,
@@ -33,6 +39,9 @@ class ItemRepository(
 
         // Prepend
         addToStart(newItem)
+
+        // Return item
+        return newItem
     }
 
     // (Changes an item)

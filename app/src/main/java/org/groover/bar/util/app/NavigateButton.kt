@@ -3,6 +3,7 @@ package org.groover.bar.util.app
 import android.widget.Toast
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 @Composable
@@ -10,6 +11,7 @@ fun NavigateButton(
     text: String,
     navigate: (route: String) -> Unit,
     route: String,
+    color: Color = MaterialTheme.colorScheme.secondary,
 ) {
     val context = LocalContext.current
     val emptyRoute = route.isEmpty()
@@ -25,6 +27,6 @@ fun NavigateButton(
             }
         },
         rounded = true,
-        color = MaterialTheme.colorScheme.secondary,
+        color = color,
     )
 }

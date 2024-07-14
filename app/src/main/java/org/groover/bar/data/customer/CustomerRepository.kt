@@ -25,16 +25,19 @@ class CustomerRepository(
     }
 
     // (Generates a member ID)
-    private fun generateMemberId() = members.generateId()
+    fun generateMemberId() = members.generateId()
 
     // (Finds the corresponding customer)
     fun find(id: Int): Customer? = data.fastFirstOrNull { element -> element.id == id }
 
     // (Adds an extra member)
-    fun addExtraMember(newExtraName: String) {
+    fun addExtraMember(
+        newExtraName: String,
+        errorHandlingOverrideId: Int? = null // ONLY USE FOR ERROR HANDLING
+    ): Customer {
         // Create extra member
         val extraMember = Member(
-            id = generateMemberId(),
+            id = errorHandlingOverrideId ?: generateMemberId(),
             name = newExtraName,
             birthday = DateUtils.Y2K,
             isExtra = true,
@@ -42,6 +45,8 @@ class CustomerRepository(
 
         // Prepend
         members.addToStart(extraMember)
+
+        return extraMember
     }
 
     // (Changes a member)
@@ -59,7 +64,7 @@ class CustomerRepository(
     }
 
     // (Generates a group ID)
-    private fun generateGroupId(): Int = max(
+    fun generateGroupId(): Int = max(
         data.fastMaxOfOrNull { it.id }?.plus(1) ?: 0,
         1000000
     )
