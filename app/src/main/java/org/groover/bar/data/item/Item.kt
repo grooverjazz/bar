@@ -47,7 +47,7 @@ data class Item(
 
             // Deserialize properties
             val id = idStr.toInt()
-            val visible = visibleStr.toBoolean()
+            val visible = visibleStr.equals("true", ignoreCase = true)
             val price = priceStr.toCents()
             val btwPercentage = btwPercentageStr.toInt()
             val hue = hueStr.replace(',','.').toFloat()

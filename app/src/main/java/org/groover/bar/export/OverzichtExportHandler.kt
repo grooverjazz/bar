@@ -1,8 +1,13 @@
 package org.groover.bar.export
 
 import androidx.compose.ui.util.fastMapIndexed
+import org.apache.poi.ss.usermodel.Color
+import org.apache.poi.ss.usermodel.FillPatternType
 import org.apache.poi.ss.usermodel.Font
 import org.apache.poi.ss.usermodel.HorizontalAlignment
+import org.apache.poi.ss.usermodel.IndexedColors
+import org.apache.poi.xssf.usermodel.XSSFCellStyle
+import org.apache.poi.xssf.usermodel.XSSFColor
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.item.ItemRepository
@@ -11,6 +16,8 @@ import org.groover.bar.export.ExcelHandler.AsCents
 import org.groover.bar.export.ExcelHandler.Companion.cellStr
 import org.groover.bar.export.ExcelHandler.Companion.writeRow
 import org.groover.bar.export.ExcelHandler.ExcelFormula
+import org.groover.bar.util.data.removeFirst
+
 
 class OverzichtExportHandler(
     private val customerRepository: CustomerRepository,
@@ -67,7 +74,8 @@ class OverzichtExportHandler(
         rightAlignBoldStyle.alignment = HorizontalAlignment.RIGHT
         rightAlignBoldStyle.setFont(boldFont)
 
-        val members = customerRepository.members.data
+        // Reorder members such that Hospitality is on top
+        val members = listOf(customerRepository.members.find(0)!!) + customerRepository.members.data.removeFirst { it.id == 0 }
         val groups = customerRepository.groups.data
         val items = itemRepository.data
         val orderExport = getOrders()
@@ -149,7 +157,7 @@ class OverzichtExportHandler(
         currentRowIndex += 1
 
         // Members
-        members.forEach { member ->
+        members.forEachIndexed { index, member ->
             val memberOrders: List<Any> = orderExport[member.id]!!.map { if (it == 0) "" else it }
 
             // Create formula for presence
@@ -170,13 +178,33 @@ class OverzichtExportHandler(
                 }
             }
 
+            // Get row color
+            val rgb: ByteArray?
+            if (member.id == 0) rgb = byteArrayOf(242.toByte(), 206.toByte(), 239.toByte())
+            else if (member.isExtra) rgb = byteArrayOf(193.toByte(), 240.toByte(), 200.toByte())
+            else if (index % 2 == 0) rgb = byteArrayOf(217.toByte(), 217.toByte(), 217.toByte())
+            else rgb = null
+
+            // Apply to style
+            val style: XSSFCellStyle?
+            if (rgb != null) {
+                val color = XSSFColor()
+                color.rgb = rgb
+
+                style = workbook.createCellStyle()
+                style.setFillForegroundColor(color)
+                style.setFillPattern(FillPatternType.SOLID_FOREGROUND)
+            }
+            else style = null
+
             // Write row
             writeRow(
                 sheet.createRow(currentRowIndex),
                 listOf(member.id, member.name, aanwezig)
                         + memberOrders
                         + memberGroupOrders.map(ExcelHandler::AsCents)
-                        + listOf(total)
+                        + listOf(total),
+                style = style
             )
 
             currentRowIndex += 1
