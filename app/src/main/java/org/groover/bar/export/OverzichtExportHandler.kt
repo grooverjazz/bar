@@ -1,11 +1,16 @@
 package org.groover.bar.export
 
-import androidx.compose.ui.util.fastMap
 import androidx.compose.ui.util.fastMapIndexed
+import org.apache.poi.ss.usermodel.Font
+import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.xssf.usermodel.XSSFSheet
-import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.customer.CustomerRepository
+import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.order.OrderRepository
+import org.groover.bar.export.ExcelHandler.AsCents
+import org.groover.bar.export.ExcelHandler.Companion.cellStr
+import org.groover.bar.export.ExcelHandler.Companion.writeRow
+import org.groover.bar.export.ExcelHandler.ExcelFormula
 
 class OverzichtExportHandler(
     private val customerRepository: CustomerRepository,
@@ -36,16 +41,32 @@ class OverzichtExportHandler(
     }
 
     private fun groupMemberRowSum(rowIndex: Int, memberCount: Int, groupCount: Int): Pair<String, String> {
-        val memberStartCell = ExcelHandler.cellStr(6, rowIndex)
-        val memberEndCell = ExcelHandler.cellStr(6 + memberCount - 1, rowIndex)
+        val memberStartCell = cellStr(7, rowIndex)
+        val memberEndCell = cellStr(7 + memberCount - 1, rowIndex)
 
-        val groupStartCell = ExcelHandler.cellStr(6 + memberCount + 2 + 1, rowIndex)
-        val groupEndCell = ExcelHandler.cellStr(6 + memberCount + 2 + groupCount + 1 - 1, rowIndex)
+        val groupStartCell = cellStr(7 + memberCount - 1 + 4, rowIndex)
+        val groupEndCell = cellStr(7 + memberCount - 1 + 4 + groupCount - 1, rowIndex)
 
         return Pair("$memberStartCell:$memberEndCell", "$groupStartCell:$groupEndCell")
     }
 
+
     fun export(sheet: XSSFSheet) {
+        val workbook = sheet.workbook
+
+        // Create bold style
+        val boldFont: Font = workbook.createFont()
+        boldFont.bold = true
+        val boldStyle = workbook.createCellStyle()
+        boldStyle.setFont(boldFont)
+
+        // Create align styles
+        val leftAlignStyle = workbook.createCellStyle()
+        leftAlignStyle.alignment = HorizontalAlignment.LEFT
+        val rightAlignBoldStyle = workbook.createCellStyle()
+        rightAlignBoldStyle.alignment = HorizontalAlignment.RIGHT
+        rightAlignBoldStyle.setFont(boldFont)
+
         val members = customerRepository.members.data
         val groups = customerRepository.groups.data
         val items = itemRepository.data
@@ -58,169 +79,144 @@ class OverzichtExportHandler(
             "aantal leden",
             members.size,
         )
-        val aantalVerzonnenLedenValues = listOf(
+        val aantalExtraLedenValues = listOf(
             "aantal verzonnen leden",
             members.count { it.isExtra },
         )
         val aantalAanwezigeLedenValues = listOf(
             "aantal aanwezige leden",
-            groupMemberRowSum(4, members.size, groups.size).let { (memberSumStr, groupSumStr) ->
-                ExcelHandler.ExcelFormula("countif($memberSumStr, \"ja\") + countif($groupSumStr, \"nee\")")
+            groupMemberRowSum(2, members.size, groups.size).let { (memberSumStr, _) ->
+                ExcelFormula("countif($memberSumStr, \"ja\")")
             },
         )
+        val totaleOmzetValues = listOf(
+            "totale omzet",
+            groupMemberRowSum(3 + items.size + groups.size, members.size, groups.size).let { (memberSumStr, _) ->
+                AsCents(ExcelFormula("sum($memberSumStr)"))
+            }
+        )
 
-        // Afzet row
-        ExcelHandler.writeRow(
-            sheet.createRow(currentRowIndex),
+        // First 5 rows (member and item table)
+        ExcelHandler.writeRows(
+            sheet,
             listOf(
-                "", "", "", "",
-                "AFZET",
-            ) + List(items.size) { index ->
-                groupMemberRowSum(5 + index, members.size, groups.size).let { (memberSumStr, groupSumStr) ->
-                    ExcelHandler.ExcelFormula("sum($memberSumStr, $groupSumStr)")
-                }
-            },
+                aantalLedenValues + listOf("") + items.map { it.name },
+                aantalExtraLedenValues + listOf("PRIJS") + items.map { it.price },
+                aantalAanwezigeLedenValues + listOf("AFZET") + List(items.size) { index ->
+                        groupMemberRowSum(3 + index, members.size, groups.size).let { (memberSumStr, groupSumStr) ->
+                        ExcelFormula("sum($memberSumStr, $groupSumStr)")
+                    }
+                },
+                totaleOmzetValues + listOf("OMZET") + List(items.size) { index ->
+                    val prijsCell = cellStr(1, 3 + index)
+                    val afzetCell = cellStr(2, 3 + index)
+                    AsCents(ExcelFormula("$afzetCell * $prijsCell"))
+                },
+                listOf("", "", "BTW") + items.map { "${it.btwPercentage}%" },
+            ),
+            0
         )
-        currentRowIndex += 1
 
-        // Omzet row
-        ExcelHandler.writeRow(
-            sheet.createRow(currentRowIndex),
-            listOf("")
-            + aantalLedenValues
-            + listOf(
-                "",
-                "OMZET",
-            )
-            + List(items.size) { index ->
-                val afzetCell = ExcelHandler.cellStr(0, 5 + index)
-                val prijsCell = ExcelHandler.cellStr(4, 5 + index)
-                ExcelHandler.ExcelFormula("$afzetCell * $prijsCell")
-            },
-        )
-        currentRowIndex += 1
+        // Make member stats align to the left
+        sheet.getRow(0).getCell(1).cellStyle = leftAlignStyle
+        sheet.getRow(1).getCell(1).cellStyle = leftAlignStyle
+        sheet.getRow(2).getCell(1).cellStyle = leftAlignStyle
+        sheet.getRow(3).getCell(1).cellStyle.alignment = HorizontalAlignment.LEFT
 
-        // Verzonnen leden row
-        ExcelHandler.writeRow(
-            sheet.createRow(currentRowIndex),
-            listOf("")
-            + aantalVerzonnenLedenValues,
-        )
-        currentRowIndex += 1
-
-        // BTW row
-        ExcelHandler.writeRow(
-            sheet.createRow(currentRowIndex),
-            listOf("")
-            + aantalAanwezigeLedenValues
-            + listOf(
-                "",
-                "BTW",
-            )
-            + items.fastMap { it.btwPercentage },
-        )
-        currentRowIndex += 1
+        // Make item names bold
+        val firstRow = sheet.getRow(0)
+        items.indices.forEach { index -> firstRow.getCell(3 + index).cellStyle = boldStyle }
 
         // Define range of prices (used in sumproduct of total)
-        val pricesRangeStr = "${ExcelHandler.cellStr(currentRowIndex, 5)}:${ExcelHandler.cellStr(currentRowIndex, 4 + items.size)}"
-        // Prices row
-        ExcelHandler.writeRow(
+        val pricesRangeStr = "${cellStr(currentRowIndex + 1, 3)}:${cellStr(currentRowIndex + 1, 2 + items.size)}"
+        currentRowIndex += 5
+
+        // Members title
+        writeRow(
             sheet.createRow(currentRowIndex),
-            listOf("PRIJZEN")
-            + items.fastMap { it.price },
-            startIndex = 4,
+            listOf("LEDEN"),
+            style = boldStyle,
         )
         currentRowIndex += 1
 
-        // Member header row
-        ExcelHandler.writeRow(
+        // Members header
+        writeRow(
             sheet.createRow(currentRowIndex),
-            listOf(
-                "id",
-                "naam",
-                "aanwezig",
-            ) + items.fastMap { it.name }
-            + groups.fastMap { it.name }
-            + listOf("OMZET"),
+            listOf("id", "naam", "aanwezig") + items.map { it.name } + groups.map { it.name } + listOf("OMZET"),
+            style = boldStyle,
         )
+        sheet.getRow(currentRowIndex).getCell(0).cellStyle = rightAlignBoldStyle
         currentRowIndex += 1
 
         // Members
         members.forEach { member ->
-            val memberOrders: List<Int> = orderExport[member.id]!!
+            val memberOrders: List<Any> = orderExport[member.id]!!.map { if (it == 0) "" else it }
 
-            // Get range of items
-            val rowWidth = 3 + memberOrders.size
-            val ordersRangeStr = "${ExcelHandler.cellStr(currentRowIndex, 5)}:${ExcelHandler.cellStr(currentRowIndex, rowWidth - 1)}"
-            val groupRangeStr = "${ExcelHandler.cellStr(currentRowIndex, rowWidth)}:${ExcelHandler.cellStr(currentRowIndex, rowWidth + groups.size - 1)}"
+            // Create formula for presence
+            val totalCell = cellStr(currentRowIndex, 3 + items.size + groups.size)
+            val aanwezig = ExcelFormula("if($totalCell,\"ja\",\"nee\")")
 
-            // Create formulas
-            val aanwezig = ExcelHandler.ExcelFormula("if(sum($ordersRangeStr),\"ja\",\"nee\")")
-            val total = ExcelHandler.ExcelFormula("sumproduct($pricesRangeStr, $ordersRangeStr) + sum($groupRangeStr)")
+            // Create formula for total
+            val ordersRangeStr = "${cellStr(currentRowIndex, 3)}:${cellStr(currentRowIndex, 3 + items.size - 1)}"
+            val groupRangeStr = if (groups.isEmpty()) "0" else
+                "${cellStr(currentRowIndex, 3 + items.size)}:${cellStr(currentRowIndex, 3 + items.size + groups.size - 1)}"
+            val total = AsCents(ExcelFormula("sumproduct($pricesRangeStr, $ordersRangeStr) + sum($groupRangeStr)"))
 
+            // Get all group orders
             val memberGroupOrders = groups.fastMapIndexed { index, group ->
-                if (group.memberIds.contains(member.id)) { // TODO: fix bounds with new row width
-                    val str = ExcelHandler.cellStr(6 + members.size + 2 + 1 + index, 4 + items.size + 1)
-                    ExcelHandler.ExcelFormula("$str / ${group.memberIds.size}")
-                }
-                else {
-                    ""
+                if (!group.memberIds.contains(member.id)) "" else {
+                    val groupCellStr = cellStr(7 + members.size + 3 + index, 3 + items.size)
+                    ExcelFormula("$groupCellStr / ${group.memberIds.size}")
                 }
             }
 
             // Write row
-            ExcelHandler.writeRow(
+            writeRow(
                 sheet.createRow(currentRowIndex),
-                listOf(
-                    member.id,
-                    member.name,
-                    aanwezig
-                )
-                + memberOrders
-                + memberGroupOrders
-                + listOf(total),
+                listOf(member.id, member.name, aanwezig)
+                        + memberOrders
+                        + memberGroupOrders.map(ExcelHandler::AsCents)
+                        + listOf(total)
             )
 
             currentRowIndex += 1
         }
-        currentRowIndex += 2
 
-        // Group header row
-        ExcelHandler.writeRow(
+        // Empty row
+        currentRowIndex += 1
+
+        // Groups title
+        writeRow(
             sheet.createRow(currentRowIndex),
-            listOf(
-                "id",
-                "naam",
-                "aanwezig"
-            ) + items.fastMap { it.name }
-            + listOf("OMZET"),
-            startIndex = 2,
+            listOf("GROEPEN"),
+            style = boldStyle,
         )
+        currentRowIndex += 1
+
+        // Groups header
+        writeRow(
+            sheet.createRow(currentRowIndex),
+            listOf("id", "naam", "") + items.map { it.name } + listOf("OMZET"),
+            style = boldStyle,
+        )
+        sheet.getRow(currentRowIndex).getCell(0).cellStyle = rightAlignBoldStyle
         currentRowIndex += 1
 
         // Groups
         groups.forEach { group ->
             val groupOrders: List<Int> = orderExport[group.id]!!
 
-            // Get range of items
-            val rowWidth = 5 + groupOrders.size
-            val ordersRangeStr = "${ExcelHandler.cellStr(currentRowIndex, 5)}:${ExcelHandler.cellStr(currentRowIndex, rowWidth - 1)}"
-
-            // Create formulas
-            val aanwezig = ExcelHandler.ExcelFormula("if(sum($ordersRangeStr),\"ja\",\"nee\")")
-            val total = ExcelHandler.ExcelFormula("sumproduct($pricesRangeStr, $ordersRangeStr)")
+            // Create formula for total
+            val ordersRangeStr = "${cellStr(currentRowIndex, 3)}:${cellStr(currentRowIndex, 3 + items.size - 1)}"
+            val total = AsCents(ExcelFormula("sumproduct($pricesRangeStr, $ordersRangeStr)"))
 
             // Write row
-            ExcelHandler.writeRow(
+            writeRow(
                 sheet.createRow(currentRowIndex),
-                listOf(
-                    group.id,
-                    group.name,
-                    aanwezig,
-                )
-                + groupOrders
-                + listOf(total),
-                startIndex = 2,
+                listOf(group.id, group.name)
+                        + listOf("")
+                        + groupOrders
+                        + listOf(total),
             )
 
             currentRowIndex += 1
