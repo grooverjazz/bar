@@ -131,7 +131,7 @@ private fun BarTurvenCustomerContent(
 ) {
     // Initialize initial amounts (or zeroes if not specified)
     val currentOrder = remember {
-        items.fastMap { item -> previousOrder?.getAmount(item.id) ?: 0 }
+        items.fastMap { item -> previousOrder?.amounts?.get(item.id) ?: 0 }
             .toMutableStateList()
     }
 

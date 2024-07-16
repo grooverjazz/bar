@@ -23,7 +23,7 @@ class BTWExportHandler(
             val itemId = item.id
             val price = item.price
             val totalItemPrice = Cents(orders.sumOf { order ->
-                order.getAmount(itemId) * price.amount
+                order.amounts[itemId] * price.amount
             })
 
             val btwPercentage = item.btwPercentage

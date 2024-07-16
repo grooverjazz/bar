@@ -40,7 +40,7 @@ class OverzichtExportHandler(
 
             // Count the order amount for each item in allAmounts
             items.forEachIndexed { index, item ->
-                allAmounts[customerId]!![index] += order.getAmount(item.id)
+                allAmounts[customerId]!![index] += order.amounts[item.id]
             }
         }
 

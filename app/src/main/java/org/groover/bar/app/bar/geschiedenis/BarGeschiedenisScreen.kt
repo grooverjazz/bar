@@ -13,6 +13,7 @@ import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.util.app.OrderList
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
+import org.groover.bar.util.data.Cents
 
 @Composable
 fun BarGeschiedenisScreen(
@@ -27,6 +28,12 @@ fun BarGeschiedenisScreen(
         "Naam van ID $id niet gevonden!"
     }
 
+    // (Gets the total price of an order)
+    val items = itemRepository.data
+    val orderGetTotal = { order: Order ->
+        orderRepository.getOrderTotal(order, items)
+    }
+
     // (Navigates to editing the order)
     val orderOnClick = { order: Order ->
         navigate("bar/geschiedenis/edit/${order.id}")
@@ -35,8 +42,8 @@ fun BarGeschiedenisScreen(
     // Content
     BarGeschiedenisContent(
         orders = orderRepository.data,
-        items = itemRepository.data,
         getCustomerName = getCustomerName,
+        orderGetTotal = orderGetTotal,
         orderOnClick = orderOnClick,
     )
 }
@@ -45,8 +52,8 @@ fun BarGeschiedenisScreen(
 @Composable
 private fun BarGeschiedenisContent(
     orders: List<Order>,
-    items: List<Item>,
     getCustomerName: (customerId: Int) -> String,
+    orderGetTotal: (order: Order) -> Cents,
     orderOnClick: (order: Order) -> Unit,
 ) {
     // UI
@@ -59,8 +66,8 @@ private fun BarGeschiedenisContent(
         // Orders
         OrderList(
             orders = orders,
-            items = items,
-            getCustomerName = getCustomerName,
+            customerGetName = getCustomerName,
+            orderGetTotal = orderGetTotal,
             onClick = orderOnClick,
         )
     }

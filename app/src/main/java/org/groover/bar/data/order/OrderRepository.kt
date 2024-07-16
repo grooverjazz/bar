@@ -42,12 +42,19 @@ class OrderRepository(
         addToStart(newOrder)
     }
 
+    // Gets the total price of an order
+    fun getOrderTotal(order: Order, items: List<Item>): Cents {
+        return items.fastMap { item ->
+            item.price * order.amounts[item.id]
+        }.sum()
+    }
+
     // (Gets the total order price for a customer)
     fun getTotalByCustomer(customerId: Int, groups: List<Group>, items: List<Item>): Cents {
         // Get the total for the customer
         val total = data
             .fastFilter { it.customerId == customerId}
-            .fastMap { it.getTotalPrice(items) }
+            .fastMap { getOrderTotal(it, items) }
             .sum()
 
         // Get the total for all groups that they are in
@@ -57,7 +64,7 @@ class OrderRepository(
             .fastMap { group ->
                 data
                     .fastFilter { it.customerId == group.id }
-                    .fastMap { it.getTotalPrice(items) }
+                    .fastMap { getOrderTotal(it, items) }
                     .sum() / group.memberIds.size
             }
             .sum()

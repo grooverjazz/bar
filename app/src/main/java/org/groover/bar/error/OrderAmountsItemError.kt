@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.util.data.Cents
-import org.groover.bar.util.data.removeFirst
 
 // Order.amounts contains a non-existent Item ID as a key.
 data class OrderAmountsItemError(
@@ -29,13 +28,10 @@ data class OrderAmountsItemError(
         val order = orderRepository.find(orderId)!!
 
         // Filter itemId from amounts
-        val newAmounts = order.getAmountsItems()
-            .removeFirst { it == itemId }
-            .associateWith { order.getAmount(it) }
-            .toMutableMap()
+        val newAmounts = order.amounts.map - itemId
 
         // Replace with new order
-        val newOrder = order.copy(amounts = newAmounts)
+        val newOrder = order.copy(mapAmounts = newAmounts)
         orderRepository.replace(order.id, newOrder)
     }
 
@@ -51,20 +47,15 @@ data class OrderAmountsItemError(
 
         // Check all orders for itemId
         for (order in orderRepository.data) {
-            val amountsItems = order.getAmountsItems()
-
-            if (!amountsItems.contains(itemId)) continue
+            // Continue if itemId not in order
+            val orderItemIds = order.amounts.itemIds
+            if (!orderItemIds.contains(itemId)) continue
 
             // Filter itemId from amounts
-            val newAmounts = amountsItems
-                .removeFirst { it == itemId }
-                .associateWith { order.getAmount(it) }
-                .toMutableMap()
-
-            newAmounts[tempItem.id] = order.getAmount(itemId)
+            val newAmounts = order.amounts.map - itemId + mapOf(tempItem.id to order.amounts[itemId])
 
             // Replace with new order
-            val newOrder = order.copy(amounts = newAmounts)
+            val newOrder = order.copy(mapAmounts = newAmounts)
             orderRepository.replace(order.id, newOrder)
         }
     }

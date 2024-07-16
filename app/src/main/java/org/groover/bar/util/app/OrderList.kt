@@ -22,21 +22,22 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.android.awaitFrame
 import org.groover.bar.data.item.Item
 import org.groover.bar.data.order.Order
+import org.groover.bar.util.data.Cents
 import org.groover.bar.util.data.SearchHandler
 import java.util.Locale
 
 @Composable
 fun OrderList(
     orders: List<Order>,
-    items: List<Item>,
-    getCustomerName: (customerId: Int) -> String,
+    customerGetName: (customerId: Int) -> String,
+    orderGetTotal: (order: Order) -> Cents,
     onClick: (order: Order) -> Unit,
 ) {
     var searchText by remember { mutableStateOf("") }
 
     val formattedSearchText = searchText.lowercase(Locale.ROOT)
     val filteredOrders = SearchHandler
-        .search(formattedSearchText, orders) { getCustomerName(it.customerId) }
+        .search(formattedSearchText, orders) { customerGetName(it.customerId) }
 
     // Keyboard focus for search box
     val keyboardFocus = remember { FocusRequester() }
@@ -61,10 +62,10 @@ fun OrderList(
     LazyBigList {
         items(filteredOrders) { order ->
             // Get printable name of customer
-            val customerName = getCustomerName(order.customerId)
+            val customerName = customerGetName(order.customerId)
 
             // Get total price
-            val totalPrice = order.getTotalPrice(items)
+            val totalPrice = orderGetTotal(order)
 
             Button({ onClick(order) },
                 modifier = Modifier

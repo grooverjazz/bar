@@ -46,7 +46,7 @@ class ErrorHandler(
         val res = emptyList<OrderAmountsItemError>().toMutableList()
 
         for (order in orders) {
-            for (itemId in order.getAmountsItems()) {
+            for (itemId in order.amounts.itemIds) {
                 if (itemRepository.find(itemId) == null) {
                     res += OrderAmountsItemError(
                         orderRepository,

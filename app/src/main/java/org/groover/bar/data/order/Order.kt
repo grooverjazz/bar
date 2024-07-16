@@ -1,40 +1,27 @@
 package org.groover.bar.data.order
 
-import androidx.compose.ui.util.fastMap
-import org.groover.bar.data.item.Item
 import org.groover.bar.util.data.BarData
 import org.groover.bar.util.data.CSV
-import org.groover.bar.util.data.Cents
-import org.groover.bar.util.data.Cents.Companion.sum
 import java.util.Date
 
 data class Order(
     override val id: Int,
     val customerId: Int, // (this can be a user ID or a group ID)
     val timestamp: Date,
-    private val amounts: MutableMap<Int, Int>, // (maps every item to an amount)
+    private val mapAmounts: Map<Int, Int>, // (maps every item to an amount)
 ): BarData() {
-    // Gets the amount ordered of the specified item
-    //  (If the item does not exist, initialize it to 0)
-    fun getAmount(itemId: Int): Int = amounts.getOrElse(itemId) { // TODO: setting amounts[itemId] needed?
-        amounts[itemId] = 0
-        return 0
+    // Safe map that defaults to 0
+    data class Amounts(val map: Map<Int, Int>) {
+        operator fun get(key: Int) = map.getOrDefault(key, 0)
+        val itemIds = map.keys
     }
-
-    // (Gets all item IDs stored in amounts)
-    fun getAmountsItems(): List<Int> = amounts.keys.toList()
-
-    // (Gets the total price of the order)
-    fun getTotalPrice(items: List<Item>): Cents = items
-        .fastMap { item -> item.price * getAmount(item.id) }
-        .sum()
-
+    val amounts = Amounts(mapAmounts)
 
     companion object {
         // (Serializes the order)
         fun serialize(order: Order): String {
             // Serialize amounts
-            val amountsStrs = order.amounts
+            val amountsStrs = order.amounts.map
                 .map { (itemId, amount) -> "${itemId}:${amount}" }
 
             // Return serialization
