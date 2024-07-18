@@ -8,11 +8,11 @@ import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.order.OrderRepository
 
 abstract class DuplicateError(
-    val elementName: String,
-    val id: Int,
+    private val elementName: String,
+    internal val id: Int,
 ) : Error() {
-    abstract val index1: Int
-    abstract val index2: Int
+    internal abstract val index1: Int
+    internal abstract val index2: Int
 
     override fun toString(): String =
         "Er zijn 2 $elementName met hetzelfde ID (${id} bij index $index1 en $index2)"
@@ -29,7 +29,7 @@ abstract class DuplicateError(
 
 // (Duplicate member error)
 data class DuplicateCustomerError(
-    val customerRepository: CustomerRepository,
+    private val customerRepository: CustomerRepository,
     override val index1: Int,
     override val index2: Int,
 ): DuplicateError("leden", customerRepository.data[index1].id) {
@@ -46,7 +46,7 @@ data class DuplicateCustomerError(
 
 // (Duplicate item error)
 data class DuplicateItemError(
-    val itemRepository: ItemRepository,
+    private val itemRepository: ItemRepository,
     override val index1: Int,
     override val index2: Int,
 ): DuplicateError("items", itemRepository.data[index1].id) {
@@ -60,7 +60,7 @@ data class DuplicateItemError(
 
 // (Duplicate order error)
 data class DuplicateOrderError(
-    val orderRepository: OrderRepository,
+    private val orderRepository: OrderRepository,
     override val index1: Int,
     override val index2: Int,
 ): DuplicateError("bestellingen", orderRepository.data[index1].id) {

@@ -8,10 +8,10 @@ import java.util.Date
 @SuppressLint("SimpleDateFormat")
 class CSV {
     companion object {
-        fun serialize(strs: List<String>): String = strs
+        fun serialize(values: List<String>): String = values
             .joinToString(";") { "\"$it\"" }
 
-        fun serialize(vararg strs: String): String = serialize(strs.asList())
+        fun serialize(vararg values: String): String = serialize(values.asList())
 
         fun deserialize(str: String): List<String> = str
             .split(";")
@@ -19,7 +19,7 @@ class CSV {
 
 
         // Timestamp methods
-        val timestampFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        private val timestampFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
         fun serializeTimestamp(timestamp: Date): String = timestampFormat.format(timestamp)
 

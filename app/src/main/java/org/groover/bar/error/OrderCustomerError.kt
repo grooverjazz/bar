@@ -5,10 +5,10 @@ import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.order.OrderRepository
 
 data class OrderCustomerError(
-    val orderRepository: OrderRepository,
-    val customerRepository: CustomerRepository,
-    val orderId: Int,
-    val customerId: Int
+    private val orderRepository: OrderRepository,
+    private val customerRepository: CustomerRepository,
+    private val orderId: Int,
+    private val customerId: Int
 ) : Error() {
     override fun toString(): String {
         return "Bestelling '$orderId' bevat klant '$customerId' die niet bestaat."

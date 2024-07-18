@@ -1,6 +1,5 @@
 package org.groover.bar.util.data
 import android.annotation.SuppressLint
-import android.util.Log
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
@@ -30,26 +29,8 @@ class DateUtils {
             return age.years >= 18
         }
 
-        fun equals(date1: Date, date2: Date): Boolean {
-            // Convert Dates to LocalDates
-            val date1Local: LocalDate = date1.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate()
-            val date2Local: LocalDate = date1.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate()
-
-            // Calculate period
-            val period: Period = Period.between(date1Local, date2Local)
-
-            Log.i("asdf", period.days.toString())
-
-            // Check if the period is 0 days
-            return period.days == 0
-        }
-
         // Date methods
-        val dateFormat = SimpleDateFormat("dd MM yyyy")
+        private val dateFormat = SimpleDateFormat("dd MM yyyy")
 
         val Y2K: Date = dateFormat.parse("01 01 2000")!!
 

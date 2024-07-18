@@ -1,5 +1,6 @@
 package org.groover.bar.app.beheer.session
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
@@ -24,6 +25,7 @@ import org.groover.bar.util.app.VerticalGrid
 import java.text.SimpleDateFormat
 import java.util.Date
 
+@SuppressLint("SimpleDateFormat")
 @Composable
 fun BeheerSessionScreen(
     navigate: (route: String) -> Unit,

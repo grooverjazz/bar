@@ -8,10 +8,10 @@ import org.groover.bar.util.data.Cents
 
 // Order.amounts contains a non-existent Item ID as a key.
 data class OrderAmountsItemError(
-    val orderRepository: OrderRepository,
-    val itemRepository: ItemRepository,
-    val orderId: Int,
-    val itemId: Int
+    private val orderRepository: OrderRepository,
+    private val itemRepository: ItemRepository,
+    private val orderId: Int,
+    private val itemId: Int
 ) : Error() {
     override fun toString(): String {
         return "Bestelling '$orderId' bevat itemnummer '$itemId' die niet bestaat."

@@ -6,11 +6,11 @@ import java.io.File
 import java.io.FileOutputStream
 
 class FileOpener(
-    val context: Context,
+    private val context: Context,
     var relativePath: String,
 ) {
     // Get the current directory
-    // (Android/data/org.groover.bartablet2/files)
+    // (Android/data/org.groover.bar/files)
     private val dir get() =
         context.getExternalFilesDir("")?.path + "/" +
         relativePath +
@@ -48,7 +48,7 @@ class FileOpener(
             writeFile.createNewFile()
         }
 
-        val dataStr = data.joinToString("\n");
+        val dataStr = data.joinToString("\n")
         writeFile.writeText(dataStr)
     }
 

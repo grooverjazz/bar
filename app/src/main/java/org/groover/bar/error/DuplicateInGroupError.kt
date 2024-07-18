@@ -6,9 +6,9 @@ import org.groover.bar.util.data.removeFirst
 
 // There are 2 or more customers in the same group.
 class DuplicateInGroupError(
-    val customerRepository: CustomerRepository,
-    val groupId: Int,
-    val memberId: Int,
+    private val customerRepository: CustomerRepository,
+    private val groupId: Int,
+    private val memberId: Int,
 ) : Error() {
     override fun toString(): String {
         val group = customerRepository.groups.find(groupId)

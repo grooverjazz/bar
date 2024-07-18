@@ -1,9 +1,6 @@
 package org.groover.bar.data.customer
 
 import androidx.compose.ui.util.fastMap
-import org.groover.bar.data.item.Item
-import org.groover.bar.util.data.Cents
-import org.groover.bar.util.data.Cents.Companion.sum
 import org.groover.bar.util.data.DateUtils
 import org.groover.bar.util.data.FileOpener
 import org.groover.bar.util.data.Repository

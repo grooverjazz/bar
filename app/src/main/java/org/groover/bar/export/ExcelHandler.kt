@@ -1,7 +1,6 @@
 package org.groover.bar.export
 
 import androidx.compose.ui.util.fastMap
-import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.ss.util.CellReference
 import org.apache.poi.xssf.usermodel.XSSFCell
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
@@ -35,7 +34,7 @@ class ExcelHandler {
             }
         }
 
-        fun writeCell(cell: XSSFCell, value: Any, style: XSSFCellStyle? = null) {
+        private fun writeCell(cell: XSSFCell, value: Any, style: XSSFCellStyle? = null) {
             if (style != null)
                 cell.cellStyle = style
 

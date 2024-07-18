@@ -6,9 +6,9 @@ import org.groover.bar.util.data.removeFirst
 
 // Group.memberIds contains a non-existent Member ID or a Group ID.
 data class GroupMemberIdError(
-    val customerRepository: CustomerRepository,
-    val groupId: Int,
-    val memberId: Int,
+    private val customerRepository: CustomerRepository,
+    private val groupId: Int,
+    private val memberId: Int,
 ) : Error(){
     override fun toString(): String {
         val group = customerRepository.groups.find(groupId)!!

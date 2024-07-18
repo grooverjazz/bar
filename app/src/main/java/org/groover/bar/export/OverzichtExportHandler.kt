@@ -28,21 +28,21 @@ class OverzichtExportHandler(
 ) {
     private var currentRow: Int = 0
 
-    val customers = customerRepository.data
+    private val customers = customerRepository.data
 
     // Reorder members such that Hospitality is on top
-    val members = listOf(customerRepository.members.find(0)!!) +
+    private val members = listOf(customerRepository.members.find(0)!!) +
         customerRepository.members.data.removeFirst { it.id == 0 }
-    val membersCount = members.size
-    val extraMembersCount = members.count { it.isExtra }
+    private val membersCount = members.size
+    private val extraMembersCount = members.count { it.isExtra }
 
-    val groups = customerRepository.groups.data
-    val groupsCount = groups.size
+    private val groups = customerRepository.groups.data
+    private val groupsCount = groups.size
 
-    val items = itemRepository.data
-    val itemsCount = items.size
+    private val items = itemRepository.data
+    private val itemsCount = items.size
 
-    val orders = orderRepository.data
+    private val orders = orderRepository.data
 
     // (Gets all customer orders)
     private fun getCustomerOrders(): Map<Int, List<Int>> {

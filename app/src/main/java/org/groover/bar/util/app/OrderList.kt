@@ -20,7 +20,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.android.awaitFrame
-import org.groover.bar.data.item.Item
 import org.groover.bar.data.order.Order
 import org.groover.bar.util.data.Cents
 import org.groover.bar.util.data.SearchHandler

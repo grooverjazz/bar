@@ -22,7 +22,7 @@ class SearchHandler {
                 val str = transform(element).lowercase(locale)
 
                 val scoreStartsWith = if (str.startsWith(searchStr)) 10 else 0
-                val scoreStartsWithSpace = if (str.startsWith(searchStr + " ")) 10 else 0
+                val scoreStartsWithSpace = if (str.startsWith("$searchStr ")) 10 else 0
                 val scoreFuzzy = scorer.fuzzyScore(str, formattedSearchStr)
 
                 scoreStartsWith + scoreStartsWithSpace + scoreFuzzy

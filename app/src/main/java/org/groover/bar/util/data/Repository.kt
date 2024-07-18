@@ -9,7 +9,7 @@ import androidx.compose.ui.util.fastMaxOfOrNull
 
 abstract class Repository<Element: BarData>(
     private val fileOpener: FileOpener,
-    protected val fileName: String,
+    private val fileName: String,
     protected val serialize: (Element) -> String,
     protected val deserialize: (String) -> Element,
     private val titleRow: List<String>,

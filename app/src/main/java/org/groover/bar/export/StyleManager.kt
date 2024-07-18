@@ -9,7 +9,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 
 class StyleManager(
-    val workbook: XSSFWorkbook,
+    private val workbook: XSSFWorkbook,
 ) {
     enum class StyleAlignment {
         Left,

@@ -6,8 +6,6 @@ class Cents(
     override fun toString(): String = "${amount / 100},${"%02d".format(amount % 100)}"
     fun toStringWithEuro(): String = "€$this"
 
-    fun toInt() = amount
-
     operator fun plus(other: Cents) = Cents(amount + other.amount)
     operator fun div(other: Int) = Cents(amount / other)
     operator fun rem(other: Int) = Cents(amount % other)
@@ -34,15 +32,5 @@ class Cents(
         }
 
         fun Cents.toDouble(): Double = amount.toDouble() / 100
-
-        fun split(cents: Cents, n: Int): List<Cents> {
-            val baseAmount = cents / n
-            val centsToSplit = (cents % n).toInt()
-
-            return (
-                List(centsToSplit) { baseAmount + Cents(1) } +
-                List(n - centsToSplit) { baseAmount }
-            ).shuffled()
-        }
     }
 }
