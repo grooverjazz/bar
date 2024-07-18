@@ -5,6 +5,7 @@ import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.item.ItemRepository
 
 class IncassoExportHandler(
+    private val updateProgress: (Float) -> Unit,
     private val customerRepository: CustomerRepository,
     private val itemRepository: ItemRepository,
     private val sessionName: String
@@ -28,15 +29,16 @@ class IncassoExportHandler(
         var refRowIndex = 6
 
         val members = customerRepository.members.data
+        val membersCount = members.size
         val itemsCount = itemRepository.data.size
         val groupsCount = customerRepository.groups.data.size
-        for (member in members) {
+        members.forEachIndexed { index, member ->
             // Define reference to total in overzicht sheet
             val totalRefFormula = ExcelHandler.ExcelFormula("Overzicht!" + ExcelHandler.cellStr(refRowIndex, itemsCount + groupsCount + 5)) // TODO: fix bounds with new row width
             refRowIndex += 1
 
             // Skip extra members
-            if (member.isExtra) continue
+            if (member.isExtra) return@forEachIndexed
 
             val memberRow = sheet.createRow(currentRowIndex)
             ExcelHandler.writeRow(
@@ -49,6 +51,7 @@ class IncassoExportHandler(
             )
 
             currentRowIndex += 1
+            updateProgress(index.toFloat() / membersCount)
         }
     }
 }

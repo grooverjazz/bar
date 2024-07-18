@@ -1,7 +1,7 @@
 package org.groover.bar.export
 
-import android.util.Log
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.util.fastMap
 import androidx.compose.ui.util.fastMapIndexed
 import androidx.compose.ui.util.fastZip
@@ -17,11 +17,11 @@ import org.groover.bar.export.ExcelHandler.ExcelFormula
 import org.groover.bar.export.StyleManager.StyleAlignment
 import org.groover.bar.export.StyleManager.StyleFormat
 import org.groover.bar.util.data.removeFirst
-import kotlin.system.measureTimeMillis
 
 
 class OverzichtExportHandler(
     private val styleManager: StyleManager,
+    private val updateProgress: (Float) -> Unit,
     customerRepository: CustomerRepository,
     itemRepository: ItemRepository,
     orderRepository: OrderRepository,
@@ -80,25 +80,21 @@ class OverzichtExportHandler(
     // Creates a map from <isExtra: Boolean, isHospitality / isEven: Boolean> to List<XSSFCellStyle>
     //   (the last in this list is the default style, the rest is per order)
     private fun createColorMap(): Map<Pair<Boolean, Boolean>, List<XSSFCellStyle>> {
-        val res = emptyMap<Pair<Boolean, Boolean>, List<XSSFCellStyle>>().toMutableMap()
+        // Gets the styles of the color mixed with all item colors, and of the original color
+        fun getStyles(col: Color): List<XSSFCellStyle> {
+            val colors = items.map { it.color.copy(alpha = 0.25f).compositeOver(col) } + col
+            return colors.map { styleManager.getStyle(backgroundColor = it) }
+        }
 
-        val pinkColor = Color(242, 206, 239)
-        val greenColor = Color(193, 240, 200)
-        val greyColor = Color(217, 217, 217)
+        return mapOf(
+            // Extra members: hospitality and other
+            Pair(true, true) to getStyles(Color(242, 206, 239)),
+            Pair(true, false) to getStyles(Color(193, 240, 200)),
 
-        // Extra member
-        val hospitalityStyle = styleManager.getStyle(backgroundColor = pinkColor)
-        res[Pair(true, true)] = List(itemsCount) { hospitalityStyle } + hospitalityStyle
-        val extraMemberStyle = styleManager.getStyle(backgroundColor = greenColor)
-        res[Pair(true, false)] = List(itemsCount) { extraMemberStyle } + extraMemberStyle
-
-        // Member
-        val oddMemberStyle = styleManager.getStyle()
-        res[Pair(false, false)] = List(itemsCount) { oddMemberStyle } + oddMemberStyle
-        val evenMemberStyle = styleManager.getStyle(backgroundColor = greyColor)
-        res[Pair(false, true)] = List(itemsCount) { evenMemberStyle } + evenMemberStyle
-
-        return res
+            // Regular members: odd and even index
+            Pair(false, false) to getStyles(Color(255, 255, 255)),
+            Pair(false, true) to getStyles(Color(217, 217, 217)),
+        )
     }
 
     // (Writes the overview table with customer and item info)
@@ -115,14 +111,8 @@ class OverzichtExportHandler(
         // Calculate customer values
         val aantalLeden = membersCount
         val aantalExtraLeden = members.count { it.isExtra }
-        val aantalAanwezigeLeden = {
-            val (memberSumStr, _) = customerSum(2)
-            ExcelFormula("countif($memberSumStr, \"ja\")")
-        }
-        val totaleOmzet = {
-            val (memberSumStr, _) = customerSum(3 + itemsCount + groupsCount)
-            ExcelFormula("sum($memberSumStr)")
-        }
+        val aantalAanwezigeLeden = ExcelFormula("countif(${customerSum(2).first}, \"ja\")")
+        val totaleOmzet = ExcelFormula("sum(${customerSum(3 + itemsCount + groupsCount).first})")
 
         // Calculate item values
         val allItemNames = items.fastMap { it.name }
@@ -170,12 +160,15 @@ class OverzichtExportHandler(
         currentRow += 1
 
         // Calculate values
-        val itemNames = items.fastMap { it.name }
+        val styledItemNames = items.fastMap { item ->
+            val style = styleManager.getStyle(backgroundColor = item.color, bold = true)
+            item.name.withStyle(style)
+        }
         val groupNames = groups.fastMap { it.name }
 
         // Members header
         writeRow(sheet.createRow(currentRow),
-            listOf("id".withStyle(rightBoldStyle), "naam", "aanwezig") + itemNames + groupNames + listOf("OMZET"),
+            listOf("id".withStyle(rightBoldStyle), "naam", "aanwezig") + styledItemNames + groupNames + listOf("OMZET"),
             style = boldStyle,
         )
         currentRow += 1
@@ -224,6 +217,8 @@ class OverzichtExportHandler(
             )
 
             currentRow += 1
+
+            updateProgress(0.3f + (index.toFloat() / membersCount) * 0.5f)
         }
     }
 
@@ -276,23 +271,28 @@ class OverzichtExportHandler(
     fun export(sheet: XSSFSheet) {
         currentRow = 0
 
+        // Initialize lookups
         val customerOrders: Map<Int, List<Int>> = getCustomerOrders()
         val colorMap: Map<Pair<Boolean, Boolean>, List<XSSFCellStyle>> = createColorMap()
+        updateProgress(0.2f)
 
         // Write overview (customer info, item info)
         val oldRowIndex = currentRow
         writeOverview(sheet)
+        updateProgress(0.3f)
 
         // Define range of prices (used in sumproduct of total)
         val pricesRangeStr = "${cellStr(oldRowIndex + 1, 3)}:${cellStr(oldRowIndex + 1, 2 + itemsCount)}"
 
         // Write member orders table
         writeMemberOrders(sheet, colorMap, customerOrders, pricesRangeStr)
+        updateProgress(0.8f)
 
-        // Empty row
+        // Write empty row
         currentRow += 1
 
         // Write group orders table
         writeGroupOrders(sheet, customerOrders, pricesRangeStr)
+        updateProgress(1f)
     }
 }

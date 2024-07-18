@@ -5,12 +5,11 @@ import org.apache.poi.ss.usermodel.FillPatternType
 import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFColor
-import org.apache.poi.xssf.usermodel.XSSFFont
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 
 class StyleManager(
-  val workbook: XSSFWorkbook,
+    val workbook: XSSFWorkbook,
 ) {
     enum class StyleAlignment {
         Left,
@@ -30,10 +29,9 @@ class StyleManager(
         val backgroundColor: Color? = null,
     )
 
-    private val boldFont: XSSFFont = workbook.createFont().apply { bold = true }
+    private val boldFont = workbook.createFont().apply { bold = true }
 
-    private val _styles: MutableMap<StyleKey, XSSFCellStyle> =
-        emptyMap<StyleKey, XSSFCellStyle>().toMutableMap()
+    private val _styles = emptyMap<StyleKey, XSSFCellStyle>().toMutableMap()
 
     fun getStyle(
         alignment: StyleAlignment? = null,
@@ -77,13 +75,13 @@ class StyleManager(
             else -> {
                 val color = XSSFColor()
                 color.rgb = byteArrayOf(
-                    (backgroundColor.red * 256f).toInt().toByte(),
-                    (backgroundColor.green * 256f).toInt().toByte(),
-                    (backgroundColor.blue * 256f).toInt().toByte(),
+                    (backgroundColor.red * 255f).toInt().toByte(),
+                    (backgroundColor.green * 255f).toInt().toByte(),
+                    (backgroundColor.blue * 255f).toInt().toByte(),
                 )
 
                 newStyle.setFillForegroundColor(color)
-                newStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND)
+                newStyle.fillPattern = FillPatternType.SOLID_FOREGROUND
             }
         }
 

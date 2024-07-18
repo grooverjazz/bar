@@ -84,7 +84,6 @@ fun App() {
 
     // Initialize export handler
     val exportHandler = ExportHandler(
-        context = context,
         fileOpener = fileOpener,
         optionsHandler = optionsHandler,
         customerRepository = customerRepository,
@@ -197,7 +196,9 @@ fun App() {
 
             BeheerScreen(
                 navigate = navigate,
-                export = { exportHandler.export("Export ${optionsHandler.sessionName}") },
+                exportHandler = exportHandler,
+                exportName = "Export ${optionsHandler.sessionName}",
+//                export = { updateProgress: (Float) -> Unit -> exportHandler.export(, updateProgress) },
                 hasErrors = hasErrors,
             )
         }
