@@ -3,6 +3,7 @@ package org.groover.bar.error
 import androidx.compose.runtime.Composable
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.order.OrderRepository
+import org.groover.bar.util.data.BTWPercentage
 import org.groover.bar.util.data.Cents
 
 // Order.amounts contains a non-existent Item ID as a key.
@@ -40,7 +41,7 @@ data class OrderAmountsItemError(
         val tempItem = itemRepository.addItem(
             "Het spook van item $itemId",
             Cents(0),
-            0,
+            BTWPercentage.Geen,
             0f,
             errorHandlingOverrideId = itemId
         )

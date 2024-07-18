@@ -31,8 +31,8 @@ class ExportHandler(
 
         // Export BTW
         BTWExportHandler(
+            styleManager = styleManager,
             itemRepository = itemRepository,
-            orderRepository = orderRepository,
         ).export(workbook.createSheet("BTW"))
         updateProgress(0.8f)
 

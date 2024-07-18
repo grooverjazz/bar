@@ -22,6 +22,7 @@ import org.groover.bar.util.app.EditableBigList
 import org.groover.bar.util.app.PopupDialog
 import org.groover.bar.util.app.TitleText
 import org.groover.bar.util.app.VerticalGrid
+import org.groover.bar.util.data.BTWPercentage
 import org.groover.bar.util.data.Cents
 
 
@@ -52,7 +53,7 @@ fun BeheerItemsScreen(
     BeheerItemsContent(
         navigate = navigate,
         items = itemRepository.data,
-        addItem = itemRepository::addItem,
+        addNewItem = { itemRepository.addItem("Item", Cents(0), BTWPercentage.Geen, 0f) },
         itemMove = itemRepository::move,
         itemRemove = { itemRemoveState = itemRepository.find(it) },
         onToggleVisible = itemRepository::toggleVisible,
@@ -63,7 +64,7 @@ fun BeheerItemsScreen(
 private fun BeheerItemsContent(
     navigate: (route: String) -> Unit,
     items: List<Item>,
-    addItem: (String, Cents, Int, Float) -> Unit,
+    addNewItem: () -> Unit,
     itemMove: (Int, Boolean) -> Unit,
     onToggleVisible: (Int) -> Unit,
     itemRemove: (Int) -> Unit,
@@ -76,7 +77,7 @@ private fun BeheerItemsContent(
         Spacer(Modifier.size(20.dp))
 
         // Add item button
-        Button({ addItem("Item", Cents(0), 0, 0f) },
+        Button(addNewItem,
             modifier = Modifier.height(70.dp),
         ) {
             Text("Voeg item toe",

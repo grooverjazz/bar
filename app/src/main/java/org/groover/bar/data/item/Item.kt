@@ -1,6 +1,8 @@
 package org.groover.bar.data.item
 
 import androidx.compose.ui.graphics.Color
+import org.groover.bar.util.data.BTWPercentage
+import org.groover.bar.util.data.BTWPercentage.Companion.toBTWPercentage
 import org.groover.bar.util.data.BarData
 import org.groover.bar.util.data.CSV
 import org.groover.bar.util.data.Cents
@@ -11,7 +13,7 @@ data class Item(
     val name: String,
     val visible: Boolean,
     val price: Cents, // incl. BTW!
-    val btwPercentage: Int,
+    val btwPercentage: BTWPercentage,
     val hue: Float,
 ): BarData() {
     // Color, defined by hue property
@@ -33,7 +35,7 @@ data class Item(
                 item.name,
                 item.visible.toString(),
                 item.price.toString(),
-                item.btwPercentage.toString(),
+                item.btwPercentage.serialize(),
                 item.hue.toString(),
             )
         }
@@ -49,7 +51,7 @@ data class Item(
             val id = idStr.toInt()
             val visible = visibleStr.equals("true", ignoreCase = true)
             val price = priceStr.toCents()
-            val btwPercentage = btwPercentageStr.toInt()
+            val btwPercentage = btwPercentageStr.toBTWPercentage()
             val hue = hueStr.replace(',','.').toFloat()
 
             // Return item

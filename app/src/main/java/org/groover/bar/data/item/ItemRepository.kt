@@ -1,6 +1,7 @@
 package org.groover.bar.data.item
 
 import androidx.compose.ui.util.fastMap
+import org.groover.bar.util.data.BTWPercentage
 import org.groover.bar.util.data.Cents
 import org.groover.bar.util.data.Cents.Companion.sum
 import org.groover.bar.util.data.FileOpener
@@ -23,7 +24,7 @@ class ItemRepository(
     fun addItem(
         name: String,
         price: Cents,
-        btwPercentage: Int,
+        btwPercentage: BTWPercentage,
         hue: Float,
         errorHandlingOverrideId: Int? = null // ONLY USE FOR ERROR HANDLING
     ): Item {
@@ -50,7 +51,7 @@ class ItemRepository(
         newName: String,
         newVisible: Boolean,
         newPrice: Cents,
-        newBtwPercentage: Int,
+        newBtwPercentage: BTWPercentage,
         newHue: Float,
     ) {
         // Create new item
