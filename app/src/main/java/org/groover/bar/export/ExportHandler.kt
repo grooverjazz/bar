@@ -38,6 +38,7 @@ class ExportHandler(
 
         // Export incasso
         IncassoExportHandler(
+            styleManager = styleManager,
             updateProgress = { progress: Float-> updateProgress(0.8f + 0.1f * progress) },
             customerRepository = customerRepository,
             itemRepository = itemRepository,
