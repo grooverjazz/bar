@@ -1,5 +1,6 @@
 package org.groover.bar.export
 
+import androidx.compose.ui.util.fastMap
 import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.ss.util.CellReference
 import org.apache.poi.xssf.usermodel.XSSFCell
@@ -16,7 +17,9 @@ class ExcelHandler {
     data class WithStyle(val value: Any, val style: XSSFCellStyle)
 
     companion object {
+        fun List<Any>.withStyle(style: XSSFCellStyle) = this.fastMap { it.withStyle(style) }
         fun Any.withStyle(style: XSSFCellStyle) = WithStyle(this, style)
+        fun List<Any>.withStyles(styles: List<XSSFCellStyle>) = (this zip styles).fastMap { (value, style) -> value.withStyle(style) }
 
         fun writeRows(sheet: XSSFSheet, values: List<List<Any>>, startRowIndex: Int = 0) {
             values.forEachIndexed { index, rowValues ->

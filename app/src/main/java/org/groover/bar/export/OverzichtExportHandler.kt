@@ -4,7 +4,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.util.fastMap
 import androidx.compose.ui.util.fastMapIndexed
-import androidx.compose.ui.util.fastZip
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.groover.bar.data.customer.CustomerRepository
@@ -12,6 +11,7 @@ import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.export.ExcelHandler.Companion.cellStr
 import org.groover.bar.export.ExcelHandler.Companion.withStyle
+import org.groover.bar.export.ExcelHandler.Companion.withStyles
 import org.groover.bar.export.ExcelHandler.Companion.writeRow
 import org.groover.bar.export.ExcelHandler.ExcelFormula
 import org.groover.bar.export.StyleManager.StyleAlignment
@@ -34,6 +34,7 @@ class OverzichtExportHandler(
     val members = listOf(customerRepository.members.find(0)!!) +
         customerRepository.members.data.removeFirst { it.id == 0 }
     val membersCount = members.size
+    val extraMembersCount = members.count { it.isExtra }
 
     val groups = customerRepository.groups.data
     val groupsCount = groups.size
@@ -64,8 +65,9 @@ class OverzichtExportHandler(
     }
 
     // (Gets the formula summing a row from the member and group table)
+    //  (excludes extra members)
     private fun customerSum(rowIndex: Int): Pair<String, String> {
-        val memberStartCell = cellStr(7, rowIndex)
+        val memberStartCell = cellStr(7 + extraMembersCount, rowIndex)
         val memberEndCell = cellStr(7 + membersCount - 1, rowIndex)
         val memberPart = "$memberStartCell:$memberEndCell"
 
@@ -110,7 +112,7 @@ class OverzichtExportHandler(
 
         // Calculate customer values
         val aantalLeden = membersCount
-        val aantalExtraLeden = members.count { it.isExtra }
+        val aantalExtraLeden = extraMembersCount
         val aantalAanwezigeLeden = ExcelFormula("countif(${customerSum(2).first}, \"ja\")")
         val totaleOmzet = ExcelFormula("sum(${customerSum(3 + itemsCount + groupsCount).first})")
 
@@ -126,21 +128,23 @@ class OverzichtExportHandler(
             val afzetCell = cellStr(2, 3 + index)
             ExcelFormula("$afzetCell * $prijsCell")
         }
-        val allItemBtw = items.map { it.btwPercentage }
+        val allItemBtw = items.map { it.btwPercentage.toDouble() / 100 }
 
         // First 5 rows (member and item table)
-        ExcelHandler.writeRows(sheet,
-            listOf(
-                listOf("aantal leden",           aantalLeden         .withStyle(leftAlignStyle),   "")      + allItemNames.map { it.withStyle(boldStyle) },
-                listOf("aantal 'extra' leden",   aantalExtraLeden    .withStyle(leftAlignStyle),   "PRIJS") + allItemPrices.map {it.withStyle(currencyStyle)},
-                listOf("aantal aanwezige leden", aantalAanwezigeLeden.withStyle(leftAlignStyle),   "AFZET") + allItemAfzet,
-                listOf("totale omzet",           totaleOmzet         .withStyle(totaleOmzetStyle), "OMZET") + allItemOmzet.map { it.withStyle(currencyStyle) },
-                listOf("",                       "",                                               "BTW")   + allItemBtw.map { (it.toDouble() / 100).withStyle(percentageStyle) },
-            ),
-            currentRow
-        )
+        ExcelHandler.run {
+            writeRows(sheet,
+                listOf(
+                    (listOf("OVERZICHT", "(data excl. Hospitality en 'extra' leden)", "")                       + allItemNames).withStyle(boldStyle),
+                    listOf("aantal leden",           aantalLeden         .withStyle(leftAlignStyle),   "prijs") + allItemPrices.withStyle(currencyStyle),
+                    listOf("aantal 'extra' leden",   aantalExtraLeden    .withStyle(leftAlignStyle),   "afzet") + allItemAfzet,
+                    listOf("aantal aanwezige leden", aantalAanwezigeLeden.withStyle(leftAlignStyle),   "omzet") + allItemOmzet.withStyle(currencyStyle),
+                    listOf("totale omzet",           totaleOmzet         .withStyle(totaleOmzetStyle), "btw")   + allItemBtw.withStyle(percentageStyle),
+                ),
+                currentRow
+            )
 
-        currentRow += 5
+            currentRow += 5
+        }
     }
 
     private fun writeMemberOrders(
@@ -210,9 +214,9 @@ class OverzichtExportHandler(
 
             // Write row
             writeRow(sheet.createRow(currentRow),
-                listOf(member.id, member.name, aanwezig).map { it.withStyle(memberDataStyle) }
-                        + regularOrders.fastMap { if (it == 0) "" else it }.fastZip(memberStyleList) { order, style -> order.withStyle(style) }
-                        + groupShares.fastMap { it.withStyle(memberCurrencyStyle) }
+                listOf(member.id, member.name, aanwezig).withStyle(memberDataStyle)
+                        + regularOrders.fastMap { if (it == 0) "" else it }.withStyles(memberStyleList)
+                        + groupShares.withStyle(memberCurrencyStyle)
                         + listOf(totalStr.withStyle(memberCurrencyStyle)),
             )
 
