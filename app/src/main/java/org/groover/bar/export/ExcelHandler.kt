@@ -13,10 +13,12 @@ import org.groover.bar.util.data.Cents.Companion.toDouble
 class ExcelHandler {
     data class ExcelFormula(val formula: String)
 
-    data class AsCents(val value: Any)
+    data class WithStyle(val value: Any, val style: XSSFCellStyle)
 
     companion object {
-        fun writeRows(sheet: XSSFSheet, values: List<List<Any>>, startRowIndex: Int) {
+        fun Any.withStyle(style: XSSFCellStyle) = WithStyle(this, style)
+
+        fun writeRows(sheet: XSSFSheet, values: List<List<Any>>, startRowIndex: Int = 0) {
             values.forEachIndexed { index, rowValues ->
                 val row = sheet.createRow(index + startRowIndex)
                 writeRow(row, rowValues)
@@ -35,30 +37,15 @@ class ExcelHandler {
                 cell.cellStyle = style
 
             when (value) {
-                is String -> {
-                    cell.setCellValue(value)
-                    if (value.endsWith('%')) {
+                // Special cases
+                is WithStyle -> writeCell(cell, value.value, value.style)
+                is ExcelFormula -> cell.cellFormula = value.formula
 
-                        cell.setCellValue(value.dropLast(1).toDouble() / 100)
-
-                        val stylePercentage: CellStyle = style?.copy() ?: cell.sheet.workbook.createCellStyle()
-                        stylePercentage.dataFormat = 9
-                        cell.setCellStyle(stylePercentage)
-                    }
-                }
+                is String -> if (value.isNotEmpty()) cell.setCellValue(value)
                 is Int -> cell.setCellValue(value.toDouble())
                 is Double -> cell.setCellValue(value)
                 is Boolean -> cell.setCellValue(if (value) 1.0 else 0.0)
-                is Cents -> writeCell(cell, AsCents(value.toDouble()), style) // Hack
-                is AsCents -> {
-                    writeCell(cell, value.value, style)
-
-                    // Set euro style
-                    val styleEuro: CellStyle = style?.copy() ?: cell.sheet.workbook.createCellStyle()
-                    styleEuro.dataFormat = 8
-                    cell.setCellStyle(styleEuro)
-                }
-                is ExcelFormula -> cell.cellFormula = value.formula
+                is Cents -> cell.setCellValue(value.toDouble())
             }
         }
 

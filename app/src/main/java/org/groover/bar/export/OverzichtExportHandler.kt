@@ -1,37 +1,53 @@
 package org.groover.bar.export
 
+import android.util.Log
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.util.fastMap
 import androidx.compose.ui.util.fastMapIndexed
-import org.apache.poi.ss.usermodel.Color
-import org.apache.poi.ss.usermodel.FillPatternType
-import org.apache.poi.ss.usermodel.Font
-import org.apache.poi.ss.usermodel.HorizontalAlignment
-import org.apache.poi.ss.usermodel.IndexedColors
+import androidx.compose.ui.util.fastZip
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
-import org.apache.poi.xssf.usermodel.XSSFColor
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.order.OrderRepository
-import org.groover.bar.export.ExcelHandler.AsCents
 import org.groover.bar.export.ExcelHandler.Companion.cellStr
+import org.groover.bar.export.ExcelHandler.Companion.withStyle
 import org.groover.bar.export.ExcelHandler.Companion.writeRow
 import org.groover.bar.export.ExcelHandler.ExcelFormula
+import org.groover.bar.export.StyleManager.StyleAlignment
+import org.groover.bar.export.StyleManager.StyleFormat
 import org.groover.bar.util.data.removeFirst
+import kotlin.system.measureTimeMillis
 
 
 class OverzichtExportHandler(
-    private val customerRepository: CustomerRepository,
-    private val itemRepository: ItemRepository,
-    private val orderRepository: OrderRepository,
+    private val styleManager: StyleManager,
+    customerRepository: CustomerRepository,
+    itemRepository: ItemRepository,
+    orderRepository: OrderRepository,
 ) {
-    private fun getOrders(): Map<Int, List<Int>> {
-        val orders = orderRepository.data
-        val items = itemRepository.data
-        val customers = customerRepository.data
+    private var currentRow: Int = 0
 
+    val customers = customerRepository.data
+
+    // Reorder members such that Hospitality is on top
+    val members = listOf(customerRepository.members.find(0)!!) +
+        customerRepository.members.data.removeFirst { it.id == 0 }
+    val membersCount = members.size
+
+    val groups = customerRepository.groups.data
+    val groupsCount = groups.size
+
+    val items = itemRepository.data
+    val itemsCount = items.size
+
+    val orders = orderRepository.data
+
+    // (Gets all customer orders)
+    private fun getCustomerOrders(): Map<Int, List<Int>> {
         // Initialize all amounts
         val allAmounts: MutableMap<Int, MutableList<Int>> = customers.associate { data ->
-            data.id to MutableList(items.size) { 0 }
+            data.id to MutableList(itemsCount) { 0 }
         }.toMutableMap()
 
         orders.forEach { order ->
@@ -47,207 +63,236 @@ class OverzichtExportHandler(
         return allAmounts
     }
 
-    private fun groupMemberRowSum(rowIndex: Int, memberCount: Int, groupCount: Int): Pair<String, String> {
+    // (Gets the formula summing a row from the member and group table)
+    private fun customerSum(rowIndex: Int): Pair<String, String> {
         val memberStartCell = cellStr(7, rowIndex)
-        val memberEndCell = cellStr(7 + memberCount - 1, rowIndex)
+        val memberEndCell = cellStr(7 + membersCount - 1, rowIndex)
+        val memberPart = "$memberStartCell:$memberEndCell"
 
-        val groupStartCell = cellStr(7 + memberCount - 1 + 4, rowIndex)
-        val groupEndCell = cellStr(7 + memberCount - 1 + 4 + groupCount - 1, rowIndex)
+        val groupStartCell = cellStr(7 + membersCount - 1 + 4, rowIndex)
+        val groupEndCell = cellStr(7 + membersCount - 1 + 4 + groupsCount - 1, rowIndex)
+        val groupPart = if (groupsCount == 0) "0" else "$groupStartCell:$groupEndCell"
 
-        return Pair("$memberStartCell:$memberEndCell", "$groupStartCell:$groupEndCell")
+        return Pair(memberPart, groupPart)
     }
 
 
-    fun export(sheet: XSSFSheet) {
-        val workbook = sheet.workbook
+    // Creates a map from <isExtra: Boolean, isHospitality / isEven: Boolean> to List<XSSFCellStyle>
+    //   (the last in this list is the default style, the rest is per order)
+    private fun createColorMap(): Map<Pair<Boolean, Boolean>, List<XSSFCellStyle>> {
+        val res = emptyMap<Pair<Boolean, Boolean>, List<XSSFCellStyle>>().toMutableMap()
 
-        // Create bold style
-        val boldFont: Font = workbook.createFont()
-        boldFont.bold = true
-        val boldStyle = workbook.createCellStyle()
-        boldStyle.setFont(boldFont)
+        val pinkColor = Color(242, 206, 239)
+        val greenColor = Color(193, 240, 200)
+        val greyColor = Color(217, 217, 217)
 
-        // Create align styles
-        val leftAlignStyle = workbook.createCellStyle()
-        leftAlignStyle.alignment = HorizontalAlignment.LEFT
-        val rightAlignBoldStyle = workbook.createCellStyle()
-        rightAlignBoldStyle.alignment = HorizontalAlignment.RIGHT
-        rightAlignBoldStyle.setFont(boldFont)
+        // Extra member
+        val hospitalityStyle = styleManager.getStyle(backgroundColor = pinkColor)
+        res[Pair(true, true)] = List(itemsCount) { hospitalityStyle } + hospitalityStyle
+        val extraMemberStyle = styleManager.getStyle(backgroundColor = greenColor)
+        res[Pair(true, false)] = List(itemsCount) { extraMemberStyle } + extraMemberStyle
 
-        // Reorder members such that Hospitality is on top
-        val members = listOf(customerRepository.members.find(0)!!) + customerRepository.members.data.removeFirst { it.id == 0 }
-        val groups = customerRepository.groups.data
-        val items = itemRepository.data
-        val orderExport = getOrders()
+        // Member
+        val oddMemberStyle = styleManager.getStyle()
+        res[Pair(false, false)] = List(itemsCount) { oddMemberStyle } + oddMemberStyle
+        val evenMemberStyle = styleManager.getStyle(backgroundColor = greyColor)
+        res[Pair(false, true)] = List(itemsCount) { evenMemberStyle } + evenMemberStyle
 
-        var currentRowIndex = 0
+        return res
+    }
 
-        // Leden table
-        val aantalLedenValues = listOf(
-            "aantal leden",
-            members.size,
-        )
-        val aantalExtraLedenValues = listOf(
-            "aantal verzonnen leden",
-            members.count { it.isExtra },
-        )
-        val aantalAanwezigeLedenValues = listOf(
-            "aantal aanwezige leden",
-            groupMemberRowSum(2, members.size, groups.size).let { (memberSumStr, _) ->
-                ExcelFormula("countif($memberSumStr, \"ja\")")
-            },
-        )
-        val totaleOmzetValues = listOf(
-            "totale omzet",
-            groupMemberRowSum(3 + items.size + groups.size, members.size, groups.size).let { (memberSumStr, _) ->
-                AsCents(ExcelFormula("sum($memberSumStr)"))
-            }
-        )
+    // (Writes the overview table with customer and item info)
+    private fun writeOverview(
+        sheet: XSSFSheet,
+    ) {
+        // Create styles
+        val leftAlignStyle = styleManager.getStyle(alignment = StyleAlignment.Left)
+        val boldStyle = styleManager.getStyle(bold = true)
+        val percentageStyle = styleManager.getStyle(format = StyleFormat.Percentage)
+        val currencyStyle = styleManager.getStyle(format = StyleFormat.Currency)
+        val totaleOmzetStyle = styleManager.getStyle(format = StyleFormat.Currency, alignment = StyleAlignment.Left)
+
+        // Calculate customer values
+        val aantalLeden = membersCount
+        val aantalExtraLeden = members.count { it.isExtra }
+        val aantalAanwezigeLeden = {
+            val (memberSumStr, _) = customerSum(2)
+            ExcelFormula("countif($memberSumStr, \"ja\")")
+        }
+        val totaleOmzet = {
+            val (memberSumStr, _) = customerSum(3 + itemsCount + groupsCount)
+            ExcelFormula("sum($memberSumStr)")
+        }
+
+        // Calculate item values
+        val allItemNames = items.fastMap { it.name }
+        val allItemPrices = items.fastMap { it.price }
+        val allItemAfzet = List(itemsCount) { index ->
+            val (memberSumStr, groupSumStr) = customerSum(3 + index)
+            ExcelFormula("sum($memberSumStr, $groupSumStr)")
+        }
+        val allItemOmzet = List(itemsCount) { index ->
+            val prijsCell = cellStr(1, 3 + index)
+            val afzetCell = cellStr(2, 3 + index)
+            ExcelFormula("$afzetCell * $prijsCell")
+        }
+        val allItemBtw = items.map { it.btwPercentage }
 
         // First 5 rows (member and item table)
-        ExcelHandler.writeRows(
-            sheet,
+        ExcelHandler.writeRows(sheet,
             listOf(
-                aantalLedenValues + listOf("") + items.map { it.name },
-                aantalExtraLedenValues + listOf("PRIJS") + items.map { it.price },
-                aantalAanwezigeLedenValues + listOf("AFZET") + List(items.size) { index ->
-                        groupMemberRowSum(3 + index, members.size, groups.size).let { (memberSumStr, groupSumStr) ->
-                        ExcelFormula("sum($memberSumStr, $groupSumStr)")
-                    }
-                },
-                totaleOmzetValues + listOf("OMZET") + List(items.size) { index ->
-                    val prijsCell = cellStr(1, 3 + index)
-                    val afzetCell = cellStr(2, 3 + index)
-                    AsCents(ExcelFormula("$afzetCell * $prijsCell"))
-                },
-                listOf("", "", "BTW") + items.map { "${it.btwPercentage}%" },
+                listOf("aantal leden",           aantalLeden         .withStyle(leftAlignStyle),   "")      + allItemNames.map { it.withStyle(boldStyle) },
+                listOf("aantal 'extra' leden",   aantalExtraLeden    .withStyle(leftAlignStyle),   "PRIJS") + allItemPrices.map {it.withStyle(currencyStyle)},
+                listOf("aantal aanwezige leden", aantalAanwezigeLeden.withStyle(leftAlignStyle),   "AFZET") + allItemAfzet,
+                listOf("totale omzet",           totaleOmzet         .withStyle(totaleOmzetStyle), "OMZET") + allItemOmzet.map { it.withStyle(currencyStyle) },
+                listOf("",                       "",                                               "BTW")   + allItemBtw.map { (it.toDouble() / 100).withStyle(percentageStyle) },
             ),
-            0
+            currentRow
         )
 
-        // Make member stats align to the left
-        sheet.getRow(0).getCell(1).cellStyle = leftAlignStyle
-        sheet.getRow(1).getCell(1).cellStyle = leftAlignStyle
-        sheet.getRow(2).getCell(1).cellStyle = leftAlignStyle
-        sheet.getRow(3).getCell(1).cellStyle.alignment = HorizontalAlignment.LEFT
+        currentRow += 5
+    }
 
-        // Make item names bold
-        val firstRow = sheet.getRow(0)
-        items.indices.forEach { index -> firstRow.getCell(3 + index).cellStyle = boldStyle }
-
-        // Define range of prices (used in sumproduct of total)
-        val pricesRangeStr = "${cellStr(currentRowIndex + 1, 3)}:${cellStr(currentRowIndex + 1, 2 + items.size)}"
-        currentRowIndex += 5
+    private fun writeMemberOrders(
+        sheet: XSSFSheet,
+        colorMap: Map<Pair<Boolean, Boolean>, List<XSSFCellStyle>>,
+        customerOrders: Map<Int, List<Int>>,
+        pricesRangeStr: String
+    ) {
+        // Get styles
+        val boldStyle = styleManager.getStyle(bold = true)
+        val rightBoldStyle = styleManager.getStyle(bold = true, alignment = StyleAlignment.Right)
 
         // Members title
-        writeRow(
-            sheet.createRow(currentRowIndex),
-            listOf("LEDEN"),
-            style = boldStyle,
+        writeRow(sheet.createRow(currentRow),
+            listOf("LEDEN".withStyle(boldStyle)),
         )
-        currentRowIndex += 1
+        currentRow += 1
+
+        // Calculate values
+        val itemNames = items.fastMap { it.name }
+        val groupNames = groups.fastMap { it.name }
 
         // Members header
-        writeRow(
-            sheet.createRow(currentRowIndex),
-            listOf("id", "naam", "aanwezig") + items.map { it.name } + groups.map { it.name } + listOf("OMZET"),
+        writeRow(sheet.createRow(currentRow),
+            listOf("id".withStyle(rightBoldStyle), "naam", "aanwezig") + itemNames + groupNames + listOf("OMZET"),
             style = boldStyle,
         )
-        sheet.getRow(currentRowIndex).getCell(0).cellStyle = rightAlignBoldStyle
-        currentRowIndex += 1
+        currentRow += 1
 
         // Members
         members.forEachIndexed { index, member ->
-            val memberOrders: List<Any> = orderExport[member.id]!!.map { if (it == 0) "" else it }
-
             // Create formula for presence
-            val totalCell = cellStr(currentRowIndex, 3 + items.size + groups.size)
+            val totalCell = cellStr(currentRow, 3 + itemsCount + groupsCount)
             val aanwezig = ExcelFormula("if($totalCell,\"ja\",\"nee\")")
 
-            // Create formula for total
-            val ordersRangeStr = "${cellStr(currentRowIndex, 3)}:${cellStr(currentRowIndex, 3 + items.size - 1)}"
-            val groupRangeStr = if (groups.isEmpty()) "0" else
-                "${cellStr(currentRowIndex, 3 + items.size)}:${cellStr(currentRowIndex, 3 + items.size + groups.size - 1)}"
-            val total = AsCents(ExcelFormula("sumproduct($pricesRangeStr, $ordersRangeStr) + sum($groupRangeStr)"))
+            // Get regular orders
+            val regularOrders: List<Int> = customerOrders[member.id]!!
 
-            // Get all group orders
-            val memberGroupOrders = groups.fastMapIndexed { index, group ->
+            // Get all formulas for group shares
+            val groupShares = groups.fastMapIndexed { groupIndex, group ->
                 if (!group.memberIds.contains(member.id)) "" else {
-                    val groupCellStr = cellStr(7 + members.size + 3 + index, 3 + items.size)
-                    ExcelFormula("$groupCellStr / ${group.memberIds.size}")
+                    val groupTotalCellStr = cellStr(7 + membersCount + 3 + groupIndex, 3 + itemsCount)
+                    ExcelFormula("$groupTotalCellStr / ${group.memberIds.size}")
                 }
             }
 
+            // Get formula for total regular orders
+            val regularOrdersRange =
+                "${cellStr(currentRow, 3)}:${cellStr(currentRow, 3 + itemsCount - 1)}"
+            val regularOrdersTotal = "sumproduct($pricesRangeStr, $regularOrdersRange)"
+
+            // Get formula for total group shares
+            val groupSharesRange = if (groups.isEmpty()) "0" else
+                "${cellStr(currentRow, 3 + itemsCount)}:${cellStr(currentRow, 3 + itemsCount + groupsCount - 1)}"
+            val groupSharesTotalStr = "sum($groupSharesRange)"
+
+            // Get formula for total
+            val totalStr = ExcelFormula("$regularOrdersTotal + $groupSharesTotalStr")
+
             // Get row color
-            val rgb: ByteArray?
-            if (member.id == 0) rgb = byteArrayOf(242.toByte(), 206.toByte(), 239.toByte())
-            else if (member.isExtra) rgb = byteArrayOf(193.toByte(), 240.toByte(), 200.toByte())
-            else if (index % 2 == 0) rgb = byteArrayOf(217.toByte(), 217.toByte(), 217.toByte())
-            else rgb = null
-
-            // Apply to style
-            val style: XSSFCellStyle?
-            if (rgb != null) {
-                val color = XSSFColor()
-                color.rgb = rgb
-
-                style = workbook.createCellStyle()
-                style.setFillForegroundColor(color)
-                style.setFillPattern(FillPatternType.SOLID_FOREGROUND)
-            }
-            else style = null
+            val memberStyleList = colorMap[Pair(member.isExtra, if (member.isExtra) member.id == 0 else index % 2 == 0)]!!
+            val memberDataStyle = memberStyleList.last()
+            val memberCurrencyStyle = styleManager.getStyle(format = StyleFormat.Currency)
 
             // Write row
-            writeRow(
-                sheet.createRow(currentRowIndex),
-                listOf(member.id, member.name, aanwezig)
-                        + memberOrders
-                        + memberGroupOrders.map(ExcelHandler::AsCents)
-                        + listOf(total),
-                style = style
+            writeRow(sheet.createRow(currentRow),
+                listOf(member.id, member.name, aanwezig).map { it.withStyle(memberDataStyle) }
+                        + regularOrders.fastMap { if (it == 0) "" else it }.fastZip(memberStyleList) { order, style -> order.withStyle(style) }
+                        + groupShares.fastMap { it.withStyle(memberCurrencyStyle) }
+                        + listOf(totalStr.withStyle(memberCurrencyStyle)),
             )
 
-            currentRowIndex += 1
+            currentRow += 1
         }
+    }
 
-        // Empty row
-        currentRowIndex += 1
+    private fun writeGroupOrders(
+        sheet: XSSFSheet,
+        customerOrders: Map<Int, List<Int>>,
+        pricesRangeStr: String,
+    ) {
+        // Get styles
+        val boldStyle = styleManager.getStyle(bold = true)
+        val rightBoldStyle = styleManager.getStyle(bold = true, alignment = StyleAlignment.Right)
 
         // Groups title
-        writeRow(
-            sheet.createRow(currentRowIndex),
+        writeRow(sheet.createRow(currentRow),
             listOf("GROEPEN"),
             style = boldStyle,
         )
-        currentRowIndex += 1
+        currentRow += 1
+
+        // Calculate values
+        val itemNames = items.fastMap { it.name }
 
         // Groups header
-        writeRow(
-            sheet.createRow(currentRowIndex),
-            listOf("id", "naam", "") + items.map { it.name } + listOf("OMZET"),
+        writeRow(sheet.createRow(currentRow),
+            listOf("id".withStyle(rightBoldStyle), "naam", "") + itemNames + listOf("OMZET"),
             style = boldStyle,
         )
-        sheet.getRow(currentRowIndex).getCell(0).cellStyle = rightAlignBoldStyle
-        currentRowIndex += 1
+        currentRow += 1
 
         // Groups
         groups.forEach { group ->
-            val groupOrders: List<Int> = orderExport[group.id]!!
+            val groupOrders: List<Int> = customerOrders[group.id]!!
 
             // Create formula for total
-            val ordersRangeStr = "${cellStr(currentRowIndex, 3)}:${cellStr(currentRowIndex, 3 + items.size - 1)}"
-            val total = AsCents(ExcelFormula("sumproduct($pricesRangeStr, $ordersRangeStr)"))
+            val ordersRangeStr = "${cellStr(currentRow, 3)}:${cellStr(currentRow, 3 + itemsCount - 1)}"
+            val total = ExcelFormula("sumproduct($pricesRangeStr, $ordersRangeStr)")
+
+            // Get styles
+            val currencyStyle = styleManager.getStyle(format = StyleFormat.Currency)
 
             // Write row
-            writeRow(
-                sheet.createRow(currentRowIndex),
-                listOf(group.id, group.name)
-                        + listOf("")
-                        + groupOrders
-                        + listOf(total),
+            writeRow(sheet.createRow(currentRow),
+                listOf(group.id, group.name, "") + groupOrders + listOf(total.withStyle(currencyStyle)),
             )
 
-            currentRowIndex += 1
+            currentRow += 1
         }
+    }
+
+    fun export(sheet: XSSFSheet) {
+        currentRow = 0
+
+        val customerOrders: Map<Int, List<Int>> = getCustomerOrders()
+        val colorMap: Map<Pair<Boolean, Boolean>, List<XSSFCellStyle>> = createColorMap()
+
+        // Write overview (customer info, item info)
+        val oldRowIndex = currentRow
+        writeOverview(sheet)
+
+        // Define range of prices (used in sumproduct of total)
+        val pricesRangeStr = "${cellStr(oldRowIndex + 1, 3)}:${cellStr(oldRowIndex + 1, 2 + itemsCount)}"
+
+        // Write member orders table
+        writeMemberOrders(sheet, colorMap, customerOrders, pricesRangeStr)
+
+        // Empty row
+        currentRow += 1
+
+        // Write group orders table
+        writeGroupOrders(sheet, customerOrders, pricesRangeStr)
     }
 }

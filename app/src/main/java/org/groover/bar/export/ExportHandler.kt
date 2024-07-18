@@ -19,9 +19,11 @@ class ExportHandler(
     fun export(exportName: String) {
         // Create a new workbook
         val workbook = XSSFWorkbook()
+        val styleManager = StyleManager(workbook)
 
         // Export overzicht
         OverzichtExportHandler(
+            styleManager = styleManager,
             customerRepository = customerRepository,
             itemRepository = itemRepository,
             orderRepository = orderRepository,
