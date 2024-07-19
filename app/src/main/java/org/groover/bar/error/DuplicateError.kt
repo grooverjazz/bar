@@ -10,7 +10,7 @@ import org.groover.bar.data.order.OrderRepository
 abstract class DuplicateError(
     private val elementName: String,
     internal val id: Int,
-) : Error() {
+) : BarError() {
     internal abstract val index1: Int
     internal abstract val index2: Int
 

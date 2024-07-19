@@ -1,4 +1,4 @@
-package org.groover.bar.util.app
+package org.groover.bar.app.util
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -11,7 +11,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TitleText(
+fun BarTitle(
     text: String,
     modifier: Modifier = Modifier,
     style: TextStyle = TextStyle(),

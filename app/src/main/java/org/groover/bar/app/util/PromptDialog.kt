@@ -1,4 +1,4 @@
-package org.groover.bar.util.app
+package org.groover.bar.app.util
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 
 @Composable
-fun PopupDialog(
+fun PromptDialog(
     confirmText: String,
     dismissText: String,
     onConfirm: () -> Unit,

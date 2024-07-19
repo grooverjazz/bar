@@ -3,8 +3,8 @@ package org.groover.bar.error
 import androidx.compose.runtime.Composable
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.order.OrderRepository
-import org.groover.bar.util.data.BTWPercentage
-import org.groover.bar.util.data.Cents
+import org.groover.bar.data.util.BTWPercentage
+import org.groover.bar.data.util.Cents
 
 // Order.amounts contains a non-existent Item ID as a key.
 data class OrderAmountsItemError(
@@ -12,7 +12,7 @@ data class OrderAmountsItemError(
     private val itemRepository: ItemRepository,
     private val orderId: Int,
     private val itemId: Int
-) : Error() {
+) : BarError() {
     override fun toString(): String {
         return "Bestelling '$orderId' bevat itemnummer '$itemId' die niet bestaat."
     }

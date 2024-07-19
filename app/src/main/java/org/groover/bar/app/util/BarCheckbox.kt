@@ -1,4 +1,4 @@
-package org.groover.bar.util.app
+package org.groover.bar.app.util
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 
 // From: https://stackoverflow.com/a/76227672
 @Composable
-fun ClickableCheckbox(
+fun BarCheckbox(
     label: String,
     state: Boolean,
     onStateChange: (Boolean) -> Unit

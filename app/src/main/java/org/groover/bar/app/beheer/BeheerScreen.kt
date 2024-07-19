@@ -18,11 +18,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.groover.bar.export.ExportHandler
-import org.groover.bar.util.app.BigButton
-import org.groover.bar.util.app.NavigateButton
-import org.groover.bar.util.app.ProgressDialog
-import org.groover.bar.util.app.TitleText
-import org.groover.bar.util.app.VerticalGrid
+import org.groover.bar.app.util.BarButton
+import org.groover.bar.app.util.BarNavigateButton
+import org.groover.bar.app.util.ProgressDialog
+import org.groover.bar.app.util.BarTitle
+import org.groover.bar.app.util.BarLayout
 
 @Composable
 fun BeheerScreen(
@@ -73,15 +73,15 @@ private fun BeheerContent(
     hasErrors: Boolean,
 ) {
     // UI
-    VerticalGrid {
+    BarLayout {
         // Title
         Spacer(Modifier.size(80.dp))
-        TitleText("Beheer")
+        BarTitle("Beheer")
         Spacer(Modifier.size(80.dp))
 
         // Error button
         if (hasErrors) {
-            NavigateButton(
+            BarNavigateButton(
                 "⚠\uFE0F Errors ⚠\uFE0F",
                 navigate = navigate,
                 route = "beheer/error",
@@ -91,34 +91,34 @@ private fun BeheerContent(
         }
 
         // Leden en Groepen button
-        NavigateButton("Leden en Groepen",
+        BarNavigateButton("Leden en Groepen",
             navigate = navigate,
             route = "beheer/customers",
         )
         Spacer(Modifier.size(30.dp))
 
         // Items button
-        NavigateButton("Items",
+        BarNavigateButton("Items",
             navigate = navigate,
             route = "beheer/items",
         )
         Spacer(Modifier.size(30.dp))
 
         // Session button
-        NavigateButton("Sessie",
+        BarNavigateButton("Sessie",
             navigate = navigate,
             route = "beheer/session",
         )
         Spacer(Modifier.size(30.dp))
 
         // Password button
-        NavigateButton("Wachtwoord veranderen",
+        BarNavigateButton("Wachtwoord veranderen",
             navigate = navigate,
             route = "beheer/password",
         )
         Spacer(Modifier.size(50.dp))
 
-        BigButton("Hele zooi afrekenen",
+        BarButton("Hele zooi afrekenen",
             onClick = export,
             rounded = true,
         )

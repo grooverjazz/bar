@@ -1,4 +1,4 @@
-package org.groover.bar.util.data
+package org.groover.bar.data.util
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList

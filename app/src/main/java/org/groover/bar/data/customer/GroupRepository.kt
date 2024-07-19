@@ -1,7 +1,7 @@
 package org.groover.bar.data.customer
 
-import org.groover.bar.util.data.FileOpener
-import org.groover.bar.util.data.Repository
+import org.groover.bar.data.util.FileOpener
+import org.groover.bar.data.util.Repository
 
 class GroupRepository(
     fileOpener: FileOpener,

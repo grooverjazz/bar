@@ -1,5 +1,6 @@
-package org.groover.bar.util.app
+package org.groover.bar.data.customer.composable
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextField
@@ -21,7 +22,10 @@ import kotlinx.coroutines.android.awaitFrame
 import org.groover.bar.data.customer.Customer
 import org.groover.bar.data.customer.Group
 import org.groover.bar.data.customer.Member
-import org.groover.bar.util.data.SearchHandler
+import org.groover.bar.app.util.BarButton
+import org.groover.bar.app.util.BarListMoveable
+import org.groover.bar.app.util.BarMultiButtons
+import org.groover.bar.data.util.SearchHandler
 import java.util.Locale
 
 enum class CustomerListState {
@@ -46,7 +50,7 @@ fun CustomerList(
 
     // Leden / Groepen button
     if (listState == null) {
-        MultiChoiceButtons(
+        BarMultiButtons(
             state = state,
             setState = { state = it },
             options = listOf("Leden", "Groepen"),
@@ -63,7 +67,7 @@ fun CustomerList(
 
     // Search box
     TextField(searchText,
-        modifier = Modifier
+        modifier = Modifier.fillMaxWidth()
             .focusRequester(keyboardFocus)
             .height(80.dp),
         onValueChange = { searchText = it },
@@ -129,7 +133,7 @@ private fun CustomerList(
     val filteredCustomers = SearchHandler.search(searchText, customers) { it.toString() }
 
     // UI
-    EditableBigList(
+    BarListMoveable(
         height = height,
         lazy = true,
         elements = filteredCustomers,
@@ -143,7 +147,7 @@ private fun CustomerList(
         onRemove = onRemove,
     ) {
         if (searchText != "" && addCustomer != null) {
-            BigButton(addCustomerText!!,
+            BarButton(addCustomerText!!,
                 color = MaterialTheme.colorScheme.secondary,
                 onClick = { addCustomer(searchText) },
             )

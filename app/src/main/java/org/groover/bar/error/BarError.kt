@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 
-abstract class Error {
+abstract class BarError {
     @Composable
     internal fun Panel(callback: () -> Unit, vararg buttons: Pair<String, () -> Unit>) {
         val desc = toString()

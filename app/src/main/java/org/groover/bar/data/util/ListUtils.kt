@@ -1,4 +1,4 @@
-package org.groover.bar.util.data
+package org.groover.bar.data.util
 
 fun <T> List<T>.removeFirst(predicate: (T) -> Boolean): List<T> {
     var found = false
@@ -6,8 +6,6 @@ fun <T> List<T>.removeFirst(predicate: (T) -> Boolean): List<T> {
         if (!found && predicate(it)) {
             found = true
             false
-        } else {
-            true
-        }
+        } else true
     }
 }

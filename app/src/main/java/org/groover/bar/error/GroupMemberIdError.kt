@@ -2,14 +2,14 @@ package org.groover.bar.error
 
 import androidx.compose.runtime.Composable
 import org.groover.bar.data.customer.CustomerRepository
-import org.groover.bar.util.data.removeFirst
+import org.groover.bar.data.util.removeFirst
 
 // Group.memberIds contains a non-existent Member ID or a Group ID.
 data class GroupMemberIdError(
     private val customerRepository: CustomerRepository,
     private val groupId: Int,
     private val memberId: Int,
-) : Error(){
+) : BarError(){
     override fun toString(): String {
         val group = customerRepository.groups.find(groupId)!!
         return "Groep '$group' bevat lidnummer $memberId die niet bestaat of een groeps-ID is."

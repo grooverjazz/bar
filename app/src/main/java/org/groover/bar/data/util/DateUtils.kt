@@ -1,4 +1,4 @@
-package org.groover.bar.util.data
+package org.groover.bar.data.util
 import android.annotation.SuppressLint
 import java.text.SimpleDateFormat
 import java.time.Instant

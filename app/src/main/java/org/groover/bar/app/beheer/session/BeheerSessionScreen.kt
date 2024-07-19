@@ -2,6 +2,7 @@ package org.groover.bar.app.beheer.session
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
@@ -17,11 +18,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastFilter
-import org.groover.bar.util.app.BigButton
-import org.groover.bar.util.app.ClickableCheckbox
-import org.groover.bar.util.app.LazyBigList
-import org.groover.bar.util.app.TitleText
-import org.groover.bar.util.app.VerticalGrid
+import org.groover.bar.app.util.BarButton
+import org.groover.bar.app.util.BarCheckbox
+import org.groover.bar.app.util.BarListLazy
+import org.groover.bar.app.util.BarTitle
+import org.groover.bar.app.util.BarLayout
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -66,24 +67,22 @@ private fun BeheerSessionContent(
     var copyGlobalData: Boolean by remember { mutableStateOf(true) }
 
     // UI
-    VerticalGrid {
+    BarLayout {
         // Title
         Spacer(Modifier.size(20.dp))
-        TitleText("Sessies")
+        BarTitle("Sessies")
         Spacer(Modifier.size(20.dp))
 
         // New session name field
-        TextField(
+        TextField(modifier = Modifier.fillMaxWidth(),
             value = newSessionName,
-            onValueChange = { newSessionName = it },
+            onValueChange = { newSessionName = it.trim() },
             placeholder = { Text("Naam") },
         )
 
         // Example name button
-        BigButton("Wat dacht je van \"$exampleStr\"?",
-            onClick = {
-                newSessionName = exampleStr
-            },
+        BarButton("Wat dacht je van \"$exampleStr\"?",
+            onClick = { newSessionName = exampleStr },
             color = MaterialTheme.colorScheme.tertiary,
             rounded = true,
             fontSize = 24.sp,
@@ -95,9 +94,9 @@ private fun BeheerSessionContent(
             textAlign = TextAlign.Center,
         )
 
-        LazyBigList(height = 600.dp) {
+        BarListLazy(height = 600.dp) {
             items(allSessions.fastFilter { it != oldSessionName }) { session ->
-                BigButton(session,
+                BarButton(session,
                     onClick = {
                         newSessionName = session
                         copyGlobalData = false
@@ -108,18 +107,15 @@ private fun BeheerSessionContent(
         Spacer(Modifier.size(30.dp))
 
         // Copy global data checkbox
-        ClickableCheckbox("Kopieer leden, groepen en items van huidige sessie",
+        BarCheckbox("Kopieer leden, groepen en items van huidige sessie",
             state = copyGlobalData,
             onStateChange = { copyGlobalData = it },
         )
         Spacer(Modifier.size(10.dp))
 
         // Save button
-        BigButton(if (allSessions.contains(newSessionName.trim())) "Sessie openen" else "Sessie aanmaken",
-            onClick = {
-                // Change the session
-                finish(newSessionName.trim(), copyGlobalData)
-            },
+        BarButton(if (allSessions.contains(newSessionName)) "Sessie openen" else "Sessie aanmaken",
+            onClick = { finish(newSessionName, copyGlobalData) },
             rounded = true,
         )
     }

@@ -16,7 +16,7 @@ import org.groover.bar.export.ExcelHandler.Companion.writeRow
 import org.groover.bar.export.ExcelHandler.ExcelFormula
 import org.groover.bar.export.StyleManager.StyleAlignment
 import org.groover.bar.export.StyleManager.StyleFormat
-import org.groover.bar.util.data.removeFirst
+import org.groover.bar.data.util.removeFirst
 
 
 class OverzichtExportHandler(

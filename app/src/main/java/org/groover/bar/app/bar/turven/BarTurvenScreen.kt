@@ -9,9 +9,9 @@ import org.groover.bar.data.customer.Customer
 import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.customer.Group
 import org.groover.bar.data.customer.Member
-import org.groover.bar.util.app.CustomerList
-import org.groover.bar.util.app.TitleText
-import org.groover.bar.util.app.VerticalGrid
+import org.groover.bar.data.customer.composable.CustomerList
+import org.groover.bar.app.util.BarTitle
+import org.groover.bar.app.util.BarLayout
 
 @Composable
 fun BarTurvenScreen(
@@ -39,10 +39,10 @@ private fun BarTurvenContent(
     customerOnClick: (customer: Customer) -> Unit,
 ) {
     // UI
-    VerticalGrid {
+    BarLayout {
         // Title
         Spacer(Modifier.size(20.dp))
-        TitleText("Turven")
+        BarTitle("Turven")
         Spacer(Modifier.size(20.dp))
 
         // Customer list

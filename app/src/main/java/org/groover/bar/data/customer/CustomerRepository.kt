@@ -2,7 +2,7 @@ package org.groover.bar.data.customer
 
 import androidx.compose.ui.util.fastFirstOrNull
 import androidx.compose.ui.util.fastMaxOfOrNull
-import org.groover.bar.util.data.DateUtils
+import org.groover.bar.data.util.DateUtils
 import java.util.Date
 import kotlin.math.max
 

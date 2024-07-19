@@ -1,4 +1,4 @@
-package org.groover.bar.util.app
+package org.groover.bar.app.util
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

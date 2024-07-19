@@ -32,7 +32,7 @@ import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.export.ExportHandler
 import org.groover.bar.export.OptionsHandler
 import org.groover.bar.error.ErrorHandler
-import org.groover.bar.util.data.FileOpener
+import org.groover.bar.data.util.FileOpener
 
 @Composable
 fun App() {

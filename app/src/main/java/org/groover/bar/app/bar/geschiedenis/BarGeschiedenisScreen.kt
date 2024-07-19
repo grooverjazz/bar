@@ -9,10 +9,10 @@ import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.order.Order
 import org.groover.bar.data.order.OrderRepository
-import org.groover.bar.util.app.OrderList
-import org.groover.bar.util.app.TitleText
-import org.groover.bar.util.app.VerticalGrid
-import org.groover.bar.util.data.Cents
+import org.groover.bar.data.order.composable.OrderList
+import org.groover.bar.app.util.BarTitle
+import org.groover.bar.app.util.BarLayout
+import org.groover.bar.data.util.Cents
 
 @Composable
 fun BarGeschiedenisScreen(
@@ -56,10 +56,10 @@ private fun BarGeschiedenisContent(
     orderOnClick: (order: Order) -> Unit,
 ) {
     // UI
-    VerticalGrid {
+    BarLayout {
         // Title
         Spacer(Modifier.size(20.dp))
-        TitleText("Geschiedenis")
+        BarTitle("Geschiedenis")
         Spacer(Modifier.size(20.dp))
 
         // Orders

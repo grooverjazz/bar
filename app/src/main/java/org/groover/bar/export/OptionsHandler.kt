@@ -1,7 +1,7 @@
 package org.groover.bar.export
 
 import android.content.Context
-import org.groover.bar.util.data.FileOpener
+import org.groover.bar.data.util.FileOpener
 
 class OptionsHandler(
     context: Context

@@ -26,11 +26,11 @@ import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.order.Order
 import org.groover.bar.data.order.OrderRepository
-import org.groover.bar.util.app.BigButton
-import org.groover.bar.util.app.ItemList
-import org.groover.bar.util.app.TitleText
-import org.groover.bar.util.app.VerticalGrid
-import org.groover.bar.util.data.Cents
+import org.groover.bar.app.util.BarButton
+import org.groover.bar.data.item.composable.ItemList
+import org.groover.bar.app.util.BarTitle
+import org.groover.bar.app.util.BarLayout
+import org.groover.bar.data.util.Cents
 
 @Composable
 fun BarTurvenCustomerScreen(
@@ -134,7 +134,7 @@ private fun BarTurvenCustomerContent(
     }
 
     // UI
-    VerticalGrid {
+    BarLayout {
         // Customer name
         Spacer(Modifier.size(20.dp))
         val hospitalityGradient = listOf(
@@ -142,7 +142,7 @@ private fun BarTurvenCustomerContent(
             Color.Red,
             Color(0xFFFFD800),
         )
-        TitleText(customerName,
+        BarTitle(customerName,
             modifier = Modifier.basicMarquee(velocity = 80.dp),
             style = if (isHospitality) TextStyle(
                 brush = Brush.linearGradient(hospitalityGradient),
@@ -181,7 +181,7 @@ private fun BarTurvenCustomerContent(
         val newOrder = previousOrder == null
 
         // Finish order button
-        BigButton(
+        BarButton(
             when {
                 hasItems -> "Bestelling afronden (${orderCost.toStringWithEuro()})"
                 !hasItems && !newOrder -> "Bestelling verwijderen"

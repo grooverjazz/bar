@@ -3,7 +3,7 @@ package org.groover.bar.error
 import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.order.OrderRepository
-import org.groover.bar.util.data.BarData
+import org.groover.bar.data.util.BarData
 
 
 class ErrorHandler(

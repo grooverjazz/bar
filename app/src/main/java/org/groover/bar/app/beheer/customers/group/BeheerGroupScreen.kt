@@ -22,13 +22,13 @@ import androidx.compose.ui.util.fastMap
 import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.customer.Group
 import org.groover.bar.data.customer.Member
-import org.groover.bar.util.app.BigButton
-import org.groover.bar.util.app.CustomerList
-import org.groover.bar.util.app.CustomerListState
-import org.groover.bar.util.app.LabeledTextField
-import org.groover.bar.util.app.LazyBigList
-import org.groover.bar.util.app.TitleText
-import org.groover.bar.util.app.VerticalGrid
+import org.groover.bar.app.util.BarButton
+import org.groover.bar.data.customer.composable.CustomerList
+import org.groover.bar.data.customer.composable.CustomerListState
+import org.groover.bar.app.util.BarTextField
+import org.groover.bar.app.util.BarListLazy
+import org.groover.bar.app.util.BarTitle
+import org.groover.bar.app.util.BarLayout
 
 
 @Composable
@@ -88,9 +88,9 @@ fun BeheerGroupError(
     groupId: Int,
 ) {
     // UI
-    VerticalGrid {
+    BarLayout {
         // Title
-        TitleText("Groep met ID $groupId niet gevonden!")
+        BarTitle("Groep met ID $groupId niet gevonden!")
     }
 }
 
@@ -107,14 +107,14 @@ fun BeheerGroupContent(
     var newName: String by remember { mutableStateOf(currentGroup.name) }
 
     // UI
-    VerticalGrid {
+    BarLayout {
         // Title
         Spacer(Modifier.size(20.dp))
-        TitleText("Groep bewerken")
+        BarTitle("Groep bewerken")
         Spacer(Modifier.size(40.dp))
 
         // Name field
-        LabeledTextField(
+        BarTextField(
             text = "Naam",
             value = newName,
             onValueChange = { newName = it },
@@ -146,9 +146,9 @@ fun BeheerGroupContent(
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(10.dp))
-        LazyBigList(height = 250.dp) {
+        BarListLazy(height = 250.dp) {
             items(newMembers) { member ->
-                BigButton(member.toString(),
+                BarButton(member.toString(),
                     color = if (member.isExtra) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
                     onClick = { excludeMember(member) },
                 )

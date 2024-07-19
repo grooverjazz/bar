@@ -18,12 +18,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
-import org.groover.bar.util.app.EditableBigList
-import org.groover.bar.util.app.PopupDialog
-import org.groover.bar.util.app.TitleText
-import org.groover.bar.util.app.VerticalGrid
-import org.groover.bar.util.data.BTWPercentage
-import org.groover.bar.util.data.Cents
+import org.groover.bar.app.util.BarListMoveable
+import org.groover.bar.app.util.PromptDialog
+import org.groover.bar.app.util.BarTitle
+import org.groover.bar.app.util.BarLayout
+import org.groover.bar.data.util.BTWPercentage
+import org.groover.bar.data.util.Cents
 
 
 
@@ -35,7 +35,7 @@ fun BeheerItemsScreen(
     // Remove popup
     var itemRemoveState: Item? by remember { mutableStateOf(null) }
     if (itemRemoveState != null) {
-        PopupDialog(
+        PromptDialog(
             confirmText = "Verwijderen",
             dismissText = "Annuleren",
             onConfirm = {
@@ -70,10 +70,10 @@ private fun BeheerItemsContent(
     itemRemove: (Int) -> Unit,
 ) {
     // UI
-    VerticalGrid {
+    BarLayout {
         // Title
         Spacer(Modifier.size(20.dp))
-        TitleText("Items")
+        BarTitle("Items")
         Spacer(Modifier.size(20.dp))
 
         // Add item button
@@ -87,7 +87,7 @@ private fun BeheerItemsContent(
         Spacer(Modifier.size(20.dp))
 
         // Items edit list
-        EditableBigList(
+        BarListMoveable(
             height = 900.dp,
             elements = items,
             getName = { it.name },

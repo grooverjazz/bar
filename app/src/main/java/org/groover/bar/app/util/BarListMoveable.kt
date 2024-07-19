@@ -1,4 +1,4 @@
-package org.groover.bar.util.app
+package org.groover.bar.app.util
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,10 +31,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.groover.bar.util.data.BarData
+import org.groover.bar.data.util.BarData
 
 @Composable
-fun <T: BarData> EditableBigList(
+fun <T: BarData> BarListMoveable(
     lazy: Boolean = false,
     height: Dp,
     elements: List<T>,
@@ -54,7 +54,7 @@ fun <T: BarData> EditableBigList(
     val item: @Composable (T) -> Unit = { element: T ->
         val id = element.id
 
-        EditListItem(
+        BarListMoveableItem(
             name = getName(element),
             visible = getVisible(element),
             color = getColor(element),
@@ -70,7 +70,7 @@ fun <T: BarData> EditableBigList(
 
     if (lazy) {
         // Lazy list
-        LazyBigList(height = height) {
+        BarListLazy(height = height) {
             // Pre content
             item { preContent?.invoke() }
 
@@ -80,7 +80,7 @@ fun <T: BarData> EditableBigList(
     }
     else {
         // Non-lazy list
-        BigList(height = height) {
+        BarList(height = height) {
             // Pre content
             preContent?.invoke()
 
@@ -92,7 +92,7 @@ fun <T: BarData> EditableBigList(
 }
 
 @Composable
-private fun EditListItem(
+private fun BarListMoveableItem(
     name: String,
     visible: Boolean,
     color: Color,
@@ -108,7 +108,7 @@ private fun EditListItem(
             .fillMaxWidth()
             .blur(if (visible) 0.dp else 1.dp)
     ) {
-        LongPressBigButton(name + if (visible) "" else " (verborgen)",
+        BarButtonLongPress(name + if (visible) "" else " (verborgen)",
             color = color.copy(if (visible) 1.0f else 0.1f),
             fontColor = fontColor.copy(if (visible) 1.0f else 0.4f),
             onClick = {
@@ -130,14 +130,14 @@ private fun EditListItem(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 if (onRemove != null)
-                    ItemControl(1f, Color.Red, onRemove, Icons.Rounded.Delete)
+                    ItemButton(1f, Color.Red, onRemove, Icons.Rounded.Delete)
 
                 if (onToggleVisible != null)
-                    ItemControl(1f, Color.Blue, onToggleVisible, Icons.Rounded.Face)
+                    ItemButton(1f, Color.Blue, onToggleVisible, Icons.Rounded.Face)
 
                 if (onMove != null) {
-                    ItemControl(2f, MaterialTheme.colorScheme.tertiary, { onMove(true) }, Icons.Rounded.KeyboardArrowUp)
-                    ItemControl(2f, MaterialTheme.colorScheme.tertiary, { onMove(false) }, Icons.Rounded.KeyboardArrowDown)
+                    ItemButton(2f, MaterialTheme.colorScheme.tertiary, { onMove(true) }, Icons.Rounded.KeyboardArrowUp)
+                    ItemButton(2f, MaterialTheme.colorScheme.tertiary, { onMove(false) }, Icons.Rounded.KeyboardArrowDown)
                 }
             }
 
@@ -147,7 +147,7 @@ private fun EditListItem(
 }
 
 @Composable
-private fun RowScope.ItemControl(
+private fun RowScope.ItemButton(
     weight: Float,
     color: Color,
     onClick: () -> Unit,

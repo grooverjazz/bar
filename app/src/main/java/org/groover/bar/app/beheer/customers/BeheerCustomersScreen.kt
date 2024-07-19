@@ -15,10 +15,10 @@ import org.groover.bar.data.customer.Customer
 import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.customer.Group
 import org.groover.bar.data.customer.Member
-import org.groover.bar.util.app.CustomerList
-import org.groover.bar.util.app.PopupDialog
-import org.groover.bar.util.app.TitleText
-import org.groover.bar.util.app.VerticalGrid
+import org.groover.bar.data.customer.composable.CustomerList
+import org.groover.bar.app.util.PromptDialog
+import org.groover.bar.app.util.BarTitle
+import org.groover.bar.app.util.BarLayout
 
 @Composable
 fun BeheerCustomersScreen(
@@ -49,7 +49,7 @@ fun BeheerCustomersScreen(
         }
 
         // Dialog
-        PopupDialog(
+        PromptDialog(
             confirmText = "Verwijderen",
             dismissText = "Annuleren",
             onConfirm = { // (Removes the customer)
@@ -86,10 +86,10 @@ private fun BeheerCustomersContent(
     addGroup: (newGroupName: String) -> Unit,
 ) {
     //UI
-    VerticalGrid {
+    BarLayout {
         // Title
         Spacer(Modifier.size(20.dp))
-        TitleText("Leden en Groepen")
+        BarTitle("Leden en Groepen")
         Spacer(Modifier.size(20.dp))
 
         // Customer list

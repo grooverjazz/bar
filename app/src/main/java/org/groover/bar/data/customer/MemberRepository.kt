@@ -1,9 +1,9 @@
 package org.groover.bar.data.customer
 
 import androidx.compose.ui.util.fastMap
-import org.groover.bar.util.data.DateUtils
-import org.groover.bar.util.data.FileOpener
-import org.groover.bar.util.data.Repository
+import org.groover.bar.data.util.DateUtils
+import org.groover.bar.data.util.FileOpener
+import org.groover.bar.data.util.Repository
 
 class MemberRepository(
     fileOpener: FileOpener,

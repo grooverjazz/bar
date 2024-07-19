@@ -2,8 +2,8 @@ package org.groover.bar.data.customer
 
 import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastMap
-import org.groover.bar.util.data.CSV
-import org.groover.bar.util.data.DateUtils
+import org.groover.bar.data.util.CSV
+import org.groover.bar.data.util.DateUtils
 
 data class Group (
     override val id: Int,

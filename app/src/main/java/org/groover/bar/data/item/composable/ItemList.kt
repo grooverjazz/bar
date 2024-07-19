@@ -1,4 +1,4 @@
-package org.groover.bar.util.app
+package org.groover.bar.data.item.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.groover.bar.data.item.Item
+import org.groover.bar.app.util.BarList
 import kotlin.math.max
 
 @Composable
@@ -31,7 +32,7 @@ fun ItemList(
     items: List<Item>,
     amounts: MutableList<Int>,
 ) {
-    BigList(height = 870.dp) {
+    BarList(height = 870.dp) {
         items.forEachIndexed { index, item ->
             if (item.visible)
                 ItemListEntry(item, amounts[index], setAmount = { amounts[index] = it })

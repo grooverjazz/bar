@@ -1,4 +1,4 @@
-package org.groover.bar.util.app
+package org.groover.bar.data.order.composable
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,8 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.android.awaitFrame
 import org.groover.bar.data.order.Order
-import org.groover.bar.util.data.Cents
-import org.groover.bar.util.data.SearchHandler
+import org.groover.bar.app.util.BarListLazy
+import org.groover.bar.data.util.Cents
+import org.groover.bar.data.util.SearchHandler
 import java.util.Locale
 
 @Composable
@@ -51,14 +52,14 @@ fun OrderList(
         onValueChange = { newSearchText: String ->
             searchText = newSearchText
         },
-        modifier = Modifier
+        modifier = Modifier.fillMaxWidth()
             .focusRequester(keyboardFocus)
             .height(80.dp),
         textStyle = TextStyle.Default.copy(fontSize = 28.sp),
     )
 
     // UI
-    LazyBigList {
+    BarListLazy {
         items(filteredOrders) { order ->
             // Get printable name of customer
             val customerName = customerGetName(order.customerId)

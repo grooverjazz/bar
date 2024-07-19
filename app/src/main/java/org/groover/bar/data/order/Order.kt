@@ -1,7 +1,7 @@
 package org.groover.bar.data.order
 
-import org.groover.bar.util.data.BarData
-import org.groover.bar.util.data.CSV
+import org.groover.bar.data.util.BarData
+import org.groover.bar.data.util.CSV
 import java.util.Date
 
 data class Order(

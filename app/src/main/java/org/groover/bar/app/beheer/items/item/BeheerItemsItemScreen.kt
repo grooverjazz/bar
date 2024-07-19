@@ -26,13 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
-import org.groover.bar.util.app.BigButton
-import org.groover.bar.util.app.LabeledTextField
-import org.groover.bar.util.app.TitleText
-import org.groover.bar.util.app.VerticalGrid
-import org.groover.bar.util.data.BTWPercentage
-import org.groover.bar.util.data.Cents
-import org.groover.bar.util.data.Cents.Companion.toCents
+import org.groover.bar.app.util.BarButton
+import org.groover.bar.app.util.BarTextField
+import org.groover.bar.app.util.BarTitle
+import org.groover.bar.app.util.BarLayout
+import org.groover.bar.data.util.BTWPercentage
+import org.groover.bar.data.util.Cents
+import org.groover.bar.data.util.Cents.Companion.toCents
 
 @Composable
 fun BeheerItemsItemScreen(
@@ -70,9 +70,9 @@ private fun BeheerItemsItemError(
     itemId: Int,
 ) {
     // UI
-    VerticalGrid {
+    BarLayout {
         // Title
-        TitleText("Kan item met ID $itemId niet vinden!")
+        BarTitle("Kan item met ID $itemId niet vinden!")
     }
 }
 
@@ -89,14 +89,14 @@ private fun BeheerItemsItemContent(
     var newColorFloat: Float by remember { mutableFloatStateOf(item.hue) }
 
     // UI
-    VerticalGrid {
+    BarLayout {
         // Title
         Spacer(Modifier.size(20.dp))
-        TitleText("Item bewerken")
+        BarTitle("Item bewerken")
         Spacer(Modifier.size(20.dp))
 
         // Name field
-        LabeledTextField(
+        BarTextField(
             text = "Naam",
             value = newName,
             onValueChange = { newName = it },
@@ -104,7 +104,7 @@ private fun BeheerItemsItemContent(
         Spacer(Modifier.size(20.dp))
 
         // New price field
-        LabeledTextField(
+        BarTextField(
             text = "Prijs",
             value = newPriceStr,
             onValueChange = { newPriceStr = it.replace('.',',') },
@@ -117,6 +117,7 @@ private fun BeheerItemsItemContent(
 
         // New color field
         Text("Tint:",
+            modifier = Modifier.fillMaxWidth(),
             fontSize = 20.sp,
         )
         Spacer(Modifier.height(5.dp))
@@ -127,15 +128,11 @@ private fun BeheerItemsItemContent(
         Spacer(Modifier.size(20.dp))
 
         // Color box
-        Box(
-            Modifier
-                .height(30.dp)
-                .background(color = Item.getColor(newColorFloat)),
-        )
+        Box(Modifier.height(30.dp).background(color = Item.getColor(newColorFloat)))
         Spacer(Modifier.size(30.dp))
 
         // Save button
-        BigButton("Opslaan",
+        BarButton("Opslaan",
             onClick = {
                 // Convert new price and BTW percentage, finish
                 finishEdit(

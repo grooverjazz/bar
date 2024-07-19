@@ -1,4 +1,4 @@
-package org.groover.bar.util.app
+package org.groover.bar.app.util
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,9 +14,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun LabeledTextField(
+fun BarTextField(
     modifier: Modifier = Modifier,
-    text: String,
+    text: String? = null,
     value: String,
     onValueChange: (String) -> Unit,
     isPassword: Boolean = false,

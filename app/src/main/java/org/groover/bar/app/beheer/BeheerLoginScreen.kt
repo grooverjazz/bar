@@ -15,10 +15,10 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.android.awaitFrame
-import org.groover.bar.util.app.BigButton
-import org.groover.bar.util.app.LabeledTextField
-import org.groover.bar.util.app.TitleText
-import org.groover.bar.util.app.VerticalGrid
+import org.groover.bar.app.util.BarButton
+import org.groover.bar.app.util.BarTextField
+import org.groover.bar.app.util.BarTitle
+import org.groover.bar.app.util.BarLayout
 
 @Composable
 fun BeheerLoginScreen(
@@ -61,14 +61,14 @@ private fun BeheerLoginContent(
     var currentPassword: String by remember { mutableStateOf("") }
 
     // UI
-    VerticalGrid {
+    BarLayout {
         // Title
         Spacer(Modifier.size(100.dp))
-        TitleText("Beheer")
+        BarTitle("Beheer")
         Spacer(Modifier.size(80.dp))
 
         // Password field
-        LabeledTextField(Modifier.focusRequester(keyboardFocus),
+        BarTextField(Modifier.focusRequester(keyboardFocus),
             text = "Wachtwoord",
             value = currentPassword,
             onValueChange = { currentPassword = it.trim() },
@@ -77,7 +77,7 @@ private fun BeheerLoginContent(
         Spacer(Modifier.size(40.dp))
 
         // Login button
-        BigButton("Inloggen",
+        BarButton("Inloggen",
             onClick = { logIn(currentPassword) },
             rounded = true,
         )

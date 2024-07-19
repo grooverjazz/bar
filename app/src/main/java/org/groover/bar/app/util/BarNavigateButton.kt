@@ -1,4 +1,4 @@
-package org.groover.bar.util.app
+package org.groover.bar.app.util
 
 import android.widget.Toast
 import androidx.compose.material3.MaterialTheme
@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 @Composable
-fun NavigateButton(
+fun BarNavigateButton(
     text: String,
     navigate: (route: String) -> Unit,
     route: String,
@@ -16,7 +16,7 @@ fun NavigateButton(
     val context = LocalContext.current
     val emptyRoute = route.isEmpty()
 
-    BigButton(text = if (emptyRoute) "$text (TODO!)" else text,
+    BarButton(text = if (emptyRoute) "$text (TODO!)" else text,
         onClick = {
             // Empty route gives warning
             if (emptyRoute) {

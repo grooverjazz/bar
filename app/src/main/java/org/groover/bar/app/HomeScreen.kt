@@ -12,8 +12,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.groover.bar.R
-import org.groover.bar.util.app.NavigateButton
-import org.groover.bar.util.app.VerticalGrid
+import org.groover.bar.app.util.BarNavigateButton
+import org.groover.bar.app.util.BarLayout
 
 @Composable
 fun HomeScreen(
@@ -35,7 +35,7 @@ private fun HomeContent(
    sessionName: String,
    hasErrors: Boolean,
 ) {
-    VerticalGrid {
+    BarLayout {
         // Title
         Spacer(Modifier.size(100.dp))
         Image(
@@ -45,14 +45,14 @@ private fun HomeContent(
         Spacer(Modifier.size(120.dp))
 
         // Bar button
-        NavigateButton("Bar",
+        BarNavigateButton("Bar",
             navigate = navigate,
             route = "bar",
         )
         Spacer(Modifier.size(30.dp))
 
         // Bar Beheer button
-        NavigateButton(
+        BarNavigateButton(
             if (!hasErrors) "Beheer" else "⚠\uFE0F Beheer ⚠\uFE0F",
             navigate = navigate,
             route = "beheer/login",

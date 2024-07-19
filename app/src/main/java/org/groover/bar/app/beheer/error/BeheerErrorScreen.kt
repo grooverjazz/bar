@@ -9,9 +9,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.groover.bar.util.app.BigList
-import org.groover.bar.util.app.TitleText
-import org.groover.bar.util.app.VerticalGrid
+import org.groover.bar.app.util.BarList
+import org.groover.bar.app.util.BarTitle
+import org.groover.bar.app.util.BarLayout
 import org.groover.bar.error.ErrorHandler
 
 @Composable
@@ -20,14 +20,14 @@ fun BeheerErrorScreen(
     errorHandler: ErrorHandler,
 ) {
     // UI
-    VerticalGrid {
+    BarLayout {
         // Title
         Spacer(Modifier.size(20.dp))
-        TitleText("Errors")
+        BarTitle("Errors")
         Spacer(Modifier.size(20.dp))
 
         // All inconsistencies
-        BigList(spacing = 0.dp) {
+        BarList(spacing = 0.dp) {
             // Group.memberIds contains a non-existent Member ID or a Group ID.
             var groupMemberIdsInconsistencies by remember { mutableStateOf(errorHandler.groupMemberIdErrors()) }
             groupMemberIdsInconsistencies.forEach { it.Panel {

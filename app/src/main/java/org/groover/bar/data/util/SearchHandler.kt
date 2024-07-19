@@ -1,4 +1,4 @@
-package org.groover.bar.util.data
+package org.groover.bar.data.util
 
 import org.apache.commons.text.similarity.FuzzyScore
 import java.util.Locale

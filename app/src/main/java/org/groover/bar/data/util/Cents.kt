@@ -1,4 +1,4 @@
-package org.groover.bar.util.data
+package org.groover.bar.data.util
 
 class Cents(
     val amount: Int

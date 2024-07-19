@@ -1,6 +1,6 @@
 package org.groover.bar.data.customer
 
-import org.groover.bar.util.data.BarData
+import org.groover.bar.data.util.BarData
 
 abstract class Customer : BarData() {
     // ABSTRACT: The name of the customer

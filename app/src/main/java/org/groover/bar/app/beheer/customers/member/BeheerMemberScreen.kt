@@ -25,11 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.customer.Member
-import org.groover.bar.util.app.BigButton
-import org.groover.bar.util.app.LabeledTextField
-import org.groover.bar.util.app.TitleText
-import org.groover.bar.util.app.VerticalGrid
-import org.groover.bar.util.data.DateUtils
+import org.groover.bar.app.util.BarButton
+import org.groover.bar.app.util.BarTextField
+import org.groover.bar.app.util.BarTitle
+import org.groover.bar.app.util.BarLayout
+import org.groover.bar.data.util.DateUtils
 import java.util.Date
 
 @Composable
@@ -69,9 +69,9 @@ private fun BeheerMemberError(
     memberId: Int,
 ) {
     // UI
-    VerticalGrid {
+    BarLayout {
         // Title
-        TitleText("Lid met ID $memberId niet gevonden!")
+        BarTitle("Lid met ID $memberId niet gevonden!")
     }
 }
 
@@ -90,14 +90,14 @@ private fun BeheerMemberContent(
     val birthdayPopupState: DatePickerState = rememberDatePickerState(initialSelectedDateMillis = DateUtils.dateToMillis(currentMember.birthday))
 
     // UI
-    VerticalGrid {
+    BarLayout {
         // Title
         Spacer(Modifier.size(20.dp))
-        TitleText("Lid bewerken")
+        BarTitle("Lid bewerken")
         Spacer(Modifier.size(20.dp))
 
         // Name field
-        LabeledTextField(
+        BarTextField(
             text = "Roepnaam",
             value = newName,
             onValueChange = { newName = it },
@@ -107,7 +107,7 @@ private fun BeheerMemberContent(
         // Birthday field
         Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
             // Text field
-            LabeledTextField(Modifier.weight(0.8f),
+            BarTextField(Modifier.weight(0.8f),
                 text = "Verjaardag",
                 value = newBirthdayStr,
                 onValueChange = { newBirthdayStr = it },
@@ -143,7 +143,7 @@ private fun BeheerMemberContent(
         }
 
         // Save button
-        BigButton("Opslaan",
+        BarButton("Opslaan",
             onClick = {
                 // Finish editing
                 val newVerjaardagDate = DateUtils.deserializeDate(newBirthdayStr.trim())

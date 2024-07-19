@@ -9,7 +9,7 @@ data class OrderCustomerError(
     private val customerRepository: CustomerRepository,
     private val orderId: Int,
     private val customerId: Int
-) : Error() {
+) : BarError() {
     override fun toString(): String {
         return "Bestelling '$orderId' bevat klant '$customerId' die niet bestaat."
     }

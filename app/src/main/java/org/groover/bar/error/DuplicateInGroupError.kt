@@ -2,14 +2,14 @@ package org.groover.bar.error
 
 import androidx.compose.runtime.Composable
 import org.groover.bar.data.customer.CustomerRepository
-import org.groover.bar.util.data.removeFirst
+import org.groover.bar.data.util.removeFirst
 
 // There are 2 or more customers in the same group.
 class DuplicateInGroupError(
     private val customerRepository: CustomerRepository,
     private val groupId: Int,
     private val memberId: Int,
-) : Error() {
+) : BarError() {
     override fun toString(): String {
         val group = customerRepository.groups.find(groupId)
         val member = customerRepository.members.find(memberId)

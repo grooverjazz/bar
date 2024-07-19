@@ -1,4 +1,4 @@
-package org.groover.bar.util.app
+package org.groover.bar.app.util
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun <T> MultiChoiceButtons(
+fun <T> BarMultiButtons(
     state: T,
     setState: (T) -> Unit,
     options: List<String>,

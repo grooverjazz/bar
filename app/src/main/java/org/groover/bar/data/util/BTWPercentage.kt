@@ -1,4 +1,4 @@
-package org.groover.bar.util.data
+package org.groover.bar.data.util
 
 enum class BTWPercentage(val value: Int) {
     Geen(0),

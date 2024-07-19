@@ -1,4 +1,4 @@
-package org.groover.bar.util.app
+package org.groover.bar.app.util
 
 import android.graphics.BlurMaskFilter
 import android.graphics.PorterDuff
@@ -35,7 +35,6 @@ fun Modifier.innerShadow(
     offsetX: Dp = 1.dp,
     spread: Dp = 0.dp,
 ) = drawWithContent {
-
     drawContent()
 
     val rect = Rect(Offset.Zero, size)
@@ -47,7 +46,6 @@ fun Modifier.innerShadow(
     val shadowOutline = shape.createOutline(size, layoutDirection, this)
 
     drawIntoCanvas { canvas ->
-
         canvas.saveLayer(rect, paint)
         canvas.drawOutline(shadowOutline, paint)
 

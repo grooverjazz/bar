@@ -1,7 +1,7 @@
 package org.groover.bar.data.customer
 
-import org.groover.bar.util.data.CSV
-import org.groover.bar.util.data.DateUtils
+import org.groover.bar.data.util.CSV
+import org.groover.bar.data.util.DateUtils
 import java.util.Date
 
 data class Member(
