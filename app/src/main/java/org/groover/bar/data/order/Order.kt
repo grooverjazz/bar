@@ -36,23 +36,28 @@ data class Order(
 
         // (Deserializes the order)
         fun deserialize(str: String): Order {
-            // Get properties
-            val props = CSV.deserialize(str)
-            val (idStr, customerIdStr, timestampStr) = props
-            val amountsStrs = props.drop(3)
+            try {
+                // Get properties
+                val props = CSV.deserialize(str)
+                val (idStr, customerIdStr, timestampStr) = props
+                val amountsStrs = props.drop(3)
 
-            // Deserialize properties
-            val id = idStr.toInt()
-            val customerId = customerIdStr.toInt()
-            val timestamp = CSV.deserializeTimestamp(timestampStr)
-            val amounts = amountsStrs.associate { amountsStr ->
-                amountsStr.split(':').let { (itemId, amount) ->
-                    itemId.toInt() to amount.toInt()
-                }
-            }.toMutableMap()
+                // Deserialize properties
+                val id = idStr.toInt()
+                val customerId = customerIdStr.toInt()
+                val timestamp = CSV.deserializeTimestamp(timestampStr)
+                val amounts = amountsStrs.associate { amountsStr ->
+                    amountsStr.split(':').let { (itemId, amount) ->
+                        itemId.toInt() to amount.toInt()
+                    }
+                }.toMutableMap()
 
-            // Return order
-            return Order(id, customerId, timestamp, amounts)
+                // Return order
+                return Order(id, customerId, timestamp, amounts)
+            } catch (e: Exception) {
+                throw IllegalStateException("Kan bestelling '$str' niet deserializeren\n" +
+                        "(normaal in de vorm 'id;customerId;timestamp;...amounts')")
+            }
         }
     }
 }

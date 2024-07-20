@@ -45,17 +45,22 @@ data class Member(
 
         // (Deserializes the user)
         fun deserialize(str: String): Member {
-            // Get properties
-            //  (destructuring a list works up until 5 items...)
-            val props = CSV.deserialize(str)
-            val (idStr, name, birthdayStr) = props
+            try {
+                // Get properties
+                //  (destructuring a list works up until 5 items...)
+                val props = CSV.deserialize(str)
+                val (idStr, name, birthdayStr) = props
 
-            // Deserialize properties
-            val id = idStr.toInt()
-            val birthday = DateUtils.deserializeDate(birthdayStr)
+                // Deserialize properties
+                val id = idStr.toInt()
+                val birthday = DateUtils.deserializeDate(birthdayStr)
 
-            // Return user
-            return Member(id, name, birthday)
+                // Return user
+                return Member(id, name, birthday)
+            } catch (e: Exception) {
+                throw IllegalStateException("Kan lid '$str' niet deserializeren\n" +
+                        "(normaal in de vorm 'id;name;birthday')")
+            }
         }
     }
 }

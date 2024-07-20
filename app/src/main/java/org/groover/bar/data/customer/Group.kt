@@ -40,18 +40,23 @@ data class Group (
 
         // (Deserializes the group)
         fun deserialize(str: String): Group {
-            // Get properties
-            val props = CSV.deserialize(str)
-            val (idStr, name) = props
-            val memberIdStrs = props.drop(2)
+            try {
+                // Get properties
+                val props = CSV.deserialize(str)
+                val (idStr, name) = props
+                val memberIdStrs = props.drop(2)
 
-            // Deserialize properties
-            val id = idStr.toInt()
-            val memberIds = memberIdStrs
-                .fastMap(String::toInt)
+                // Deserialize properties
+                val id = idStr.toInt()
+                val memberIds = memberIdStrs
+                    .fastMap(String::toInt)
 
-            // Return group
-            return Group(id, name, memberIds)
+                // Return group
+                return Group(id, name, memberIds)
+            } catch (e: Exception) {
+                throw IllegalStateException("Kan groep '$str' niet deserializeren\n" +
+                        "(normaal in de vorm 'id;name;...memberIds')")
+            }
         }
     }
 }

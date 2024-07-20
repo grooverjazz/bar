@@ -42,20 +42,25 @@ data class Item(
 
         // (Deserializes the item)
         fun deserialize(str: String): Item {
-            // Get properties
-            val props = CSV.deserialize(str)
-            val (idStr, name, visibleStr, priceStr, btwPercentageStr) = props
-            val hueStr = props[5]
+            try {
+                // Get properties
+                val props = CSV.deserialize(str)
+                val (idStr, name, visibleStr, priceStr, btwPercentageStr) = props
+                val hueStr = props[5]
 
-            // Deserialize properties
-            val id = idStr.toInt()
-            val visible = visibleStr.equals("true", ignoreCase = true)
-            val price = priceStr.toCents()
-            val btwPercentage = btwPercentageStr.toBTWPercentage()
-            val hue = hueStr.replace(',','.').toFloat()
+                // Deserialize properties
+                val id = idStr.toInt()
+                val visible = visibleStr.equals("true", ignoreCase = true)
+                val price = priceStr.toCents()
+                val btwPercentage = btwPercentageStr.toBTWPercentage()
+                val hue = hueStr.replace(',', '.').toFloat()
 
-            // Return item
-            return Item(id, name, visible, price, btwPercentage, hue)
+                // Return item
+                return Item(id, name, visible, price, btwPercentage, hue)
+            } catch (e: Exception) {
+                throw IllegalStateException("Kan item '$str' niet deserializeren\n" +
+                        "(normaal in de vorm 'id;visible;price;btwPercentage;hue')")
+            }
         }
     }
 }

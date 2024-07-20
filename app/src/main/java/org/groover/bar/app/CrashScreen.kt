@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.groover.bar.app.util.BarLayout
 import org.groover.bar.app.util.BarList
@@ -19,15 +21,24 @@ private fun CrashScreen(location: String, e: Exception) {
         BarTitle("Crash!")
         Spacer(Modifier.size(20.dp))
 
-        Text("$location: ${e.message}")
+        // Location and message
+        Text(text = "$location: ${e.message}",
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+        )
         Spacer(Modifier.size(20.dp))
 
+        // Stack trace text
+        Text("Stack trace:")
+        Spacer(Modifier.size(10.dp))
+
+        // Stack trace
         BarList(height = 600.dp) {
             Spacer(Modifier.size(20.dp))
 
             e.stackTrace.forEach { element ->
                 Text(element.toString(),
-                    modifier = Modifier.padding(horizontal = 20.dp)
+                    modifier = Modifier.padding(horizontal = 20.dp),
                 )
             }
 
