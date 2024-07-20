@@ -54,7 +54,7 @@ data class Group (
                 // Return group
                 return Group(id, name, memberIds)
             } catch (e: Exception) {
-                throw IllegalStateException("Kan groep '$str' niet deserializeren\n" +
+                throw IllegalStateException("Kan groep '$str' niet deserialiseren\n" +
                         "(normaal in de vorm 'id;name;...memberIds')")
             }
         }

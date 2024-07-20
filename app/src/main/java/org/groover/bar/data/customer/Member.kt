@@ -58,7 +58,7 @@ data class Member(
                 // Return user
                 return Member(id, name, birthday)
             } catch (e: Exception) {
-                throw IllegalStateException("Kan lid '$str' niet deserializeren\n" +
+                throw IllegalStateException("Kan lid '$str' niet deserialiseren\n" +
                         "(normaal in de vorm 'id;name;birthday')")
             }
         }

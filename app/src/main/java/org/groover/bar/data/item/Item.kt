@@ -58,7 +58,7 @@ data class Item(
                 // Return item
                 return Item(id, name, visible, price, btwPercentage, hue)
             } catch (e: Exception) {
-                throw IllegalStateException("Kan item '$str' niet deserializeren\n" +
+                throw IllegalStateException("Kan item '$str' niet deserialiseren\n" +
                         "(normaal in de vorm 'id;visible;price;btwPercentage;hue')")
             }
         }

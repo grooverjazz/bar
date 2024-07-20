@@ -55,7 +55,7 @@ data class Order(
                 // Return order
                 return Order(id, customerId, timestamp, amounts)
             } catch (e: Exception) {
-                throw IllegalStateException("Kan bestelling '$str' niet deserializeren\n" +
+                throw IllegalStateException("Kan bestelling '$str' niet deserialiseren\n" +
                         "(normaal in de vorm 'id;customerId;timestamp;...amounts')")
             }
         }
