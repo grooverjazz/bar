@@ -70,17 +70,13 @@ fun App() {
         fileOpener.relativePath = newSessionName
 
         // Don't open if copying over data from current session
-        if (!copyGlobalData) {
-            customerRepository.open()
-            itemRepository.open()
-        }
-        else {
+        if (copyGlobalData) {
             customerRepository.save()
             itemRepository.save()
         }
 
-        // (Always) open orders
-        orderRepository.open()
+        // Restart app
+        (context as Activity).recreate()
     }
 
     // Initialize error handler
