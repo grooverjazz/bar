@@ -40,20 +40,28 @@ fun App() {
     val context = LocalContext.current
 
     // Initialize options
-    val optionsHandler = OptionsHandler(context)
+    val optionsHandler = tryOrCrash("OptionsHandler") {
+        OptionsHandler(context)
+    } ?: return
 
     // Initialize file opener
-    val fileOpener = FileOpener(context, optionsHandler.sessionName)
+    val fileOpener = tryOrCrash("FileOpener") {
+        FileOpener(context, optionsHandler.sessionName)
+    } ?: return
 
     // Initialize repositories
-    val itemRepository = ItemRepository(fileOpener)
-    val orderRepository = OrderRepository(fileOpener)
-
-    // Create customer pseudo-repository
-    val customerRepository = CustomerRepository(
-        members = MemberRepository(fileOpener),
-        groups = GroupRepository(fileOpener),
-    )
+    val itemRepository = tryOrCrash("ItemRepository") {
+        ItemRepository(fileOpener)
+    } ?: return
+    val orderRepository = tryOrCrash("OrderRepository") {
+        OrderRepository(fileOpener)
+    } ?: return
+    val customerRepository = tryOrCrash("CustomerRepository") {
+        CustomerRepository(
+            members = MemberRepository(fileOpener),
+            groups = GroupRepository(fileOpener),
+        )
+    } ?: return
 
     // (Reloads the repositories)
     val reload: (String, Boolean) -> Unit = { newSessionName, copyGlobalData ->
