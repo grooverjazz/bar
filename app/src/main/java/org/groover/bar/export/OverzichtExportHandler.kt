@@ -17,6 +17,7 @@ import org.groover.bar.export.ExcelHandler.ExcelFormula
 import org.groover.bar.export.StyleManager.StyleAlignment
 import org.groover.bar.export.StyleManager.StyleFormat
 import org.groover.bar.data.util.removeFirst
+import org.groover.bar.export.ExcelHandler.Companion.writeRows
 
 
 class OverzichtExportHandler(
@@ -130,21 +131,19 @@ class OverzichtExportHandler(
         }
         val allItemBtw = items.map { it.btwPercentage.toDouble() / 100 }
 
-        // First 5 rows (member and item table)
-        ExcelHandler.run {
-            writeRows(sheet,
-                listOf(
-                    (listOf("OVERZICHT", "(data excl. Hospitality en 'extra' leden)", "")                       + allItemNames).withStyle(boldStyle),
-                    listOf("aantal leden",           aantalLeden         .withStyle(leftAlignStyle),   "prijs") + allItemPrices.withStyle(currencyStyle),
-                    listOf("aantal 'extra' leden",   aantalExtraLeden    .withStyle(leftAlignStyle),   "afzet") + allItemAfzet,
-                    listOf("aantal aanwezige leden", aantalAanwezigeLeden.withStyle(leftAlignStyle),   "omzet") + allItemOmzet.withStyle(currencyStyle),
-                    listOf("totale omzet",           totaleOmzet         .withStyle(totaleOmzetStyle), "btw")   + allItemBtw.withStyle(percentageStyle),
-                ),
-                currentRow
-            )
+        // Write table
+        writeRows(sheet,
+            listOf(
+                (listOf("OVERZICHT", "(data excl. Hospitality en 'extra' leden)", "")                       + allItemNames).withStyle(boldStyle),
+                listOf("aantal leden",           aantalLeden         .withStyle(leftAlignStyle),   "prijs") + allItemPrices.withStyle(currencyStyle),
+                listOf("aantal 'extra' leden",   aantalExtraLeden    .withStyle(leftAlignStyle),   "afzet") + allItemAfzet,
+                listOf("aantal aanwezige leden", aantalAanwezigeLeden.withStyle(leftAlignStyle),   "omzet") + allItemOmzet.withStyle(currencyStyle),
+                listOf("totale omzet",           totaleOmzet         .withStyle(totaleOmzetStyle), "btw")   + allItemBtw.withStyle(percentageStyle),
+            ),
+            currentRow
+        )
 
-            currentRow += 5
-        }
+        currentRow += 5
     }
 
     private fun writeMemberOrders(
