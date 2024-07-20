@@ -157,12 +157,9 @@ fun BeheerGroupContent(
         Spacer(Modifier.size(40.dp))
 
         // Save button
-        Button({ finishEdit(newName, newMembers.fastMap { it.id }) },
-            modifier = Modifier.height(60.dp),
-        ) {
-            Text("Opslaan",
-                fontSize = 30.sp,
-            )
-        }
+        BarButton("Opslaan",
+            onClick = { finishEdit(newName, newMembers.fastMap { it.id }) },
+            rounded = true,
+        )
     }
 }

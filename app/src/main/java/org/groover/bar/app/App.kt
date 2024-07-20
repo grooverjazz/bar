@@ -177,7 +177,7 @@ fun App() {
             val orderIdStr = backStackEntry.arguments?.getString("orderId")
                 ?: throw Exception("Kan vorige order niet vinden in route!")
             val orderId = orderIdStr.toInt()
-            val previousOrder = orderRepository.find(orderId)!!
+            val previousOrder = orderRepository.find(orderId) ?: return@composable
 
             // Get the customer ID from the order
             val customerId = previousOrder.customerId
