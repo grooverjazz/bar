@@ -55,7 +55,7 @@ fun <T> BarDropdownMenu(
             ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 values.forEach { value ->
                     DropdownMenuItem(onClick = { onValueChange(value); expanded = false }, text = {
-                        Text(valueToString(currentValue))
+                        Text(valueToString(value))
                     })
                 }
             }

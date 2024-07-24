@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.groover.bar.app.util.BarButton
 import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.app.util.BarListMoveable
@@ -77,13 +78,10 @@ private fun BeheerItemsContent(
         Spacer(Modifier.size(20.dp))
 
         // Add item button
-        Button(addNewItem,
-            modifier = Modifier.height(70.dp),
-        ) {
-            Text("Voeg item toe",
-                fontSize = 30.sp,
-            )
-        }
+        BarButton("Voeg item toe",
+            onClick = addNewItem,
+            rounded = true,
+        )
         Spacer(Modifier.size(20.dp))
 
         // Items edit list

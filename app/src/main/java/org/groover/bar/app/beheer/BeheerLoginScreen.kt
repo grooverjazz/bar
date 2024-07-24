@@ -19,6 +19,7 @@ import org.groover.bar.app.util.BarButton
 import org.groover.bar.app.util.BarTextField
 import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
+import org.groover.bar.app.util.BarTextFieldType
 
 @Composable
 fun BeheerLoginScreen(
@@ -72,7 +73,7 @@ private fun BeheerLoginContent(
             text = "Wachtwoord",
             value = currentPassword,
             onValueChange = { currentPassword = it.trim() },
-            isPassword = true,
+            type = BarTextFieldType.Password,
         )
         Spacer(Modifier.size(40.dp))
 

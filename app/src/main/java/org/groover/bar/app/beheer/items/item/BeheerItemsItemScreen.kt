@@ -1,6 +1,7 @@
 package org.groover.bar.app.beheer.items.item
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -22,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.groover.bar.data.item.Item
@@ -31,6 +34,7 @@ import org.groover.bar.app.util.BarDropdownMenu
 import org.groover.bar.app.util.BarTextField
 import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
+import org.groover.bar.app.util.BarTextFieldType
 import org.groover.bar.data.util.BTWPercentage
 import org.groover.bar.data.util.Cents
 import org.groover.bar.data.util.Cents.Companion.toCents
@@ -61,6 +65,7 @@ fun BeheerItemsItemScreen(
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BeheerItemsItemContent(
     item: Item,
@@ -92,6 +97,7 @@ private fun BeheerItemsItemContent(
             text = "Prijs",
             value = newPriceStr,
             onValueChange = { newPriceStr = it.replace('.',',') },
+            type = BarTextFieldType.Decimal,
         )
         Spacer(Modifier.size(20.dp))
 
@@ -105,7 +111,8 @@ private fun BeheerItemsItemContent(
         )
         Spacer(Modifier.size(20.dp))
 
-        // New color field
+        // New tint field
+        val newColor = Item.getColor(newColorFloat)
         Text("Tint:",
             modifier = Modifier.fillMaxWidth(),
             fontSize = 20.sp,
@@ -114,15 +121,11 @@ private fun BeheerItemsItemContent(
         Slider(
             value = newColorFloat,
             onValueChange = { newColorFloat = it },
+            colors = SliderDefaults.colors().copy(activeTrackColor = newColor),
+            // Custom 'thumb'
+            thumb = { Box(Modifier.size(50.dp).border(3.dp, Color.Black).background(newColor)) },
         )
         Spacer(Modifier.size(20.dp))
-
-        // Color box
-        Box(
-            Modifier
-                .height(30.dp)
-                .background(color = Item.getColor(newColorFloat)))
-        Spacer(Modifier.size(30.dp))
 
         // Save button
         BarButton("Opslaan",
