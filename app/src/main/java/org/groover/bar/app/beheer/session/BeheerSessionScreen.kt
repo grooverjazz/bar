@@ -95,12 +95,14 @@ private fun BeheerSessionContent(
         )
 
         BarListLazy(height = 600.dp) {
-            items(allSessions.fastFilter { it != oldSessionName }) { session ->
-                BarButton(session,
+            items(allSessions) { session ->
+                val isCurrentSession = session == oldSessionName
+                BarButton(if (isCurrentSession) "$session (huidige sessie)" else session,
                     onClick = {
                         newSessionName = session
                         copyGlobalData = false
                     },
+                    enabled = !isCurrentSession,
                 )
             }
         }
@@ -114,9 +116,16 @@ private fun BeheerSessionContent(
         Spacer(Modifier.size(10.dp))
 
         // Save button
-        BarButton(if (allSessions.contains(newSessionName)) "Sessie openen" else "Sessie aanmaken",
+        val buttonText = when {
+            newSessionName == oldSessionName -> "(Open een sessie of maak er een aan)"
+            allSessions.contains(newSessionName) -> "Sessie '$newSessionName' openen"
+            else -> "Sessie '$newSessionName' aanmaken"
+        }
+        BarButton(buttonText,
             onClick = { finish(newSessionName, copyGlobalData) },
             rounded = true,
+            enabled = (newSessionName != oldSessionName),
+            fontSize = 24.sp,
         )
     }
 }

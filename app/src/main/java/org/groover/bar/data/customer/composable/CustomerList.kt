@@ -51,8 +51,8 @@ fun CustomerList(
     // Leden / Groepen button
     if (listState == null) {
         BarMultiButtons(
-            state = state,
-            setState = { state = it },
+            currentValue = state,
+            onValueChange = { state = it },
             options = listOf("Leden", "Groepen"),
             values = listOf(CustomerListState.MEMBERS, CustomerListState.GROUPS),
         )

@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun <T> BarMultiButtons(
-    state: T,
-    setState: (T) -> Unit,
+    currentValue: T,
+    onValueChange: (T) -> Unit,
     options: List<String>,
     values: List<T>,
     pressedColor: Color = MaterialTheme.colorScheme.primary,
@@ -34,10 +34,10 @@ fun <T> BarMultiButtons(
                 offsetY = 3.dp,
             )
 
-            Button({ setState(value) },
-                modifier = if (state == value) modifierShadow else modifier,
+            Button({ onValueChange(value) },
+                modifier = if (currentValue == value) modifierShadow else modifier,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (state == value)
+                    containerColor = if (currentValue == value)
                         pressedColor
                     else depressedColor
                 ),

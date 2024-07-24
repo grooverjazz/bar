@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import org.groover.bar.data.item.Item
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.app.util.BarButton
+import org.groover.bar.app.util.BarDropdownMenu
 import org.groover.bar.app.util.BarTextField
 import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
@@ -95,7 +96,13 @@ private fun BeheerItemsItemContent(
         Spacer(Modifier.size(20.dp))
 
         // New BTW percentage field
-        BTWDropdown(newBTWPercentage) { newBTWPercentage = it }
+        BarDropdownMenu(
+            label = "BTW-percentage:",
+            currentValue = newBTWPercentage,
+            onValueChange = { newBTWPercentage = it },
+            values = BTWPercentage.entries,
+            valueToString = BTWPercentage::toString
+        )
         Spacer(Modifier.size(20.dp))
 
         // New color field
@@ -111,7 +118,10 @@ private fun BeheerItemsItemContent(
         Spacer(Modifier.size(20.dp))
 
         // Color box
-        Box(Modifier.height(30.dp).background(color = Item.getColor(newColorFloat)))
+        Box(
+            Modifier
+                .height(30.dp)
+                .background(color = Item.getColor(newColorFloat)))
         Spacer(Modifier.size(30.dp))
 
         // Save button
@@ -127,46 +137,5 @@ private fun BeheerItemsItemContent(
             },
             rounded = true,
         )
-    }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BTWDropdown(currentPercentage: BTWPercentage, changePercentage: (BTWPercentage) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Column {
-        // Label
-        Text(
-            "BTW-percentage:",
-            modifier = Modifier.fillMaxWidth(),
-            fontSize = 20.sp,
-        )
-        Spacer(Modifier.height(5.dp))
-
-        // Dropdown menu
-        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
-            TextField(
-                readOnly = true,
-                value = currentPercentage.toString(),
-                onValueChange = {},
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                },
-                colors = OutlinedTextFieldDefaults.colors(),
-                modifier = Modifier
-                    .menuAnchor()
-                    .fillMaxWidth()
-            )
-
-            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                BTWPercentage.entries.forEach { percentage ->
-                    DropdownMenuItem(onClick = { changePercentage(percentage); expanded = false }, text = {
-                        Text(percentage.toString())
-                    })
-                }
-            }
-        }
     }
 }
