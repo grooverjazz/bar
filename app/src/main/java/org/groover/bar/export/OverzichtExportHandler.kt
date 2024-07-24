@@ -81,12 +81,18 @@ class OverzichtExportHandler(
 
 
     // Creates a map from <isExtra: Boolean, isHospitality / isEven: Boolean> to List<XSSFCellStyle>
-    //   (the last in this list is the default style, the rest is per order)
+    //   (the last in this list is the default style,
+    //   the second-to last is the default style with currency formatting,
+    //   the rest of the styles are laid out per order)
     private fun createColorMap(): Map<Pair<Boolean, Boolean>, List<XSSFCellStyle>> {
         // Gets the styles of the color mixed with all item colors, and of the original color
         fun getStyles(col: Color): List<XSSFCellStyle> {
-            val colors = items.map { it.color.copy(alpha = 0.25f).compositeOver(col) } + col
-            return colors.map { styleManager.getStyle(backgroundColor = it) }
+            val colors = items.map { it.color.copy(alpha = 0.25f).compositeOver(col) }
+            return (
+                colors.map { styleManager.getStyle(backgroundColor = it) }
+                    + styleManager.getStyle(backgroundColor = col, format = StyleFormat.Currency)
+                    + styleManager.getStyle(backgroundColor = col)
+            )
         }
 
         return mapOf(
@@ -209,7 +215,7 @@ class OverzichtExportHandler(
             // Get row color
             val memberStyleList = colorMap[Pair(member.isExtra, if (member.isExtra) member.id == 0 else index % 2 == 0)]!!
             val memberDataStyle = memberStyleList.last()
-            val memberCurrencyStyle = styleManager.getStyle(format = StyleFormat.Currency)
+            val memberCurrencyStyle = memberStyleList[memberStyleList.size - 2]
 
             // Write row
             writeRow(sheet.createRow(currentRow),

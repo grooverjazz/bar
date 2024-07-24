@@ -143,8 +143,7 @@ fun App() {
             BackBehavior("bar/turven")
 
             // Extract the member ID from the route
-            val customerIdStr = backStackEntry.arguments?.getString("customerId")
-                ?: throw Exception("Kan klant niet vinden in route!")
+            val customerIdStr = backStackEntry.arguments?.getString("customerId")!!
             val customerId = customerIdStr.toInt()
 
             BarTurvenCustomerScreen(
@@ -174,8 +173,7 @@ fun App() {
             BackBehavior("bar/geschiedenis")
 
             // Extract the previous order from the route
-            val orderIdStr = backStackEntry.arguments?.getString("orderId")
-                ?: throw Exception("Kan vorige order niet vinden in route!")
+            val orderIdStr = backStackEntry.arguments?.getString("orderId")!!
             val orderId = orderIdStr.toInt()
             val previousOrder = orderRepository.find(orderId) ?: return@composable
 
@@ -202,7 +200,6 @@ fun App() {
                 navigate = navigate,
                 exportHandler = exportHandler,
                 exportName = "Export ${optionsHandler.sessionName}",
-//                export = { updateProgress: (Float) -> Unit -> exportHandler.export(, updateProgress) },
                 hasErrors = hasErrors,
             )
         }
@@ -232,8 +229,7 @@ fun App() {
             BackBehavior("beheer/items")
 
             // Extract the item ID from the route
-            val itemIdStr = backStackEntry.arguments?.getString("itemId")
-                ?: throw Exception("Kan item niet vinden in route!")
+            val itemIdStr = backStackEntry.arguments?.getString("itemId")!!
             val itemId = itemIdStr.toInt()
 
             BeheerItemsItemScreen(
@@ -258,8 +254,7 @@ fun App() {
             BackBehavior("beheer/customers")
 
             // Extract the member ID from the route
-            val memberIdStr = backStackEntry.arguments?.getString("memberId")
-                ?: throw Exception("Kan lid niet vinden in route!")
+            val memberIdStr = backStackEntry.arguments?.getString("memberId")!!
             val memberId = memberIdStr.toInt()
 
             BeheerMemberScreen(
@@ -274,8 +269,7 @@ fun App() {
             BackBehavior("beheer/customers")
 
             // Extract the member ID from the route
-            val groupIdStr = backStackEntry.arguments?.getString("groupId")
-                ?: throw Exception("Kan groep niet vinden in route!")
+            val groupIdStr = backStackEntry.arguments?.getString("groupId")!!
             val groupId = groupIdStr.toInt()
 
             BeheerGroupScreen(

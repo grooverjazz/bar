@@ -44,15 +44,14 @@ fun BarTurvenCustomerScreen(
     val context = LocalContext.current
 
     // Look up current customer's name
-    val currentCustomer = customerRepository.find(customerId)
-        ?: throw Exception("Kan gebruiker niet vinden!")
+    val currentCustomer = customerRepository.find(customerId)!!
 
     // Get customer total
     val items = itemRepository.data
     val customerTotal = orderRepository.getTotalByCustomer(customerId, customerRepository.groups.data, items)
 
     // Get warning message
-    val warningMessage = currentCustomer.getWarningMessage(customerRepository.members::find)
+    val warningMessage = currentCustomer.getWarningMessage { customerRepository.members.find(it)!! }
 
     // (Gets the cost of an order)
     val getOrderCost = { currentOrder: List<Int> ->

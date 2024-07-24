@@ -38,17 +38,11 @@ fun BeheerGroupScreen(
     groupId: Int,
 ) {
     // Get current group
-    val currentGroup = customerRepository.groups.find(groupId)
-
-    // Error
-    if (currentGroup == null) {
-        BeheerGroupError(groupId = groupId)
-        return
-    }
+    val currentGroup = customerRepository.groups.find(groupId)!!
 
     // Remember list of new members
     val initialMembers = currentGroup.memberIds.fastMap {
-        customerRepository.members.find(it) ?: throw Exception("Kan lid met ID $it niet vinden!")
+        customerRepository.members.find(it)!!
     }
     val newMembers = remember { mutableStateListOf(*initialMembers.toTypedArray()) }
 
@@ -81,17 +75,6 @@ fun BeheerGroupScreen(
         includeMember = includeMember,
         excludeMember = excludeMember,
     )
-}
-
-@Composable
-fun BeheerGroupError(
-    groupId: Int,
-) {
-    // UI
-    BarLayout {
-        // Title
-        BarTitle("Groep met ID $groupId niet gevonden!")
-    }
 }
 
 @Composable

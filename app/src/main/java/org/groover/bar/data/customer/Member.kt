@@ -14,7 +14,7 @@ data class Member(
     override fun toString(): String = if (isExtra) "(($name))" else name
 
     // (OVERRIDE: Gets a warning message of the customer)
-    override fun getWarningMessage(findMember: (id: Int) -> Member?): String {
+    override fun getWarningMessage(findMember: (id: Int) -> Member): String {
         // Check if it is Hospitality
         if (id == 0)
             return ""

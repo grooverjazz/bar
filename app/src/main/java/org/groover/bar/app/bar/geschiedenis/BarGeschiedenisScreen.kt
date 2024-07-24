@@ -23,8 +23,7 @@ fun BarGeschiedenisScreen(
 ) {
     // (Retrieves the name of a customer)
     val getCustomerName = { id: Int ->
-        customerRepository.find(id)?.name ?:
-        "Naam van ID $id niet gevonden!"
+        customerRepository.find(id)!!.name
     }
 
     // (Gets the total price of an order)

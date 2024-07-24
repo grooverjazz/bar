@@ -7,5 +7,5 @@ abstract class Customer : BarData() {
     abstract val name: String
 
     // (ABSTRACT: Gets a warning message of the customer)
-    abstract fun getWarningMessage(findMember: (id: Int) -> Member?): String
+    abstract fun getWarningMessage(findMember: (id: Int) -> Member): String
 }

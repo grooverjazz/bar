@@ -14,12 +14,12 @@ data class Group (
     override fun toString(): String = "$name (${memberIds.size} leden)"
 
     // (OVERRIDE: Gets a warning message of the customer)
-    override fun getWarningMessage(findMember: (id: Int) -> Member?): String {
+    override fun getWarningMessage(findMember: (id: Int) -> Member): String {
         // Check if any of its members is extra
-        if (memberIds.fastAny { findMember(it)!!.isExtra })
+        if (memberIds.fastAny { findMember(it).isExtra })
             return "Deze groep bevat tijdelijke leden!"
         // Check if any of its members is a minor
-        if (memberIds.fastAny { !DateUtils.isOlderThan18(findMember(it)!!.birthday) })
+        if (memberIds.fastAny { !DateUtils.isOlderThan18(findMember(it).birthday) })
             return "Deze groep bevat minderjarigen!"
         // No warning
         return ""

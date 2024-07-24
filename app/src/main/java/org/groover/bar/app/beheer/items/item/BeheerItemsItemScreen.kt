@@ -41,13 +41,7 @@ fun BeheerItemsItemScreen(
     itemId: Int,
 ) {
     // Get item
-    val item = itemRepository.find(itemId)
-
-    // Error
-    if (item == null) {
-        BeheerItemsItemError(itemId = itemId)
-        return
-    }
+    val item = itemRepository.find(itemId)!!
 
     // (Finishes editing the item)
     val finishEdit = { newName: String, newPrice: Cents, newBtwPercentage: BTWPercentage, newHue: Float ->
@@ -63,17 +57,6 @@ fun BeheerItemsItemScreen(
         item = item,
         finishEdit = finishEdit,
     )
-}
-
-@Composable
-private fun BeheerItemsItemError(
-    itemId: Int,
-) {
-    // UI
-    BarLayout {
-        // Title
-        BarTitle("Kan item met ID $itemId niet vinden!")
-    }
 }
 
 

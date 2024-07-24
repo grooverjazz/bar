@@ -70,7 +70,7 @@ class ItemRepository(
 
     // (Toggles visibility for the given item)
     fun toggleVisible(id: Int) {
-        val item = find(id) ?: throw Exception("Error bij wisselen zichtbaarheid")
+        val item = find(id)!!
         replace(id, item.copy(visible = !item.visible))
     }
 

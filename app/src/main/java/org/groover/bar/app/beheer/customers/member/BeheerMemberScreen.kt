@@ -39,13 +39,7 @@ fun BeheerMemberScreen(
     memberId: Int,
 ) {
     // Get current member
-    val currentMember = customerRepository.members.find(memberId)
-
-    // Error
-    if (currentMember == null) {
-        BeheerMemberError(memberId = memberId)
-        return
-    }
+    val currentMember = customerRepository.members.find(memberId)!!
 
     // (Finishes editing a member)
     val finishEdit = { newName: String, newBirthday: Date ->
@@ -63,17 +57,6 @@ fun BeheerMemberScreen(
     )
 }
 
-
-@Composable
-private fun BeheerMemberError(
-    memberId: Int,
-) {
-    // UI
-    BarLayout {
-        // Title
-        BarTitle("Lid met ID $memberId niet gevonden!")
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
