@@ -30,6 +30,7 @@ class StyleManager(
     )
 
     private val boldFont = workbook.createFont().apply { bold = true }
+    private val currencyFormat = workbook.createDataFormat().getFormat("€ #,##0.00")
 
     private val _styles = emptyMap<StyleKey, XSSFCellStyle>().toMutableMap()
 
@@ -61,7 +62,7 @@ class StyleManager(
 
         when (format) {
             StyleFormat.Percentage -> newStyle.dataFormat = 9
-            StyleFormat.Currency -> newStyle.dataFormat = 8
+            StyleFormat.Currency -> newStyle.dataFormat = currencyFormat
             else -> {}
         }
 
