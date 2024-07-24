@@ -13,7 +13,11 @@ class ExportHandler(
     private val itemRepository: ItemRepository,
     private val orderRepository: OrderRepository,
 ) {
-    fun export(exportName: String, updateProgress: (Float) -> Unit) {
+    fun export(
+        exportName: String,
+        openExternal: Boolean,
+        updateProgress: (Float) -> Unit,
+    ) {
         // Create a new workbook
         val workbook = XSSFWorkbook()
         val styleManager = StyleManager(workbook)
@@ -47,8 +51,13 @@ class ExportHandler(
         updateProgress(0.9f)
 
         // Export and close
-        fileOpener.write("$exportName.xlsx", workbook)
+        val fileName = "$exportName.xlsx"
+        fileOpener.write(fileName, workbook)
         workbook.close()
         updateProgress(1f)
+
+        // Open in external program
+        if (openExternal)
+            fileOpener.openExternal(fileName)
     }
 }

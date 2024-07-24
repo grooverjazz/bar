@@ -1,6 +1,9 @@
 package org.groover.bar.data.util
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.core.content.FileProvider
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
 import java.io.FileOutputStream
@@ -55,6 +58,22 @@ class FileOpener(
     fun write(fileName: String, data: XSSFWorkbook) {
         FileOutputStream(File(dir, fileName)).use { fileOut ->
             data.write(fileOut)
+        }
+
+        File(dir, fileName)
+    }
+
+    fun openExternal(fileName: String) {
+        val file = File(dir, fileName)
+        val fileProviderStr = "${context.packageName}.fileprovider"
+        val fileUri: Uri = FileProvider.getUriForFile(context, fileProviderStr, file)
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(fileUri, "application/vnd.ms-excel")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        if (intent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(intent)
         }
     }
 }

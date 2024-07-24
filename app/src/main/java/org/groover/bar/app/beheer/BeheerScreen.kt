@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.groover.bar.export.ExportHandler
 import org.groover.bar.app.util.BarButton
+import org.groover.bar.app.util.BarCheckbox
 import org.groover.bar.app.util.BarNavigateButton
 import org.groover.bar.app.util.ProgressDialog
 import org.groover.bar.app.util.BarTitle
@@ -34,6 +35,7 @@ fun BeheerScreen(
     val context = LocalContext.current
 
     // Export progress bar state
+    var openExternal by remember { mutableStateOf(false) }
     var isExporting by remember { mutableStateOf(false) }
     var progress by remember { mutableFloatStateOf(0f) }
     val coroutineScope = rememberCoroutineScope()
@@ -44,7 +46,9 @@ fun BeheerScreen(
         coroutineScope.launch {
             isExporting = true
 
-            withContext(Dispatchers.IO) { exportHandler.export(exportName) { progress = it } }
+            withContext(Dispatchers.IO) {
+                exportHandler.export(exportName, openExternal) { progress = it }
+            }
 
             // Show toast
             Toast.makeText(context, "Export klaar!", Toast.LENGTH_SHORT)
@@ -63,6 +67,8 @@ fun BeheerScreen(
         navigate = navigate,
         export = exportWithProgress,
         hasErrors = hasErrors,
+        openExternal = openExternal,
+        setOpenExternal = { openExternal = it }
     )
 }
 
@@ -71,6 +77,8 @@ private fun BeheerContent(
     navigate: (route: String) -> Unit,
     export: () -> Unit,
     hasErrors: Boolean,
+    openExternal: Boolean,
+    setOpenExternal: (Boolean) -> Unit,
 ) {
     // UI
     BarLayout {
@@ -122,5 +130,6 @@ private fun BeheerContent(
             onClick = export,
             rounded = true,
         )
+        BarCheckbox("Export-bestand openen na export", openExternal, setOpenExternal)
     }
 }
