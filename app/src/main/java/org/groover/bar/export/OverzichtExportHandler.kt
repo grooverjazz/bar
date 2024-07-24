@@ -70,7 +70,7 @@ class OverzichtExportHandler(
     private fun customerSum(rowIndex: Int): Pair<String, String> {
         val memberStartCell = cellStr(7 + extraMembersCount, rowIndex)
         val memberEndCell = cellStr(7 + membersCount - 1, rowIndex)
-        val memberPart = "$memberStartCell:$memberEndCell"
+        val memberPart = if (membersCount - extraMembersCount == 0) "0" else "$memberStartCell:$memberEndCell"
 
         val groupStartCell = cellStr(7 + membersCount - 1 + 4, rowIndex)
         val groupEndCell = cellStr(7 + membersCount - 1 + 4 + groupsCount - 1, rowIndex)
@@ -120,7 +120,9 @@ class OverzichtExportHandler(
         // Calculate customer values
         val aantalLeden = membersCount
         val aantalExtraLeden = extraMembersCount
-        val aantalAanwezigeLeden = ExcelFormula("countif(${customerSum(2).first}, \"ja\")")
+        val aanwezigeLedenSum = customerSum(2).first
+        val aantalAanwezigeLeden: Any = if (aanwezigeLedenSum == "0") "0"
+            else ExcelFormula("countif(${aanwezigeLedenSum}, \"ja\")")
         val totaleOmzet = ExcelFormula("sum(${customerSum(3 + itemsCount + groupsCount).first})")
 
         // Calculate item values
@@ -202,7 +204,7 @@ class OverzichtExportHandler(
             // Get formula for total regular orders
             val regularOrdersRange =
                 "${cellStr(currentRow, 3)}:${cellStr(currentRow, 3 + itemsCount - 1)}"
-            val regularOrdersTotal = "sumproduct($pricesRangeStr, $regularOrdersRange)"
+            val regularOrdersTotal = "iferror(sumproduct($pricesRangeStr, $regularOrdersRange), 0)"
 
             // Get formula for total group shares
             val groupSharesRange = if (groups.isEmpty()) "0" else
@@ -212,14 +214,14 @@ class OverzichtExportHandler(
             // Get formula for total
             val totalStr = ExcelFormula("$regularOrdersTotal + $groupSharesTotalStr")
 
-            // Get row color
+            // Get row colors
             val memberStyleList = colorMap[Pair(member.isExtra, if (member.isExtra) member.id == 0 else index % 2 == 0)]!!
-            val memberDataStyle = memberStyleList.last()
+            val memberDefaultStyle = memberStyleList.last()
             val memberCurrencyStyle = memberStyleList[memberStyleList.size - 2]
 
             // Write row
             writeRow(sheet.createRow(currentRow),
-                listOf(member.id, member.name, aanwezig).withStyle(memberDataStyle)
+                listOf(member.id, member.name, aanwezig).withStyle(memberDefaultStyle)
                         + regularOrders.fastMap { if (it == 0) "" else it }.withStyles(memberStyleList)
                         + groupShares.withStyle(memberCurrencyStyle)
                         + listOf(totalStr.withStyle(memberCurrencyStyle)),
@@ -233,6 +235,7 @@ class OverzichtExportHandler(
 
     private fun writeGroupOrders(
         sheet: XSSFSheet,
+        colorMap: Map<Pair<Boolean, Boolean>, List<XSSFCellStyle>>,
         customerOrders: Map<Int, List<Int>>,
         pricesRangeStr: String,
     ) {
@@ -248,29 +251,36 @@ class OverzichtExportHandler(
         currentRow += 1
 
         // Calculate values
-        val itemNames = items.fastMap { it.name }
+        val styledItemNames = items.fastMap { item ->
+            val style = styleManager.getStyle(backgroundColor = item.color, bold = true)
+            item.name.withStyle(style)
+        }
 
         // Groups header
         writeRow(sheet.createRow(currentRow),
-            listOf("id".withStyle(rightBoldStyle), "naam", "") + itemNames + listOf("OMZET"),
+            listOf("id".withStyle(rightBoldStyle), "naam", "") + styledItemNames + listOf("OMZET"),
             style = boldStyle,
         )
         currentRow += 1
 
         // Groups
-        groups.forEach { group ->
+        groups.forEachIndexed { index, group ->
             val groupOrders: List<Int> = customerOrders[group.id]!!
 
             // Create formula for total
             val ordersRangeStr = "${cellStr(currentRow, 3)}:${cellStr(currentRow, 3 + itemsCount - 1)}"
-            val total = ExcelFormula("sumproduct($pricesRangeStr, $ordersRangeStr)")
+            val total = ExcelFormula("iferror(sumproduct($pricesRangeStr, $ordersRangeStr), 0)")
 
-            // Get styles
-            val currencyStyle = styleManager.getStyle(format = StyleFormat.Currency)
+            // Get row colors
+            val groupStyleList = colorMap[Pair(false, index % 2 == 0)]!!
+            val groupDefaultStyle = groupStyleList.last()
+            val groupCurrencyStyle = groupStyleList[groupStyleList.size - 2]
 
             // Write row
             writeRow(sheet.createRow(currentRow),
-                listOf(group.id, group.name, "") + groupOrders + listOf(total.withStyle(currencyStyle)),
+                listOf(group.id, group.name, "").withStyle(groupDefaultStyle)
+                        + groupOrders.withStyles(groupStyleList)
+                        + listOf(total.withStyle(groupCurrencyStyle)),
             )
 
             currentRow += 1
@@ -301,7 +311,7 @@ class OverzichtExportHandler(
         currentRow += 1
 
         // Write group orders table
-        writeGroupOrders(sheet, customerOrders, pricesRangeStr)
+        writeGroupOrders(sheet, colorMap, customerOrders, pricesRangeStr)
         updateProgress(1f)
     }
 }
