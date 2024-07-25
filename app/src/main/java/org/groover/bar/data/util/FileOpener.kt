@@ -40,6 +40,14 @@ class FileOpener(
         return lines
     }
 
+    fun readToMap(fileName: String, dropFirst: Boolean = false): Map<String, String> {
+        val lines = read(fileName, dropFirst)
+        return lines.associate { line ->
+            val (key, value) = CSV.deserialize(line)
+            return@associate (key to value)
+        }
+    }
+
     fun write(fileName: String, data: List<String>) {
         // Create directory if it doesn't exist
         val writeDir = File(dir)
@@ -53,6 +61,11 @@ class FileOpener(
 
         val dataStr = data.joinToString("\n")
         writeFile.writeText(dataStr)
+    }
+
+    fun writeFromMap(fileName: String, data: Map<String, String>) {
+        val lines = data.map { (key, value) -> CSV.serialize(listOf(key, value)) }
+        write(fileName, lines)
     }
 
     fun write(fileName: String, data: XSSFWorkbook) {

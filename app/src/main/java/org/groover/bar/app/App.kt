@@ -2,6 +2,9 @@ package org.groover.bar.app
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +27,7 @@ import org.groover.bar.app.beheer.items.BeheerItemsScreen
 import org.groover.bar.app.beheer.items.item.BeheerItemsItemScreen
 import org.groover.bar.app.beheer.password.BeheerPasswordScreen
 import org.groover.bar.app.beheer.session.BeheerSessionScreen
+import org.groover.bar.app.util.BarLayout
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.customer.GroupRepository
@@ -105,6 +109,8 @@ fun App() {
     NavHost(
         navController = navController,
         startDestination = "home",
+        enterTransition = { return@NavHost fadeIn(tween(0)) },
+        exitTransition = { return@NavHost fadeOut(tween(0)) },
     ) {
         // Home
         composable("home") {
@@ -175,7 +181,10 @@ fun App() {
             // Extract the previous order from the route
             val orderIdStr = backStackEntry.arguments?.getString("orderId")!!
             val orderId = orderIdStr.toInt()
-            val previousOrder = orderRepository.find(orderId) ?: return@composable
+            val previousOrder = orderRepository.find(orderId) ?: run {
+                BarLayout { } // (fixes visual glitch)
+                return@composable
+            }
 
             // Get the customer ID from the order
             val customerId = previousOrder.customerId

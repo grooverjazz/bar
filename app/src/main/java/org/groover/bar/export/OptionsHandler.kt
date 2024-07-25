@@ -7,6 +7,7 @@ class OptionsHandler(
     context: Context
 ) {
     private val fileOpener = FileOpener(context, "")
+    val fileName = "options.csv"
 
     var sessionName = ""
     var beheerPassword = ""
@@ -17,11 +18,11 @@ class OptionsHandler(
 
     private fun open() {
         // Load data
-        val dataStr = fileOpener.read("session.csv")
+        val dataDict = fileOpener.readToMap(fileName)
 
         // Deserialize
-        sessionName = dataStr.getOrElse(0) { "__default" }
-        beheerPassword = dataStr.getOrElse(1) { "" }
+        sessionName = dataDict.getOrDefault("sessionName", "__default")
+        beheerPassword = dataDict.getOrDefault("beheerPassword", "")
     }
 
     fun changeSession(newSessionName: String) {
@@ -33,13 +34,13 @@ class OptionsHandler(
 
     fun save() {
         // Serialize
-        val dataStr = listOf(
-            sessionName,
-            beheerPassword,
+        val dataStr = mapOf(
+            "sessionName" to sessionName,
+            "beheerPassword" to beheerPassword,
         )
 
         // Save data
-        fileOpener.write("session.csv", dataStr)
+        fileOpener.writeFromMap(fileName, dataStr)
     }
 
     fun getAllSessions(): List<String> = fileOpener.listDirs().sortedDescending()
