@@ -3,8 +3,6 @@ package org.groover.bar.data.order.composable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,14 +13,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.android.awaitFrame
 import org.groover.bar.app.util.BarButton
-import org.groover.bar.data.order.Order
 import org.groover.bar.app.util.BarListLazy
+import org.groover.bar.data.order.Order
 import org.groover.bar.data.util.Cents
 import org.groover.bar.data.util.SearchHandler
 import java.util.Locale

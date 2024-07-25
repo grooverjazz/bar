@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,16 +18,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastFilter
 import androidx.compose.ui.util.fastMap
+import org.groover.bar.app.util.BarButton
+import org.groover.bar.app.util.BarLayout
+import org.groover.bar.app.util.BarListLazy
+import org.groover.bar.app.util.BarTextField
+import org.groover.bar.app.util.BarTitle
 import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.customer.Group
 import org.groover.bar.data.customer.Member
-import org.groover.bar.app.util.BarButton
 import org.groover.bar.data.customer.composable.CustomerList
 import org.groover.bar.data.customer.composable.CustomerListState
-import org.groover.bar.app.util.BarTextField
-import org.groover.bar.app.util.BarListLazy
-import org.groover.bar.app.util.BarTitle
-import org.groover.bar.app.util.BarLayout
 
 /**
  * The screen where the specified group can be edited.

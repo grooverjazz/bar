@@ -17,12 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.fastFilter
 import org.groover.bar.app.util.BarButton
 import org.groover.bar.app.util.BarCheckbox
+import org.groover.bar.app.util.BarLayout
 import org.groover.bar.app.util.BarListLazy
 import org.groover.bar.app.util.BarTitle
-import org.groover.bar.app.util.BarLayout
 import java.text.SimpleDateFormat
 import java.util.Date
 
