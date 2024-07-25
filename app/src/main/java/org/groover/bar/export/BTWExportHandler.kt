@@ -6,10 +6,14 @@ import org.groover.bar.export.ExcelHandler.Companion.cellStr
 import org.groover.bar.export.ExcelHandler.Companion.withStyle
 import org.groover.bar.data.util.BTWPercentage
 
+/**
+ * Class responsible for exporting the 'BTW' sheet.
+ */
 class BTWExportHandler(
     private val styleManager: StyleManager,
     private val itemRepository: ItemRepository,
 )  {
+    // (Exports the sheet)
     fun export(sheet: XSSFSheet) {
         val itemsCount = itemRepository.data.size
         var currentRowIndex = 0

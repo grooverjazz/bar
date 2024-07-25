@@ -21,6 +21,9 @@ import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
 import org.groover.bar.app.util.BarTextFieldType
 
+/**
+ * The log-in screen for the 'beheer' screen.
+ */
 @Composable
 fun BeheerLoginScreen(
     navigate: (route: String) -> Unit,
@@ -44,7 +47,6 @@ fun BeheerLoginScreen(
         logIn = logIn,
     )
 }
-
 
 @Composable
 private fun BeheerLoginContent(

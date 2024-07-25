@@ -16,8 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 
-
-// From: https://stackoverflow.com/a/76227672
+/**
+ * A simple labeled checkbox.
+ * From: https://stackoverflow.com/a/76227672
+ */
 @Composable
 fun BarCheckbox(
     label: String,

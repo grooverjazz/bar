@@ -10,6 +10,9 @@ import org.groover.bar.data.util.FileOpener
 import org.groover.bar.data.util.Repository
 import java.util.Date
 
+/**
+ * The repository that contains all orders.
+ */
 class OrderRepository(
     fileOpener: FileOpener,
 ) : Repository<Order>(

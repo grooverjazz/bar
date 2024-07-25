@@ -1,11 +1,15 @@
 package org.groover.bar.export
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.groover.bar.data.util.OptionsHandler
 import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.data.util.FileOpener
 
+/**
+ * Class responsible for handling export functionality.
+ */
 class ExportHandler(
     private val fileOpener: FileOpener,
     private val optionsHandler: OptionsHandler,
@@ -13,6 +17,7 @@ class ExportHandler(
     private val itemRepository: ItemRepository,
     private val orderRepository: OrderRepository,
 ) {
+    // (Exports the file)
     fun export(
         exportName: String,
         openExternal: Boolean,

@@ -27,6 +27,9 @@ import org.groover.bar.data.item.Item
 import org.groover.bar.app.util.BarList
 import kotlin.math.max
 
+/**
+ * A list of all items.
+ */
 @Composable
 fun ItemList(
     items: List<Item>,

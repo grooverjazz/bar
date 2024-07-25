@@ -1,9 +1,12 @@
 package org.groover.bar.data.order
 
 import org.groover.bar.data.util.BarData
-import org.groover.bar.data.util.CSV
+import org.groover.bar.data.util.CSVHandler
 import java.util.Date
 
+/**
+ * An order that can be made by a customer.
+ */
 data class Order(
     override val id: Int,
     val customerId: Int, // (this can be a user ID or a group ID)
@@ -25,11 +28,11 @@ data class Order(
                 .map { (itemId, amount) -> "${itemId}:${amount}" }
 
             // Return serialization
-            return CSV.serialize(
+            return CSVHandler.serialize(
                 listOf(
                     order.id.toString(),
                     order.customerId.toString(),
-                    CSV.serializeTimestamp(order.timestamp)
+                    CSVHandler.serializeTimestamp(order.timestamp)
                 ) + amountsStrs
             )
         }
@@ -38,14 +41,14 @@ data class Order(
         fun deserialize(str: String): Order {
             try {
                 // Get properties
-                val props = CSV.deserialize(str)
+                val props = CSVHandler.deserialize(str)
                 val (idStr, customerIdStr, timestampStr) = props
                 val amountsStrs = props.drop(3)
 
                 // Deserialize properties
                 val id = idStr.toInt()
                 val customerId = customerIdStr.toInt()
-                val timestamp = CSV.deserializeTimestamp(timestampStr)
+                val timestamp = CSVHandler.deserializeTimestamp(timestampStr)
                 val amounts = amountsStrs.associate { amountsStr ->
                     amountsStr.split(':').let { (itemId, amount) ->
                         itemId.toInt() to amount.toInt()

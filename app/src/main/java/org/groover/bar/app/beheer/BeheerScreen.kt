@@ -25,6 +25,9 @@ import org.groover.bar.app.util.ProgressDialog
 import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
 
+/**
+ * The main 'beheer' screen.
+ */
 @Composable
 fun BeheerScreen(
     navigate: (route: String) -> Unit,

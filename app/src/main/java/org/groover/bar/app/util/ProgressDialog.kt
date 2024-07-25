@@ -15,6 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 
+/**
+ * A simple progress indicator dialog.
+ */
 @Composable
 fun ProgressDialog(title: String, progress: Float) {
     Dialog(onDismissRequest = {}) {

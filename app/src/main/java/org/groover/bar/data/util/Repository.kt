@@ -7,6 +7,9 @@ import androidx.compose.ui.util.fastFirstOrNull
 import androidx.compose.ui.util.fastMap
 import androidx.compose.ui.util.fastMaxOfOrNull
 
+/**
+ * Class that is responsible for loading, storing, accessing, editing and saving all bar data.
+ */
 abstract class Repository<Element: BarData>(
     private val fileOpener: FileOpener,
     private val fileName: String,
@@ -54,7 +57,7 @@ abstract class Repository<Element: BarData>(
         serialize: (T) -> String,
     ) {
         // Serialize data
-        val titleRowStr = CSV.serialize(titleRow)
+        val titleRowStr = CSVHandler.serialize(titleRow)
         val dataStr = listOf(titleRowStr) + data.fastMap(serialize)
 
         // Write data

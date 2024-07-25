@@ -14,6 +14,9 @@ import org.groover.bar.app.util.BarTextField
 import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
 
+/**
+ * The screen where the password for the 'beheer' screen can be changed.
+ */
 @Composable
 fun BeheerPasswordScreen(
     navigate: (route: String) -> Unit,

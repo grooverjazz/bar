@@ -15,6 +15,9 @@ import org.groover.bar.R
 import org.groover.bar.app.util.BarNavigateButton
 import org.groover.bar.app.util.BarLayout
 
+/**
+ * The main home screen.
+ */
 @Composable
 fun HomeScreen(
     navigate: (route: String) -> Unit,
@@ -27,7 +30,6 @@ fun HomeScreen(
         hasErrors = hasErrors,
     )
 }
-
 
 @Composable
 private fun HomeContent(

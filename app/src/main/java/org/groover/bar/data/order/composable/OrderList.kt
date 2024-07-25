@@ -26,6 +26,9 @@ import org.groover.bar.data.util.Cents
 import org.groover.bar.data.util.SearchHandler
 import java.util.Locale
 
+/**
+ * A list of all orders.
+ */
 @Composable
 fun OrderList(
     orders: List<Order>,

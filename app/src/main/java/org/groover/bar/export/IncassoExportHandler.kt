@@ -6,6 +6,9 @@ import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.export.ExcelHandler.Companion.cellStr
 import org.groover.bar.export.ExcelHandler.Companion.withStyle
 
+/**
+ * Class responsible for exporting the 'Incasso' sheet.
+ */
 class IncassoExportHandler(
     private val styleManager: StyleManager,
     private val updateProgress: (Float) -> Unit,
@@ -20,6 +23,7 @@ class IncassoExportHandler(
 
     private val groupsCount = customerRepository.groups.data.size
 
+    // (Exports the sheet)
     fun export(sheet: XSSFSheet) {
         var currentRowIndex = 0
 
@@ -53,6 +57,7 @@ class IncassoExportHandler(
             val referenceCell = "Overzicht!${cellStr(overzichtRowIndex, itemsCount + groupsCount + 3)}"
             val totalRefFormula = ExcelHandler.ExcelFormula(referenceCell)
 
+            // Write values
             val memberRow = sheet.createRow(currentRowIndex)
             ExcelHandler.writeRow(
                 memberRow,

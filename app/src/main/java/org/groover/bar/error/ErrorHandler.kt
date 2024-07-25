@@ -5,7 +5,9 @@ import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.data.util.BarData
 
-
+/**
+ * Class responsible for finding all errors.
+ */
 class ErrorHandler(
     private val customerRepository: CustomerRepository,
     private val orderRepository: OrderRepository,
@@ -116,7 +118,6 @@ class ErrorHandler(
     fun duplicateItemErrors() = duplicateErrors(itemRepository.data) { index1: Int, index2: Int ->
         DuplicateItemError(itemRepository, index1, index2)
     }
-
     private fun duplicateErrors(
         elements: List<BarData>,
         construct: (index1: Int, index2: Int) -> DuplicateError

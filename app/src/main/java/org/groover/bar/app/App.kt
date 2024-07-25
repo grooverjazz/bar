@@ -34,10 +34,13 @@ import org.groover.bar.data.customer.GroupRepository
 import org.groover.bar.data.customer.MemberRepository
 import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.export.ExportHandler
-import org.groover.bar.export.OptionsHandler
+import org.groover.bar.data.util.OptionsHandler
 import org.groover.bar.error.ErrorHandler
 import org.groover.bar.data.util.FileOpener
 
+/**
+ * The main app.
+ */
 @Composable
 fun App() {
     // Get context
@@ -320,7 +323,6 @@ fun App() {
             BackBehavior("beheer")
 
             BeheerErrorScreen(
-                navigate = navigate,
                 errorHandler = errorHandler,
             )
         }

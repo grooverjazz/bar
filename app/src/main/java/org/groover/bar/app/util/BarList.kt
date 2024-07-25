@@ -15,6 +15,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+/**
+ * A simple styled list.
+ */
 @Composable
 fun BarList(
     height: Dp = 800.dp,

@@ -13,6 +13,9 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * A simple multi-button row.
+ */
 @Composable
 fun <T> BarMultiButtons(
     currentValue: T,

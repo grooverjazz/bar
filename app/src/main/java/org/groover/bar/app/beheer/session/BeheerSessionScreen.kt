@@ -26,6 +26,9 @@ import org.groover.bar.app.util.BarLayout
 import java.text.SimpleDateFormat
 import java.util.Date
 
+/**
+ * The screen where the current session can be changed.
+ */
 @SuppressLint("SimpleDateFormat")
 @Composable
 fun BeheerSessionScreen(

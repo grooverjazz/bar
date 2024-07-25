@@ -6,6 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
+/**
+ * A BarButton with extra navigation parameters.
+ */
 @Composable
 fun BarNavigateButton(
     text: String,

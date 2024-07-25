@@ -19,8 +19,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
-
+/**
+ * Error class.
+ */
 abstract class BarError {
+    // (Makes a panel for the error screen)
     @Composable
     internal fun Panel(callback: () -> Unit, vararg buttons: Pair<String, () -> Unit>) {
         val desc = toString()
@@ -53,6 +56,7 @@ abstract class BarError {
         }
     }
 
+    // (ABSTRACT: Makes a panel for the error screen)
     @Composable
     abstract fun Panel(callback: () -> Unit)
 }

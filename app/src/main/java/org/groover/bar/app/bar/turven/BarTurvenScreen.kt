@@ -13,6 +13,9 @@ import org.groover.bar.data.customer.composable.CustomerList
 import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
 
+/**
+ * The screen where a customer can be selected for placing an order.
+ */
 @Composable
 fun BarTurvenScreen(
     navigate: (route: String) -> Unit,
@@ -30,7 +33,6 @@ fun BarTurvenScreen(
         customerOnClick = customerOnClick,
     )
 }
-
 
 @Composable
 private fun BarTurvenContent(

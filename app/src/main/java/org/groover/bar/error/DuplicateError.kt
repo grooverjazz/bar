@@ -7,6 +7,9 @@ import org.groover.bar.data.customer.Member
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.order.OrderRepository
 
+/**
+ * Abstract class for errors where multiple bar data elements have the same ID.
+ */
 abstract class DuplicateError(
     private val elementName: String,
     internal val id: Int,
@@ -14,9 +17,11 @@ abstract class DuplicateError(
     internal abstract val index1: Int
     internal abstract val index2: Int
 
+    // (Turns the error into a String)
     override fun toString(): String =
         "Er zijn 2 $elementName met hetzelfde ID (${id} bij index $index1 en $index2)"
 
+    // (OVERRIDE: Makes a panel for the error screen)
     @Composable
     override fun Panel(callback: () -> Unit) = Panel(callback,
         "Kopieer de eerste" to { solve(index1) },
@@ -27,7 +32,9 @@ abstract class DuplicateError(
     abstract fun solve(index: Int)
 }
 
-// (Duplicate member error)
+/**
+ * Duplicate member error.
+ */
 data class DuplicateCustomerError(
     private val customerRepository: CustomerRepository,
     override val index1: Int,
@@ -44,7 +51,9 @@ data class DuplicateCustomerError(
     }
 }
 
-// (Duplicate item error)
+/**
+ * Duplicate item error.
+ */
 data class DuplicateItemError(
     private val itemRepository: ItemRepository,
     override val index1: Int,
@@ -58,7 +67,9 @@ data class DuplicateItemError(
     }
 }
 
-// (Duplicate order error)
+/**
+ * Duplicate order error
+ */
 data class DuplicateOrderError(
     private val orderRepository: OrderRepository,
     override val index1: Int,

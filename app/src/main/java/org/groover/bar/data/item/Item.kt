@@ -4,10 +4,13 @@ import androidx.compose.ui.graphics.Color
 import org.groover.bar.data.util.BTWPercentage
 import org.groover.bar.data.util.BTWPercentage.Companion.toBTWPercentage
 import org.groover.bar.data.util.BarData
-import org.groover.bar.data.util.CSV
+import org.groover.bar.data.util.CSVHandler
 import org.groover.bar.data.util.Cents
 import org.groover.bar.data.util.Cents.Companion.toCents
 
+/**
+ * An item that can be ordered.
+ */
 data class Item(
     override val id: Int,
     val name: String,
@@ -22,7 +25,6 @@ data class Item(
     // (Converts the Group to a String)
     override fun toString(): String = "$name (${price.toStringWithEuro()} incl. $btwPercentage% BTW)"
 
-
     companion object {
         // (Turns the hue into a color)
         fun getColor(hue: Float) = Color.hsv(hue * 360f, 0.4f, 1f)
@@ -30,7 +32,7 @@ data class Item(
         // (Serializes the item)
         fun serialize(item: Item): String {
             // Return serialization
-            return CSV.serialize(
+            return CSVHandler.serialize(
                 item.id.toString(),
                 item.name,
                 item.visible.toString(),
@@ -44,7 +46,7 @@ data class Item(
         fun deserialize(str: String): Item {
             try {
                 // Get properties
-                val props = CSV.deserialize(str)
+                val props = CSVHandler.deserialize(str)
                 val (idStr, name, visibleStr, priceStr, btwPercentageStr) = props
                 val hueStr = props[5]
 

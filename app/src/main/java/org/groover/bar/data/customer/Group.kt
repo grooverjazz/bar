@@ -2,9 +2,12 @@ package org.groover.bar.data.customer
 
 import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastMap
-import org.groover.bar.data.util.CSV
+import org.groover.bar.data.util.CSVHandler
 import org.groover.bar.data.util.DateUtils
 
+/**
+ * A group of members.
+ */
 data class Group (
     override val id: Int,
     override val name: String,
@@ -25,12 +28,11 @@ data class Group (
         return ""
     }
 
-
     companion object {
         // (Serializes the group)
         fun serialize(group: Group): String {
             // Return serialization
-            return CSV.serialize(
+            return CSVHandler.serialize(
                 listOf(
                     group.id.toString(),
                     group.name,
@@ -42,7 +44,7 @@ data class Group (
         fun deserialize(str: String): Group {
             try {
                 // Get properties
-                val props = CSV.deserialize(str)
+                val props = CSVHandler.deserialize(str)
                 val (idStr, name) = props
                 val memberIdStrs = props.drop(2)
 

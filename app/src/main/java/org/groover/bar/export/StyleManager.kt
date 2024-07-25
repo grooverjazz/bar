@@ -7,21 +7,34 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFColor
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
-
+/**
+ * Class responsible for creating and managing Excel cell styles.
+ *   (wrapper for weird Apache POI functionality)
+ */
 class StyleManager(
     private val workbook: XSSFWorkbook,
 ) {
+    /**
+     * Enum that defines style text alignment.
+     */
     enum class StyleAlignment {
         Left,
         Center,
         Right
     }
 
+    /**
+     * Enum that defines style text formatting.
+     */
     enum class StyleFormat {
         Percentage,
         Currency,
     }
 
+    /**
+     * Data class that allows StyleManager to reuse previously-created styles.
+     *   (key into StyleManager._styles)
+     */
     private data class StyleKey(
         val alignment: StyleAlignment? = null,
         val format: StyleFormat? = null,
@@ -29,11 +42,16 @@ class StyleManager(
         val backgroundColor: Color? = null,
     )
 
+    // Bold font
     private val boldFont = workbook.createFont().apply { bold = true }
+
+    // Currency format
     private val currencyFormat = workbook.createDataFormat().getFormat("€ #,##0.00")
 
+    // Map of all already-created styles
     private val _styles = emptyMap<StyleKey, XSSFCellStyle>().toMutableMap()
 
+    // (Creates or fetches a style based on the specified parameters)
     fun getStyle(
         alignment: StyleAlignment? = null,
         format: StyleFormat? = null,
@@ -45,6 +63,7 @@ class StyleManager(
         return _styles.getOrPut(key) { createStyle(alignment, format, bold, backgroundColor) }
     }
 
+    // (Creates a style based on the specified parameters)
     private fun createStyle(
         alignment: StyleAlignment?,
         format: StyleFormat?,

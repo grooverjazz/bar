@@ -19,7 +19,9 @@ import org.groover.bar.export.StyleManager.StyleFormat
 import org.groover.bar.data.util.removeFirst
 import org.groover.bar.export.ExcelHandler.Companion.writeRows
 
-
+/**
+ * Class responsible for exporting the 'Overzicht' sheet.
+ */
 class OverzichtExportHandler(
     private val styleManager: StyleManager,
     private val updateProgress: (Float) -> Unit,
@@ -154,6 +156,7 @@ class OverzichtExportHandler(
         currentRow += 5
     }
 
+    // (Writes the member orders table)
     private fun writeMemberOrders(
         sheet: XSSFSheet,
         colorMap: Map<Pair<Boolean, Boolean>, List<XSSFCellStyle>>,
@@ -233,6 +236,7 @@ class OverzichtExportHandler(
         }
     }
 
+    // (Writes the group orders table)
     private fun writeGroupOrders(
         sheet: XSSFSheet,
         colorMap: Map<Pair<Boolean, Boolean>, List<XSSFCellStyle>>,
@@ -287,6 +291,7 @@ class OverzichtExportHandler(
         }
     }
 
+    // (Exports the sheet)
     fun export(sheet: XSSFSheet) {
         currentRow = 0
 

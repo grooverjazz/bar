@@ -12,6 +12,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+/**
+ * A simple, styled, list that evaluates its items lazily.
+ *   (handy for large lists)
+ */
 @Composable
 fun BarListLazy(
     height: Dp = 800.dp,

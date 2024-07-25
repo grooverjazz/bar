@@ -32,6 +32,9 @@ import org.groover.bar.app.util.BarLayout
 import org.groover.bar.data.util.DateUtils
 import java.util.Date
 
+/**
+ * The screen where the specified member can be edited.
+ */
 @Composable
 fun BeheerMemberScreen(
     navigate: (route: String) -> Unit,
@@ -56,7 +59,6 @@ fun BeheerMemberScreen(
         finishEdit = finishEdit,
     )
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

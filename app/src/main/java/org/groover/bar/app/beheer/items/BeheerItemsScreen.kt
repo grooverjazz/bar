@@ -26,8 +26,9 @@ import org.groover.bar.app.util.BarLayout
 import org.groover.bar.data.util.BTWPercentage
 import org.groover.bar.data.util.Cents
 
-
-
+/**
+ * The screen where an item can be selected for editing.
+ */
 @Composable
 fun BeheerItemsScreen(
     navigate: (route: String) -> Unit,

@@ -14,9 +14,11 @@ import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
 import org.groover.bar.error.ErrorHandler
 
+/**
+ * The screen that shows the errors that are present in the current session.
+ */
 @Composable
 fun BeheerErrorScreen(
-    navigate: (route: String) -> Unit,
     errorHandler: ErrorHandler,
 ) {
     // UI

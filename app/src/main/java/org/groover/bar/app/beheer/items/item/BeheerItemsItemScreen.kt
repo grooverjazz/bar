@@ -39,6 +39,9 @@ import org.groover.bar.data.util.BTWPercentage
 import org.groover.bar.data.util.Cents
 import org.groover.bar.data.util.Cents.Companion.toCents
 
+/**
+ * The screen where the specified item can be edited.
+ */
 @Composable
 fun BeheerItemsItemScreen(
     navigate: (route: String) -> Unit,
@@ -63,7 +66,6 @@ fun BeheerItemsItemScreen(
         finishEdit = finishEdit,
     )
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -13,6 +13,23 @@ import org.groover.bar.app.util.BarLayout
 import org.groover.bar.app.util.BarList
 import org.groover.bar.app.util.BarTitle
 
+/**
+ * Tries to execute the action, otherwise shows the crash screen.
+ */
+@Composable
+fun <T> tryOrCrash(location: String, action: () -> T): T? {
+    try {
+        return action()
+    }
+    catch (e: Exception) {
+        CrashScreen(location, e)
+        return null
+    }
+}
+
+/**
+ * The screen that launches whenever an initialization exception occurs.
+ */
 @Composable
 private fun CrashScreen(location: String, e: Exception) {
     BarLayout {
@@ -44,16 +61,5 @@ private fun CrashScreen(location: String, e: Exception) {
 
             Spacer(Modifier.size(20.dp))
         }
-    }
-}
-
-@Composable
-fun <T> tryOrCrash(location: String, action: () -> T): T? {
-    try {
-        return action()
-    }
-    catch (e: Exception) {
-        CrashScreen(location, e)
-        return null
     }
 }

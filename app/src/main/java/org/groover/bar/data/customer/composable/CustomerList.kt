@@ -28,11 +28,19 @@ import org.groover.bar.app.util.BarMultiButtons
 import org.groover.bar.data.util.SearchHandler
 import java.util.Locale
 
+/**
+ * The state that a CustomerList may be in.
+ */
 enum class CustomerListState {
+    /** Shows all members.*/
     MEMBERS,
+    /** Shows all groups.*/
     GROUPS
 }
 
+/**
+ * A list of all customers (members, groups).
+ */
 @Composable
 fun CustomerList(
     members: List<Member>,

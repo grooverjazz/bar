@@ -32,6 +32,10 @@ import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
 import org.groover.bar.data.util.Cents
 
+/**
+ * The screen where an order can be made/changed for the specified customer.
+ * If 'prevousOrder' is specified, this is the order that will be changed.
+ */
 @Composable
 fun BarTurvenCustomerScreen(
     navigate: (route: String) -> Unit,

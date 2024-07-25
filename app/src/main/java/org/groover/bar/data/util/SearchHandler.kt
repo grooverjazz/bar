@@ -3,8 +3,12 @@ package org.groover.bar.data.util
 import org.apache.commons.text.similarity.FuzzyScore
 import java.util.Locale
 
+/**
+ * Class that is responsible for fuzzy search.
+ */
 class SearchHandler {
     companion object {
+        // (Searches for the specified string in the data)
         fun <T> search(
             searchStr: String,
             data: List<T>,

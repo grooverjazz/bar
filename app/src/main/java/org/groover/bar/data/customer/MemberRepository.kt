@@ -5,6 +5,9 @@ import org.groover.bar.data.util.DateUtils
 import org.groover.bar.data.util.FileOpener
 import org.groover.bar.data.util.Repository
 
+/**
+ * The repository that contains all members.
+ */
 class MemberRepository(
     fileOpener: FileOpener,
 ) : Repository<Member>(

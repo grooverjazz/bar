@@ -15,12 +15,21 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * The type that a BarTextField may be.
+ */
 enum class BarTextFieldType {
+    /** Plain-text.*/
     Text,
+    /** A password (turns characters into dots).*/
     Password,
+    /** A decimal number (initiates the decimal number keyboard).*/
     Decimal,
 }
 
+/**
+ * A simple labeled text field.
+ */
 @Composable
 fun BarTextField(
     modifier: Modifier = Modifier,

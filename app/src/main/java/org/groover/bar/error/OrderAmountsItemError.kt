@@ -6,17 +6,21 @@ import org.groover.bar.data.order.OrderRepository
 import org.groover.bar.data.util.BTWPercentage
 import org.groover.bar.data.util.Cents
 
-// Order.amounts contains a non-existent Item ID as a key.
+/**
+ * Error where Order.amounts contains a non-existent Item ID as a key.
+ */
 data class OrderAmountsItemError(
     private val orderRepository: OrderRepository,
     private val itemRepository: ItemRepository,
     private val orderId: Int,
     private val itemId: Int
 ) : BarError() {
+    // (Turns the error into a String)
     override fun toString(): String {
         return "Bestelling '$orderId' bevat itemnummer '$itemId' die niet bestaat."
     }
 
+    // (OVERRIDE: Makes a panel for the error screen)
     @Composable
     override fun Panel(callback: () -> Unit) = Panel(callback,
         "Haal item $itemId uit bestelling" to ::solveByRemove,

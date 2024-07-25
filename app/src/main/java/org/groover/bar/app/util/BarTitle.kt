@@ -10,6 +10,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 
+/**
+ * A simple title text.
+ */
 @Composable
 fun BarTitle(
     text: String,

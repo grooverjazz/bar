@@ -24,6 +24,9 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * A styled button that allows for a callback on long press.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BarButtonLongPress(
@@ -36,6 +39,7 @@ fun BarButtonLongPress(
     rounded: Boolean = false,
     enabled: Boolean = true,
 ) {
+    // (the button is implemented by heavily modifying a Card)
     ElevatedCard(
         Modifier
         .height(95.dp)

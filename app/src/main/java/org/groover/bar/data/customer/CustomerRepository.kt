@@ -6,6 +6,9 @@ import org.groover.bar.data.util.DateUtils
 import java.util.Date
 import kotlin.math.max
 
+/**
+ * A 'pseudo-repository' that wraps over MemberRepository and CustomerRepository.
+ */
 class CustomerRepository(
     val members: MemberRepository,
     val groups: GroupRepository,

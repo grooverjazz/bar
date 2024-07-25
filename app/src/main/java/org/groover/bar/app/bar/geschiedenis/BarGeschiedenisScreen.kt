@@ -14,6 +14,9 @@ import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
 import org.groover.bar.data.util.Cents
 
+/**
+ * The screen that shows the history of all orders in the session.
+ */
 @Composable
 fun BarGeschiedenisScreen(
     navigate: (route: String) -> Unit,
@@ -45,7 +48,6 @@ fun BarGeschiedenisScreen(
         orderOnClick = orderOnClick,
     )
 }
-
 
 @Composable
 private fun BarGeschiedenisContent(

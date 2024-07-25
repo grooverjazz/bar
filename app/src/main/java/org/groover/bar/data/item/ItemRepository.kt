@@ -7,6 +7,9 @@ import org.groover.bar.data.util.Cents.Companion.sum
 import org.groover.bar.data.util.FileOpener
 import org.groover.bar.data.util.Repository
 
+/**
+ * The repository that contains all items.
+ */
 class ItemRepository(
     fileOpener: FileOpener,
 ) : Repository<Item>(

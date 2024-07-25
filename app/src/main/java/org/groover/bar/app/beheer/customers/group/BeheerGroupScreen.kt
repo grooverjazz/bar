@@ -30,7 +30,9 @@ import org.groover.bar.app.util.BarListLazy
 import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
 
-
+/**
+ * The screen where the specified group can be edited.
+ */
 @Composable
 fun BeheerGroupScreen(
     navigate: (route: String) -> Unit,

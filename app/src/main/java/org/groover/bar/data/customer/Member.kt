@@ -1,9 +1,12 @@
 package org.groover.bar.data.customer
 
-import org.groover.bar.data.util.CSV
+import org.groover.bar.data.util.CSVHandler
 import org.groover.bar.data.util.DateUtils
 import java.util.Date
 
+/**
+ * An association member or a made-up ('extra') member (ie. Hospitality).
+ */
 data class Member(
     override val id: Int,
     override val name: String,
@@ -28,7 +31,6 @@ data class Member(
         return ""
     }
 
-
     companion object {
         // (Serializes the user)
         fun serialize(member: Member): String {
@@ -36,7 +38,7 @@ data class Member(
             val idStr = member.id.toString()
 
             // Return serialization
-            return CSV.serialize(
+            return CSVHandler.serialize(
                 idStr,
                 member.name,
                 DateUtils.serializeDate(member.birthday)
@@ -48,7 +50,7 @@ data class Member(
             try {
                 // Get properties
                 //  (destructuring a list works up until 5 items...)
-                val props = CSV.deserialize(str)
+                val props = CSVHandler.deserialize(str)
                 val (idStr, name, birthdayStr) = props
 
                 // Deserialize properties

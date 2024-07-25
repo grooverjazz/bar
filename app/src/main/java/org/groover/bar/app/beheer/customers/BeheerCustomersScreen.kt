@@ -20,6 +20,9 @@ import org.groover.bar.app.util.PromptDialog
 import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
 
+/**
+ * The screen where a customer (member, group) can be selected for editing.
+ */
 @Composable
 fun BeheerCustomersScreen(
     navigate: (route: String) -> Unit,

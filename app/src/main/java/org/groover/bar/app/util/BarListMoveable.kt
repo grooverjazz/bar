@@ -33,6 +33,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.groover.bar.data.util.BarData
 
+/**
+ * A styled list that allows for moving, toggling visibility of and deleting its items.
+ */
 @Composable
 fun <T: BarData> BarListMoveable(
     lazy: Boolean = false,

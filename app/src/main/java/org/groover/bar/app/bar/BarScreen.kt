@@ -9,6 +9,9 @@ import org.groover.bar.app.util.BarNavigateButton
 import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
 
+/**
+ * The main 'Bar' screen.
+ */
 @Composable
 fun BarScreen(
     navigate: (route: String) -> Unit,
@@ -16,7 +19,6 @@ fun BarScreen(
     // Content
     BarContent(navigate)
 }
-
 
 @Composable
 private fun BarContent(

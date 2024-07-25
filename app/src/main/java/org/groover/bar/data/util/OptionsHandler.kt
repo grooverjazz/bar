@@ -1,8 +1,10 @@
-package org.groover.bar.export
+package org.groover.bar.data.util
 
 import android.content.Context
-import org.groover.bar.data.util.FileOpener
 
+/**
+ * Class responsible for app-wide options.
+ */
 class OptionsHandler(
     context: Context
 ) {
@@ -16,6 +18,7 @@ class OptionsHandler(
         open()
     }
 
+    // (Loads the option data)
     private fun open() {
         // Load data
         val dataDict = fileOpener.readToMap(fileName)
@@ -25,6 +28,7 @@ class OptionsHandler(
         beheerPassword = dataDict.getOrDefault("beheerPassword", "")
     }
 
+    // (Changes the session name)
     fun changeSession(newSessionName: String) {
         // Change session name
         sessionName = newSessionName
@@ -32,6 +36,7 @@ class OptionsHandler(
         save()
     }
 
+    // (Saves the option data)
     fun save() {
         // Serialize
         val dataStr = mapOf(
@@ -43,5 +48,6 @@ class OptionsHandler(
         fileOpener.writeFromMap(fileName, dataStr)
     }
 
-    fun getAllSessions(): List<String> = fileOpener.listDirs().sortedDescending()
+    // (Lists all session directories)
+    fun getAllSessions(): List<String> = fileOpener.getSessionDirs()
 }

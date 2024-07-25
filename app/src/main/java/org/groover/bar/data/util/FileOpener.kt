@@ -8,6 +8,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
 import java.io.FileOutputStream
 
+/**
+ * Class responsible for opening a file in a current session folder.
+ */
 class FileOpener(
     private val context: Context,
     var relativePath: String,
@@ -15,19 +18,21 @@ class FileOpener(
     // Get the current directory
     // (Android/data/org.groover.bar/files)
     private val dir get() =
-        context.getExternalFilesDir("")?.path + "/" +
-        relativePath +
+        context.getExternalFilesDir("")?.path + "/" + relativePath +
         (if (relativePath == "") "" else "/")
 
-    fun listDirs(): List<String> {
+    // (Lists all session directories)
+    fun getSessionDirs(): List<String> {
         return File(dir)
             .walk()
             .filter(File::isDirectory)
             .map(File::getName)
             .filter { it != "files" }
+            .sortedDescending()
             .toList()
     }
 
+    // (Reads the contents of a file)
     fun read(fileName: String, dropFirst: Boolean = false): List<String> {
         // Open a file for reading
         val readFile = File(dir, fileName)
@@ -40,14 +45,16 @@ class FileOpener(
         return lines
     }
 
+    // (Reads the contents of a file to a Map)
     fun readToMap(fileName: String, dropFirst: Boolean = false): Map<String, String> {
         val lines = read(fileName, dropFirst)
         return lines.associate { line ->
-            val (key, value) = CSV.deserialize(line)
+            val (key, value) = CSVHandler.deserialize(line)
             return@associate (key to value)
         }
     }
 
+    // (Writes the data to a file)
     fun write(fileName: String, data: List<String>) {
         // Create directory if it doesn't exist
         val writeDir = File(dir)
@@ -63,11 +70,13 @@ class FileOpener(
         writeFile.writeText(dataStr)
     }
 
+    // (Writes a Map to a file)
     fun writeFromMap(fileName: String, data: Map<String, String>) {
-        val lines = data.map { (key, value) -> CSV.serialize(listOf(key, value)) }
+        val lines = data.map { (key, value) -> CSVHandler.serialize(listOf(key, value)) }
         write(fileName, lines)
     }
 
+    // (Writes an Excel workbook to a file)
     fun write(fileName: String, data: XSSFWorkbook) {
         FileOutputStream(File(dir, fileName)).use { fileOut ->
             data.write(fileOut)
@@ -76,6 +85,8 @@ class FileOpener(
         File(dir, fileName)
     }
 
+    // (Opens the specified file in an external program)
+    //   (for now only works with Excel files)
     fun openExternal(fileName: String) {
         val file = File(dir, fileName)
         val fileProviderStr = "${context.packageName}.fileprovider"
