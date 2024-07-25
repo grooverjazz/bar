@@ -20,6 +20,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.android.awaitFrame
+import org.groover.bar.app.util.BarButton
 import org.groover.bar.data.order.Order
 import org.groover.bar.app.util.BarListLazy
 import org.groover.bar.data.util.Cents
@@ -55,7 +56,8 @@ fun OrderList(
         onValueChange = { newSearchText: String ->
             searchText = newSearchText
         },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .focusRequester(keyboardFocus)
             .height(80.dp),
         textStyle = TextStyle.Default.copy(fontSize = 28.sp),
@@ -70,16 +72,9 @@ fun OrderList(
             // Get total price
             val totalPrice = orderGetTotal(order)
 
-            Button({ onClick(order) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp),
-                shape = RectangleShape,
-            ) {
-                Text("$customerName (${totalPrice.toStringWithEuro()})",
-                    fontSize = 25.sp
-                )
-            }
+            BarButton("$customerName (${totalPrice.toStringWithEuro()})",
+                onClick = { onClick(order) },
+            )
         }
     }
 }
