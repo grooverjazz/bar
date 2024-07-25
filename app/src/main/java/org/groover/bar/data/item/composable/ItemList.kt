@@ -58,7 +58,7 @@ fun ItemListEntry(item: Item, amount: Int, setAmount: (Int) -> Unit) {
             fontWeight = FontWeight.Bold,
             fontSize = 30.sp,
             modifier = Modifier
-                .weight(0.35f)
+                .weight(0.43f)
                 .padding(start = 15.dp),
         )
 
@@ -68,7 +68,7 @@ fun ItemListEntry(item: Item, amount: Int, setAmount: (Int) -> Unit) {
         )
 
         // Amount buttons
-        Row(Modifier.weight(0.45f),
+        Row(Modifier.weight(0.37f),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             // Add and remove buttons
