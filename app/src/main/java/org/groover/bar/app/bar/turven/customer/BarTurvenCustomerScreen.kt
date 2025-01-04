@@ -30,6 +30,7 @@ import org.groover.bar.app.util.BarButton
 import org.groover.bar.data.item.composable.ItemList
 import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
+import org.groover.bar.data.customer.Member
 import org.groover.bar.data.util.Cents
 
 /**
@@ -105,11 +106,14 @@ fun BarTurvenCustomerScreen(
             placeOrder(currentOrder)
     }
 
+    // Check if customer is a hospitality member (for fun)
+    val isHospitality = currentCustomer is Member && currentCustomer.isHospitality
+
     // Content
     BarTurvenCustomerContent(
         items = items,
         previousOrder = previousOrder,
-        isHospitality = currentCustomer.id == 0,
+        isHospitality = isHospitality,
         customerName = currentCustomer.name,
         customerTotal = customerTotal,
         warningMessage = warningMessage,

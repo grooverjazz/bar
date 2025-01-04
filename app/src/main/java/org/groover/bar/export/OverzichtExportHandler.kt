@@ -34,8 +34,16 @@ class OverzichtExportHandler(
     private val customers = customerRepository.data
 
     // Reorder members such that Hospitality is on top
-    private val members = listOf(customerRepository.members.find(0)!!) +
-        customerRepository.members.data.removeFirst { it.id == 0 }
+    private val members = customerRepository.members.data
+        .sortedBy { it.id }
+        .sortedBy {
+            when {
+                it.isHospitality -> 0
+                it.isExtra -> 1
+                else -> 2
+            }
+        }
+
     private val membersCount = members.size
     private val extraMembersCount = members.count { it.isExtra }
 
@@ -218,7 +226,7 @@ class OverzichtExportHandler(
             val totalStr = ExcelFormula("$regularOrdersTotal + $groupSharesTotalStr")
 
             // Get row colors
-            val memberStyleList = colorMap[Pair(member.isExtra, if (member.isExtra) member.id == 0 else index % 2 == 0)]!!
+            val memberStyleList = colorMap[Pair(member.isExtra, if (member.isExtra) member.isHospitality else index % 2 == 0)]!!
             val memberDefaultStyle = memberStyleList.last()
             val memberCurrencyStyle = memberStyleList[memberStyleList.size - 2]
 

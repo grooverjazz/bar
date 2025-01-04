@@ -1,5 +1,7 @@
 package org.groover.bar.data.customer
 
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toLowerCase
 import org.groover.bar.data.util.CSVHandler
 import org.groover.bar.data.util.DateUtils
 import java.util.Date
@@ -30,6 +32,9 @@ data class Member(
         // No warning
         return ""
     }
+
+    // (Determines whether the member accounts for hospitality)
+    val isHospitality = isExtra && name.toLowerCase(Locale.current).contains("hospi")
 
     companion object {
         // (Serializes the user)
