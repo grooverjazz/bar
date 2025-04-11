@@ -1,6 +1,8 @@
 [versions]
-agp = "8.4.2"
+agp = "8.9.1"
 fuzzyMatcher = "1.2.1"
+fuzzywuzzyKotlin = "1.0.1"
+fuzzywuzzyKotlinVersion = "0.9.0"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
 lifecycleRuntimeKtx = "2.8.4"
@@ -23,6 +25,8 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+fuzzywuzzy-kotlin = { module = "com.willowtreeapps:fuzzywuzzy-kotlin", version.ref = "fuzzywuzzyKotlin" }
+fuzzywuzzy-kotlin-v090 = { module = "com.willowtreeapps:fuzzywuzzy-kotlin", version.ref = "fuzzywuzzyKotlinVersion" }
 poi = { module = "org.apache.poi:poi", version.ref = "poi" }
 poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poiOoxml" }
 

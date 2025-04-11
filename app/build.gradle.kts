@@ -51,6 +51,7 @@ dependencies {
 
     // Fuzzy matcher (used for search)
     implementation(libs.fuzzy.matcher)
+    implementation(libs.fuzzywuzzy.kotlin.v090)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
