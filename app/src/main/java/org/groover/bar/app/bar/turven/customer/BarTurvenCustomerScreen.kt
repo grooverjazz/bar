@@ -32,6 +32,7 @@ import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
 import org.groover.bar.data.customer.Member
 import org.groover.bar.data.util.Cents
+import org.groover.bar.data.util.OptionsHandler
 
 /**
  * The screen where an order can be made/changed for the specified customer.
@@ -45,6 +46,7 @@ fun BarTurvenCustomerScreen(
     orderRepository: OrderRepository,
     customerId: Int,
     previousOrder: Order?,
+    isReadOnly: Boolean,
 ) {
     val context = LocalContext.current
 
@@ -113,6 +115,7 @@ fun BarTurvenCustomerScreen(
     BarTurvenCustomerContent(
         items = items,
         previousOrder = previousOrder,
+        isReadOnly = isReadOnly,
         isHospitality = isHospitality,
         customerName = currentCustomer.name,
         customerTotal = customerTotal,
@@ -127,6 +130,7 @@ fun BarTurvenCustomerScreen(
 private fun BarTurvenCustomerContent(
     items: List<Item>,
     previousOrder: Order?,
+    isReadOnly: Boolean,
     isHospitality: Boolean,
     customerName: String,
     customerTotal: Cents,
@@ -187,16 +191,27 @@ private fun BarTurvenCustomerContent(
         val hasItems = currentOrder.sum() != 0
         val newOrder = previousOrder == null
 
-        // Finish order button
-        BarButton(
-            when {
-                hasItems -> "Bestelling afronden (${orderCost.toStringWithEuro()})"
-                !hasItems && !newOrder -> "Bestelling verwijderen"
-                else -> "..."
-            },
-            onClick = { finishOrder(currentOrder) },
-            enabled = hasItems || !newOrder,
-            rounded = true,
-        )
+        if (isReadOnly) {
+            // Read-only message
+            Text("Je kunt niet bestellen in ${OptionsHandler.defaultSessionName}!",
+                color = Color.Red,
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Bold,
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center,
+            )
+        } else {
+            // Finish order button
+            BarButton(
+                when {
+                    hasItems -> "Bestelling afronden (${orderCost.toStringWithEuro()})"
+                    !hasItems && !newOrder -> "Bestelling verwijderen"
+                    else -> "..."
+                },
+                onClick = { finishOrder(currentOrder) },
+                enabled = hasItems || !newOrder,
+                rounded = true,
+            )
+        }
     }
 }

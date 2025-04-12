@@ -51,6 +51,9 @@ fun App() {
         OptionsHandler(context)
     } ?: return
 
+    // Determine if session is read-only
+    val isReadOnly = optionsHandler.sessionName == OptionsHandler.defaultSessionName
+
     // Initialize file opener
     val fileOpener = tryOrCrash("FileOpener") {
         FileOpener(context, optionsHandler.sessionName)
@@ -162,6 +165,7 @@ fun App() {
                 orderRepository = orderRepository,
                 customerId = customerId,
                 previousOrder = null,
+                isReadOnly = isReadOnly,
             )
         }
 
@@ -199,6 +203,7 @@ fun App() {
                 orderRepository = orderRepository,
                 customerId = customerId,
                 previousOrder = previousOrder,
+                isReadOnly = isReadOnly,
             )
         }
 
