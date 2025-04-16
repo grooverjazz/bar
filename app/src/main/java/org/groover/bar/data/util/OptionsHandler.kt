@@ -8,8 +8,13 @@ import android.content.Context
 class OptionsHandler(
     context: Context
 ) {
+    companion object {
+        val fileName = "options.csv"
+
+        val defaultSessionName = "__default"
+    }
+
     private val fileOpener = FileOpener(context, "")
-    val fileName = "options.csv"
 
     var sessionName = ""
     var beheerPassword = ""
@@ -24,7 +29,7 @@ class OptionsHandler(
         val dataDict = fileOpener.readToMap(fileName)
 
         // Deserialize
-        sessionName = dataDict.getOrDefault("sessionName", "__default")
+        sessionName = dataDict.getOrDefault("sessionName", defaultSessionName)
         beheerPassword = dataDict.getOrDefault("beheerPassword", "")
     }
 
