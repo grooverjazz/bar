@@ -14,7 +14,7 @@ class SearchHandler {
         ): Int {
             var count = 0
             for (i in 0..<searchStr.length) {
-                if (str[i] == searchStr[i]) count++
+                if (i < str.length && str[i] == searchStr[i]) count++
                 else break
             }
             return count / searchStr.length * 100
