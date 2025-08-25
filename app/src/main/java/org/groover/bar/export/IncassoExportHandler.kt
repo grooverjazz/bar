@@ -17,6 +17,15 @@ class IncassoExportHandler(
     private val sessionName: String
 )  {
     private val members = customerRepository.members.data
+        .sortedBy { it.id }
+        .sortedBy {
+            when {
+                it.isHospitality -> 0
+                it.isExtra -> 1
+                else -> 2
+            }
+        }
+
     private val membersCount = members.size
 
     private val itemsCount = itemRepository.data.size
