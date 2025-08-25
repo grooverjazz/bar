@@ -16,7 +16,6 @@ import org.groover.bar.export.ExcelHandler.Companion.writeRow
 import org.groover.bar.export.ExcelHandler.ExcelFormula
 import org.groover.bar.export.StyleManager.StyleAlignment
 import org.groover.bar.export.StyleManager.StyleFormat
-import org.groover.bar.data.util.removeFirst
 import org.groover.bar.export.ExcelHandler.Companion.writeRows
 
 /**
@@ -45,7 +44,9 @@ class OverzichtExportHandler(
         }
 
     private val membersCount = members.size
-    private val extraMembersCount = members.count { it.isExtra }
+
+    private val hospitalityCount = members.count { it.isHospitality }
+    private val extraMembersCount = members.count { it.isExtra && !it.isHospitality }
 
     private val groups = customerRepository.groups.data
     private val groupsCount = groups.size
@@ -76,11 +77,11 @@ class OverzichtExportHandler(
     }
 
     // (Gets the formula summing a row from the member and group table)
-    //  (excludes extra members)
+    //  (including extra members and excluding hospitality)
     private fun customerSum(rowIndex: Int): Pair<String, String> {
-        val memberStartCell = cellStr(7 + extraMembersCount, rowIndex)
+        val memberStartCell = cellStr(7 + hospitalityCount, rowIndex)
         val memberEndCell = cellStr(7 + membersCount - 1, rowIndex)
-        val memberPart = if (membersCount - extraMembersCount == 0) "0" else "$memberStartCell:$memberEndCell"
+        val memberPart = if (membersCount - hospitalityCount == 0) "0" else "$memberStartCell:$memberEndCell"
 
         val groupStartCell = cellStr(7 + membersCount - 1 + 4, rowIndex)
         val groupEndCell = cellStr(7 + membersCount - 1 + 4 + groupsCount - 1, rowIndex)
