@@ -47,6 +47,7 @@ fun BarTurvenCustomerScreen(
     customerId: Int,
     previousOrder: Order?,
     isReadOnly: Boolean,
+    sessionName: String
 ) {
     val context = LocalContext.current
 
@@ -122,6 +123,7 @@ fun BarTurvenCustomerScreen(
         warningMessage = warningMessage,
         getOrderCost = getOrderCost,
         finishOrder = finishOrder,
+        sessionName = sessionName
     )
 }
 
@@ -137,6 +139,7 @@ private fun BarTurvenCustomerContent(
     warningMessage: String,
     getOrderCost: (currentOrder: List<Int>) -> Cents,
     finishOrder: (currentOrder: List<Int>) -> Unit,
+    sessionName: String = "Session not found"
 ) {
     // Initialize initial amounts (or zeroes if not specified)
     val currentOrder = remember {
@@ -170,6 +173,11 @@ private fun BarTurvenCustomerContent(
         )
         Spacer(Modifier.size(10.dp))
 
+        // Session text
+        Text("Huidige sessie: $sessionName",
+            textAlign = TextAlign.Center,
+            fontSize = 25.sp
+        )
         // Warning message
         if (warningMessage != "") {
             Text(warningMessage,

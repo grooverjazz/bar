@@ -2,9 +2,12 @@ package org.groover.bar.app.bar.turven
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.groover.bar.data.customer.Customer
 import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.customer.Group
@@ -20,6 +23,7 @@ import org.groover.bar.app.util.BarLayout
 fun BarTurvenScreen(
     navigate: (route: String) -> Unit,
     customerRepository: CustomerRepository,
+    sessionName: String
 ) {
     // (Navigates to the turven screen)
     val customerOnClick = { customer: Customer ->
@@ -31,6 +35,7 @@ fun BarTurvenScreen(
         members = customerRepository.members.data,
         groups = customerRepository.groups.data,
         customerOnClick = customerOnClick,
+        sessionName = sessionName
     )
 }
 
@@ -39,13 +44,19 @@ private fun BarTurvenContent(
     members: List<Member>,
     groups: List<Group>,
     customerOnClick: (customer: Customer) -> Unit,
+    sessionName: String = "Session not found"
 ) {
     // UI
     BarLayout {
         // Title
-        Spacer(Modifier.size(20.dp))
+        Spacer(Modifier.size(10.dp))
         BarTitle("Turven")
-        Spacer(Modifier.size(20.dp))
+        // Session text
+        Text("Huidige sessie: $sessionName",
+            textAlign = TextAlign.Center,
+            fontSize = 20.sp
+        )
+        Spacer(Modifier.size(10.dp))
 
         // Customer list
         CustomerList(

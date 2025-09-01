@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.groover.bar.R
 import org.groover.bar.app.util.BarNavigateButton
 import org.groover.bar.app.util.BarLayout
@@ -65,6 +66,7 @@ private fun HomeContent(
         // Session text
         Text("Huidige sessie: $sessionName",
             textAlign = TextAlign.Center,
+            fontSize = 25.sp
         )
         Spacer(Modifier.size(220.dp))
 

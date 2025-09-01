@@ -2,9 +2,12 @@ package org.groover.bar.app.bar.geschiedenis
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.groover.bar.data.customer.CustomerRepository
 import org.groover.bar.data.item.ItemRepository
 import org.groover.bar.data.order.Order
@@ -23,6 +26,7 @@ fun BarGeschiedenisScreen(
     customerRepository: CustomerRepository,
     orderRepository: OrderRepository,
     itemRepository: ItemRepository,
+    sessionName: String
 ) {
     // (Retrieves the name of a customer)
     val getCustomerName = { id: Int ->
@@ -46,6 +50,7 @@ fun BarGeschiedenisScreen(
         getCustomerName = getCustomerName,
         orderGetTotal = orderGetTotal,
         orderOnClick = orderOnClick,
+        sessionName = sessionName
     )
 }
 
@@ -55,12 +60,18 @@ private fun BarGeschiedenisContent(
     getCustomerName: (customerId: Int) -> String,
     orderGetTotal: (order: Order) -> Cents,
     orderOnClick: (order: Order) -> Unit,
+    sessionName: String = "Session not found"
 ) {
     // UI
     BarLayout {
         // Title
         Spacer(Modifier.size(20.dp))
         BarTitle("Geschiedenis")
+        // Session text
+        Text("Huidige sessie: $sessionName",
+            textAlign = TextAlign.Center,
+            fontSize = 25.sp
+        )
         Spacer(Modifier.size(20.dp))
 
         // Orders

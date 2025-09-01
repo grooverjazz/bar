@@ -137,6 +137,7 @@ fun App() {
 
             BarScreen(
                 navigate = navigate,
+                sessionName = optionsHandler.sessionName
             )
         }
 
@@ -147,6 +148,7 @@ fun App() {
             BarTurvenScreen(
                 navigate = navigate,
                 customerRepository = customerRepository,
+                sessionName = optionsHandler.sessionName
             )
         }
 
@@ -166,6 +168,7 @@ fun App() {
                 customerId = customerId,
                 previousOrder = null,
                 isReadOnly = isReadOnly,
+                sessionName = optionsHandler.sessionName
             )
         }
 
@@ -178,6 +181,7 @@ fun App() {
                 orderRepository = orderRepository,
                 customerRepository = customerRepository,
                 itemRepository = itemRepository,
+                sessionName = optionsHandler.sessionName
             )
         }
 
@@ -204,6 +208,7 @@ fun App() {
                 customerId = customerId,
                 previousOrder = previousOrder,
                 isReadOnly = isReadOnly,
+                sessionName = optionsHandler.sessionName
             )
         }
 
