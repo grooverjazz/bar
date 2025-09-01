@@ -36,7 +36,7 @@ import org.groover.bar.data.util.OptionsHandler
 
 /**
  * The screen where an order can be made/changed for the specified customer.
- * If 'prevousOrder' is specified, this is the order that will be changed.
+ * If 'previousOrder' is specified, this is the order that will be changed.
  */
 @Composable
 fun BarTurvenCustomerScreen(
@@ -79,7 +79,7 @@ fun BarTurvenCustomerScreen(
         } else {
             orderRepository.remove(previousOrder.id)
 
-            navigate("bar/geschiedenis")
+            navigate("bar")
 
             // Show toast
             Toast.makeText(context, "Bestelling aangepast!", Toast.LENGTH_SHORT)
@@ -91,7 +91,7 @@ fun BarTurvenCustomerScreen(
     val removeOrder = {
         orderRepository.remove(previousOrder!!.id)
 
-        navigate("bar/geschiedenis")
+        navigate("bar")
 
         // Show toast
         Toast.makeText(context, "Bestelling verwijderd!", Toast.LENGTH_SHORT)
