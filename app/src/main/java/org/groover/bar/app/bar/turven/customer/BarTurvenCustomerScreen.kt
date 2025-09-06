@@ -32,6 +32,7 @@ import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
 import org.groover.bar.data.customer.Member
 import org.groover.bar.data.util.Cents
+import org.groover.bar.data.util.DateUtils
 import org.groover.bar.data.util.OptionsHandler
 
 /**
@@ -55,7 +56,7 @@ fun BarTurvenCustomerScreen(
     val currentCustomer = customerRepository.find(customerId)!!
 
     // Get customer total
-    val items = itemRepository.data
+    val items = itemRepository.data.filter {DateUtils.isOlderThan18((currentCustomer as Member).birthday) || !it.alcoholic}
     val customerTotal = orderRepository.getTotalByCustomer(customerId, customerRepository.groups.data, items)
 
     // Get warning message
@@ -111,6 +112,7 @@ fun BarTurvenCustomerScreen(
 
     // Check if customer is a hospitality member (for fun)
     val isHospitality = currentCustomer is Member && currentCustomer.isHospitality
+
 
     // Content
     BarTurvenCustomerContent(
