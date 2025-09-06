@@ -36,7 +36,7 @@ fun BarCheckbox(
         )
         .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.Start,
     ) {
         Checkbox(
             checked = state,

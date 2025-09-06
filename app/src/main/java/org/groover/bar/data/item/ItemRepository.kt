@@ -17,7 +17,7 @@ class ItemRepository(
     "items.csv",
     Item.Companion::serialize,
     Item.Companion::deserialize,
-    listOf("ID", "Name", "Visible", "Price", "BTW Percentage", "Hue"),
+    listOf("ID", "Name", "Visible", "Price", "BTW Percentage", "Hue", "Alcoholic", "Hospitality"),
 ) {
     init {
         open()
@@ -29,6 +29,8 @@ class ItemRepository(
         price: Cents,
         btwPercentage: BTWPercentage,
         hue: Float,
+        alcoholic: Boolean,
+        hospitality: Boolean,
         errorHandlingOverrideId: Int? = null // ONLY USE FOR ERROR HANDLING
     ): Item {
         // Create new item
@@ -39,6 +41,8 @@ class ItemRepository(
             price,
             btwPercentage,
             hue,
+            alcoholic,
+            hospitality
         )
 
         // Prepend
@@ -56,6 +60,8 @@ class ItemRepository(
         newPrice: Cents,
         newBtwPercentage: BTWPercentage,
         newHue: Float,
+        newAlcoholic: Boolean,
+        newHospitality: Boolean
     ) {
         // Create new item
         val newItem = Item(
@@ -65,6 +71,8 @@ class ItemRepository(
             newPrice,
             newBtwPercentage,
             newHue,
+            newAlcoholic,
+            newHospitality
         )
 
         // Replace

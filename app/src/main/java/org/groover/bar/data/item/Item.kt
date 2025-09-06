@@ -18,6 +18,8 @@ data class Item(
     val price: Cents, // incl. BTW!
     val btwPercentage: BTWPercentage,
     val hue: Float,
+    val alcoholic: Boolean,
+    val hospitality: Boolean
 ): BarData() {
     // Color, defined by hue property
     val color: Color = getColor(hue)
@@ -39,6 +41,8 @@ data class Item(
                 item.price.toString(),
                 item.btwPercentage.serialize(),
                 item.hue.toString(),
+                item.alcoholic.toString(),
+                item.hospitality.toString()
             )
         }
 
@@ -49,6 +53,8 @@ data class Item(
                 val props = CSVHandler.deserialize(str)
                 val (idStr, name, visibleStr, priceStr, btwPercentageStr) = props
                 val hueStr = props[5]
+                val alcoholicStr = props[6]
+                val hospitalityStr = props[7]
 
                 // Deserialize properties
                 val id = idStr.toInt()
@@ -56,12 +62,15 @@ data class Item(
                 val price = priceStr.toCents()
                 val btwPercentage = btwPercentageStr.toBTWPercentage()
                 val hue = hueStr.replace(',', '.').toFloat()
+                val alcoholic = alcoholicStr.equals("true", ignoreCase = true)
+                val hospitality = hospitalityStr.equals("true", ignoreCase = true)
+
 
                 // Return item
-                return Item(id, name, visible, price, btwPercentage, hue)
+                return Item(id, name, visible, price, btwPercentage, hue, alcoholic , hospitality)
             } catch (e: Exception) {
                 throw IllegalStateException("Kan item '$str' niet deserialiseren\n" +
-                        "(normaal in de vorm 'id;name;visible;price;btwPercentage;hue')")
+                        "(normaal in de vorm 'id;name;visible;price;btwPercentage;hue;alcoholic;hospitality')")
             }
         }
     }

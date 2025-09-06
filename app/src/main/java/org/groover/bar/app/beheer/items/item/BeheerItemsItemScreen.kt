@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.groover.bar.app.util.BarButton
+import org.groover.bar.app.util.BarCheckbox
 import org.groover.bar.app.util.BarDropdownMenu
 import org.groover.bar.app.util.BarLayout
 import org.groover.bar.app.util.BarTextField
@@ -46,9 +47,9 @@ fun BeheerItemsItemScreen(
     val item = itemRepository.find(itemId)!!
 
     // (Finishes editing the item)
-    val finishEdit = { newName: String, newPrice: Cents, newBtwPercentage: BTWPercentage, newHue: Float ->
+    val finishEdit = { newName: String, newPrice: Cents, newBtwPercentage: BTWPercentage, newHue: Float, newAlcoholic: Boolean, newHospitality: Boolean ->
         // Change the item
-        itemRepository.changeItem(itemId, newName, item.visible, newPrice, newBtwPercentage, newHue)
+        itemRepository.changeItem(itemId, newName, item.visible, newPrice, newBtwPercentage, newHue, newAlcoholic, newHospitality)
 
         // Navigate back
         navigate("beheer/items")
@@ -65,13 +66,15 @@ fun BeheerItemsItemScreen(
 @Composable
 private fun BeheerItemsItemContent(
     item: Item,
-    finishEdit: (String, Cents, BTWPercentage, Float) -> Unit,
+    finishEdit: (String, Cents, BTWPercentage, Float, Boolean, Boolean) -> Unit,
 ) {
     // Remember name, price and BTW percentage
     var newName: String by remember { mutableStateOf(item.name) }
     var newPriceStr: String by remember { mutableStateOf(item.price.toString()) }
     var newBTWPercentage: BTWPercentage by remember { mutableStateOf(item.btwPercentage) }
     var newColorFloat: Float by remember { mutableFloatStateOf(item.hue) }
+    var newAlcoholic: Boolean by remember { mutableStateOf(item.alcoholic)}
+    var newHospitality: Boolean by remember { mutableStateOf(item.hospitality)}
 
     // UI
     BarLayout {
@@ -122,6 +125,10 @@ private fun BeheerItemsItemContent(
             thumb = { Box(Modifier.size(50.dp).border(3.dp, Color.Black).background(newColor)) },
         )
         Spacer(Modifier.size(20.dp))
+        BarCheckbox("Alcoholisch", newAlcoholic, { newAlcoholic = it})
+        Spacer(Modifier.size(20.dp))
+        BarCheckbox("Hospitality", newHospitality, { newHospitality = it})
+        Spacer(Modifier.size(20.dp))
 
         // Save button
         BarButton("Opslaan",
@@ -132,6 +139,8 @@ private fun BeheerItemsItemContent(
                     newPriceStr.toCents(),
                     newBTWPercentage,
                     newColorFloat,
+                    newAlcoholic,
+                    newHospitality
                 )
             },
             rounded = true,

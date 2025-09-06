@@ -47,6 +47,8 @@ data class OrderAmountsItemError(
             Cents(0),
             BTWPercentage.Geen,
             0f,
+            false,
+            false,
             errorHandlingOverrideId = itemId
         )
 

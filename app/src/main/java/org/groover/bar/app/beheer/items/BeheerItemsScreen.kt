@@ -51,7 +51,7 @@ fun BeheerItemsScreen(
     BeheerItemsContent(
         navigate = navigate,
         items = itemRepository.data,
-        addNewItem = { itemRepository.addItem("Item", Cents(0), BTWPercentage.Geen, 0f) },
+        addNewItem = { itemRepository.addItem("Item", Cents(0), BTWPercentage.Geen, 0f, false, false) },
         itemMove = itemRepository::move,
         itemRemove = { itemRemoveState = itemRepository.find(it) },
         onToggleVisible = itemRepository::toggleVisible,
