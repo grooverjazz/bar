@@ -54,9 +54,9 @@ fun BarTurvenCustomerScreen(
 
     // Look up current customer's name
     val currentCustomer = customerRepository.find(customerId)!!
-
+    // Filters items when someone is underage so alcohol cannot be purchased and filters away
+    val items = itemRepository.data.filter {(DateUtils.isOlderThan18((currentCustomer as Member).birthday) || !it.alcoholic) && (!currentCustomer.isHospitality || it.hospitality)}
     // Get customer total
-    val items = itemRepository.data.filter {DateUtils.isOlderThan18((currentCustomer as Member).birthday) || !it.alcoholic}
     val customerTotal = orderRepository.getTotalByCustomer(customerId, customerRepository.groups.data, items)
 
     // Get warning message
