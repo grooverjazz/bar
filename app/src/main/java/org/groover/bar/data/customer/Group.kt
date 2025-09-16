@@ -4,6 +4,7 @@ import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastMap
 import org.groover.bar.data.util.CSVHandler
 import org.groover.bar.data.util.DateUtils
+import java.util.Date
 
 /**
  * A group of members.
@@ -26,6 +27,11 @@ data class Group (
             return "Deze groep bevat minderjarigen!"
         // No warning
         return ""
+    }
+    // Returns the birthday of the youngest person in the group
+    fun getLatestBirthday(findMember: (id: Int) -> Member): Date {
+        val memberBirthdays = memberIds.fastMap { findMember(it).birthday }
+        return memberBirthdays.max()
     }
 
     companion object {
@@ -52,7 +58,6 @@ data class Group (
                 val id = idStr.toInt()
                 val memberIds = memberIdStrs
                     .fastMap(String::toInt)
-
                 // Return group
                 return Group(id, name, memberIds)
             } catch (e: Exception) {

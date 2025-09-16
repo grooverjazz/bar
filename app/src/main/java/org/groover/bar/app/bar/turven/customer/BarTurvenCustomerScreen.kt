@@ -30,6 +30,7 @@ import org.groover.bar.app.util.BarButton
 import org.groover.bar.data.item.composable.ItemList
 import org.groover.bar.app.util.BarTitle
 import org.groover.bar.app.util.BarLayout
+import org.groover.bar.data.customer.Group
 import org.groover.bar.data.customer.Member
 import org.groover.bar.data.util.Cents
 import org.groover.bar.data.util.DateUtils
@@ -54,8 +55,18 @@ fun BarTurvenCustomerScreen(
 
     // Look up current customer's name
     val currentCustomer = customerRepository.find(customerId)!!
-    // Filters items when someone is underage so alcohol cannot be purchased and filters away
-    val items = itemRepository.data.filter {(DateUtils.isOlderThan18((currentCustomer as Member).birthday) || !it.alcoholic) && (!currentCustomer.isHospitality || it.hospitality)}
+    // Filters items when someone is underage so alcohol cannot be purchased
+    var items = itemRepository.data
+    if (currentCustomer is Group) {
+        val latestBirthday = currentCustomer.getLatestBirthday { customerRepository.members.find(it)!! }
+        if (!DateUtils.isOlderThan18(latestBirthday)) {
+            items = items.filter {  !it.alcoholic }
+        }
+    } else if (currentCustomer is Member) {
+        // Also filters on hospitality for members
+        items = items.filter { it.hospitality || !currentCustomer.isHospitality }
+        items = items.filter { !it.alcoholic || DateUtils.isOlderThan18(currentCustomer.birthday) }
+    }
     // Get customer total
     val customerTotal = orderRepository.getTotalByCustomer(customerId, customerRepository.groups.data, items)
 
