@@ -75,7 +75,7 @@ fun BarTurvenCustomerScreen(
 
     // (Gets the cost of an order)
     val getOrderCost = { currentOrder: List<Int> ->
-        itemRepository.costProduct(currentOrder)
+        itemRepository.costProduct(currentOrder, items)
     }
 
     // (Places an order)

@@ -86,8 +86,8 @@ class ItemRepository(
     }
 
     // (Gets the total cost of the specified amounts)
-    fun costProduct(amounts: List<Int>): Cents {
-        return (data zip amounts)
+    fun costProduct(amounts: List<Int>, items: List<Item>): Cents {
+        return (items zip amounts)
             .fastMap { (item, amount) -> item.price * amount }
             .sum()
     }
